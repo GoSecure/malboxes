@@ -1,0 +1,44 @@
+Intro:
+
+Packer templates for creating a basic malware analysis lab, as per the
+recommended setup in Practical Malware Analysis, but using VirtualBox instead
+of VMware.
+
+This will create a Debian VM serving up DHCP with INetSim, in addition to a
+Windows host for testing, reverse engineering and otherwise analysing malware.
+This will allow you to (relatively) quickly and easily spin up a lab for
+performing malware analysis which you can then quickly destroy once complete.
+
+VMs are isolated from the outside world on an internal network.  You can
+ignore any SSH connection timeouts for this reason.
+
+Windows VMs are fairly vanilla and do not include any anti-anti-VM changes to
+stop malware from detecting an underlying VM.  I hope to include some methods
+soon.
+
+Modify any URLs for ISO downloads accordingly.
+
+Any recommendations, feedback, pull requests welcome.
+
+Templates:
+
+debian-8.2.0-amd64.json - Base Debian install with static IP 10.0.0.1 serving
+DHCP on 10.0.0.0/24.  Includes INetSim.
+
+windows-10-victim.json - Base Windows 10 Enterprise RTM install with a dynamic
+IP pulled from the Debian box.
+
+Usage:
+
+packer build debian-8.2.0-amd64.json
+packer build windows-10-victim.json
+vagrant box add boxes/debian820.box --name=debian820
+vagrant box add boxes/win10victim.box --name=win10victim
+mkdir debian820
+mkdir win10victim
+cd debian820
+vagrant init debian820
+vagrant up
+cd ../win10victim
+vagrant init win10victim
+vagrant up

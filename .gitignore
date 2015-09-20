@@ -1,0 +1,5 @@
+*~
+*.swp
+packer_cache/
+boxes/
+builds/
