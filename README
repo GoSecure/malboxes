@@ -26,7 +26,10 @@ debian-8.2.0-amd64.json - Base Debian install with static IP 10.0.0.1 serving
 DHCP on 10.0.0.0/24.  Includes INetSim.
 
 windows-10-victim.json - Base Windows 10 Enterprise RTM install with a dynamic
-IP pulled from the Debian box.
+IP pulled from the Debian box.  Now includes some basic apps installed via
+Chocolatey (see scripts/windows/installtools.ps1).  I may make some Chocolatey packages for other tools
+(disassemblers, etc), or possibly just add an upload directory for you to
+deploy your own favourite tools.
 
 Usage:
 
