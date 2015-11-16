@@ -2,12 +2,12 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win10victim"
+		"name": "win7dirty"
 	},
 
 	"builders": [{
 		"type": "virtualbox-iso",
-		"guest_os_type": "Windows10_64",
+		"guest_os_type": "Windows7",
 		"guest_additions_mode": "attach",
 		"headless": "false",
 		"communicator": "winrm",
@@ -26,8 +26,8 @@
 
 		"output_directory": "builds",
 
-		"iso_url": "http://care.dlservice.microsoft.com/dl/download/C/3/9/C399EEA8-135D-4207-92C9-6AAB3259F6EF/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
-		"iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
+		"iso_url": "en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso",
+		"iso_checksum": "d89937df3a9bc2ec1a1486195fd308cd3dade928",
 		"iso_checksum_type": "sha1",
 
 		"winrm_username": "{{user `winrm_user`}}",
@@ -39,15 +39,15 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"installconfig/windows_10/Autounattend.xml",
-			"installconfig/windows_10/enablewinrm.ps1"
+			"installconfig/windows_7/Autounattend.xml",
+			"installconfig/windows_7/enablewinrm.ps1"
 		]
 	}],
 
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{user `name`}}.box",
-		"vagrantfile_template": "vagrantfiles/windows-10-malware.rb"
+		"vagrantfile_template": "vagrantfiles/windows-7-dirty.rb"
 	}],
 
 	"provisioners": [{
