@@ -25,7 +25,7 @@
 
 		"output_directory": "builds",
 
-		"iso_url": "http://mirror.internode.on.net/pub/debian-cd/current/amd64/iso-cd/debian-8.2.0-amd64-netinst.iso",
+		"iso_url": "http://debian-cd.debian.net/debian-cd/8.2.0/amd64/iso-cd/debian-8.2.0-amd64-netinst.iso",
 		"iso_checksum": "a41801dcc0e37bce2406e18b334f99ae366d6fde",
 		"iso_checksum_type": "sha1",
 
