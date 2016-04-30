@@ -2,12 +2,12 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win81x64"
+		"name": "win7x64"
 	},
 
 	"builders": [{
 		"type": "virtualbox-iso",
-		"guest_os_type": "Windows8.1",
+		"guest_os_type": "Windows7x64",
 		"guest_additions_mode": "attach",
 		"headless": "false",
 		"communicator": "winrm",
@@ -26,8 +26,8 @@
 
 		"output_directory": "builds",
 
-		"iso_url": "http://care.dlservice.microsoft.com/dl/download/B/9/9/B999286E-0A47-406D-8B3D-5B5AD7373A4A/9600.17050.WINBLUE_REFRESH.140317-1640_X64FRE_ENTERPRISE_EVAL_EN-US-IR3_CENA_X64FREE_EN-US_DV9.ISO",
-		"iso_checksum": "7c7d99546077c805faae40a8864882c46f0ca141",
+		"iso_url": "/home/svieg/win764.iso",
+		"iso_checksum": "0f22dfe89ae18b45821276db41b375faf9a7906a",
 		"iso_checksum_type": "sha1",
 
 		"winrm_username": "{{user `winrm_user`}}",
@@ -39,15 +39,15 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"installconfig/windows_81/Autounattend.xml",
-			"installconfig/windows_81/enablewinrm.ps1"
+			"installconfig/windows_7x64/Autounattend.xml",
+			"installconfig/windows_7x64/enablewinrm.ps1"
 		]
 	}],
 
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{user `name`}}.box",
-		"vagrantfile_template": "vagrantfiles/windows-81x64.rb"
+		"vagrantfile_template": "vagrantfiles/windows-7x64.rb"
 	}],
 
 	"provisioners": [{
