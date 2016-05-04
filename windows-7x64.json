@@ -2,12 +2,12 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win7x64"
+		"name": "win7"
 	},
 
 	"builders": [{
 		"type": "virtualbox-iso",
-		"guest_os_type": "Windows7x64",
+		"guest_os_type": "Windows7_64",
 		"guest_additions_mode": "attach",
 		"headless": "false",
 		"communicator": "winrm",

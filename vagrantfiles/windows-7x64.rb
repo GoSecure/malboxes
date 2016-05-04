@@ -1,5 +1,5 @@
 Vagrant.configure(2) do |config|
-	config.vm.box = "win81x64"
+	config.vm.box = "win7x64"
 	config.vm.guest = :windows
 	config.vm.boot_timeout = 1
 
