@@ -2,12 +2,12 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win10victim"
+		"name": "win10_32_analyst"
 	},
 
 	"builders": [{
 		"type": "virtualbox-iso",
-		"guest_os_type": "Windows10_64",
+		"guest_os_type": "Windows10",
 		"guest_additions_mode": "attach",
 		"headless": "false",
 		"communicator": "winrm",
@@ -17,17 +17,12 @@
 			["modifyvm", "{{.Name}}", "--cpus", "1"]
 		],
 
-		"vboxmanage_post": [
-			["modifyvm", "{{.Name}}", "--nic1", "intnet"],
-			["modifyvm", "{{.Name}}", "--intnet1", "malwarelab"]
-		],
-
 		"disk_size": "15360",
 
 		"output_directory": "builds",
 
-		"iso_url": "http://care.dlservice.microsoft.com/dl/download/C/3/9/C399EEA8-135D-4207-92C9-6AAB3259F6EF/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
-		"iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
+		"iso_url": "http://care.dlservice.microsoft.com/dl/download/B/B/3/BB3611B6-9781-437F-A293-AB43B85C2190/10586.0.151029-1700.TH2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO",
+		"iso_checksum": "e431a4e259a5c056a5d58b9cd0628a3c59f112f9",
 		"iso_checksum_type": "sha1",
 
 		"winrm_username": "{{user `winrm_user`}}",
@@ -39,8 +34,8 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"installconfig/windows_10/Autounattend.xml",
-			"installconfig/windows_10/enablewinrm.ps1"
+			"installconfig/windows10_64/Autounattend.xml",
+			"installconfig/windows10_64/enablewinrm.ps1"
 		]
 	}],
 
@@ -55,6 +50,7 @@
 		"scripts": [
 			"scripts/windows/vmtools.ps1",
 			"scripts/windows/enablerdp.ps1",
+			"scripts/windows/installchocolatey.ps1",
 			"scripts/windows/installtools.ps1"
 		]
 	}]
