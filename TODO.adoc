@@ -43,3 +43,7 @@ https://github.com/joefitzgerald/packer-windows/blob/master/answer_files/7/Autou
 == Related projects that might be useful
 
 * http://boxstarter.org/
+
+== Cleanup
+
+* Consolidate duplicated info (arch specifics) in installconfig/windows10/

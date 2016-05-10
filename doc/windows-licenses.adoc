@@ -3,13 +3,15 @@
 == Trial
 
 Trial versions of Windows use a different .ISO. You can find them here:
-
-// TODO
+https://www.microsoft.com/en-us/evalcenter/evaluate-windows
 
 If you want to use a trial version make sure you have the following in your
 `config.json`:
 
     "trial": true
+
+NOTE: Trial versions of Windows 7 were not tested since evaluation ISOs are no
+longer available. Open an issue if you can provide missing information.
 
 == Registered
 
