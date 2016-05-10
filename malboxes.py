@@ -17,35 +17,55 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
+import argparse
+import glob
 import json
 import os
+import re
 import signal
 import subprocess
+import sys
 
 from jinja2 import Environment, FileSystemLoader
 from sh import packer_io
 
 CONFIG_CACHE = 'config_cache/'
 
-def prepare_autounattend(config, os):
+def prepare_autounattend(config):
     """
     Prepares an Autounattend.xml file according to configuration and writes it
     into a temporary location where packer later expects it.
     
     Uses jinja2 template syntax to generate the resulting XML file.
     """
+    # os type is extracted from profile json
+    os_type = config['builders'][0]['guest_os_type'].lower()
+
     env = Environment(loader=FileSystemLoader('installconfig/'))
-    template = env.get_template("{}/Autounattend.xml".format(os))
+    template = env.get_template("{}/Autounattend.xml".format(os_type))
     f = create_configfd('Autounattend.xml')
     f.write(template.render(config))
 
 
-def load_config():
+def load_config(profile):
     """
     Config is in JSON since we can re-use the same in both malboxes and packer
     """
+    profile_file = 'profiles/{}.json'.format(profile)
+    # validate if profile is present
+    if not os.path.isfile(profile_file):
+        return False, None
+
+    # load general config
+    config = {}
     with open('config.json', 'r') as f:
-        return json.load(f)
+        config = json.load(f)
+
+    # merge/update with profile config
+    with open(profile_file, 'r') as f:
+        config.update(json.load(f))
+
+    return True, config
 
 
 tempfiles = []
@@ -57,6 +77,16 @@ def create_configfd(filename):
 
     tempfiles.append(filename)
     return open(CONFIG_CACHE + filename, 'w')
+
+
+def initialize():
+    parser = argparse.ArgumentParser(description=
+            "Vagrant box builder for malware analysis")
+    parser.add_argument('profile', nargs='?', default=None,
+            help='Name of the profile to build. '
+            'Will list the profiles if no profile is given.')
+    args = parser.parse_args()
+    return parser, args
 
 
 def cleanup():
@@ -85,12 +115,31 @@ def run_packer(os_config):
     print("packer completed")
 
 
+def list_profiles():
+    print("Supported profiles:\n")
+    for f in glob.glob('profiles/*.json'):
+        m = re.search(r'^profiles\/(.*).json$', f)
+        print(m.group(1))
+    print()
+
+
 if __name__ == "__main__":
     try:
+        parser, args = initialize()
+        if not args.profile:
+            list_profiles()
+            parser.print_usage()
+            sys.exit(1)
+
         print("Generating configuration files...")
-        config = load_config()
-        prepare_autounattend(config, 'windows_7')
+        result, config = load_config(args.profile)
+        if not result:
+            print("Profile doesn't exist")
+            sys.exit(2)
+
+        prepare_autounattend(config)
         print("Configuration files are ready")
-        run_packer('windows-7-dirty.json')
+        run_packer('profiles/{}.json'.format(args.profile))
+
     finally:
         cleanup()

@@ -11,7 +11,11 @@ https://github.com/gosecure/malboxes
 
 == Usage
 
-Copy `config-example.json` to `config.json` and run:
+Copy `config-example.json` to `config.json`. Modify it and run:
+
+    ./malboxes.py <profile>
+
+You can also list all supported profiles with:
 
     ./malboxes.py
 

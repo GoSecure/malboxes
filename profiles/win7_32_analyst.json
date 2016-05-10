@@ -2,7 +2,7 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win7dirty"
+		"name": "win7_32_analyst"
 	},
 
 	"builders": [{
@@ -15,11 +15,6 @@
 		"vboxmanage": [
 			["modifyvm", "{{.Name}}", "--memory", "4096"],
 			["modifyvm", "{{.Name}}", "--cpus", "1"]
-		],
-
-		"vboxmanage_post": [
-			["modifyvm", "{{.Name}}", "--nic1", "intnet"],
-			["modifyvm", "{{.Name}}", "--intnet1", "malwarelab"]
 		],
 
 		"disk_size": "15360",
@@ -40,7 +35,7 @@
 
 		"floppy_files": [
 			"config_cache/Autounattend.xml",
-			"installconfig/windows_7/enablewinrm.ps1"
+			"installconfig/windows7/enablewinrm.ps1"
 		]
 	}],
 

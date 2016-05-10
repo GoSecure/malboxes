@@ -11,6 +11,13 @@
 * vagrant team workflow
 * git malware analysis template integrated with malboxes
 
+=== inetsim json config
+
+		"vboxmanage_post": [
+			["modifyvm", "{{.Name}}", "--nic1", "intnet"],
+			["modifyvm", "{{.Name}}", "--intnet1", "malwarelab"]
+		],
+
 == Install process
 
 * Make easily customizable in `Autounattend.xml`
