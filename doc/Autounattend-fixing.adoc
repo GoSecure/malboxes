@@ -1,0 +1,58 @@
+= Troubleshooting Autounattend.xml problems
+
+Best advice is to use the `Windows System Image Manager` that comes with
+Windows Automated Installation Kit (AIK) which you can download from
+Microsoft.
+
+Using one of the `installconfig/*/Autounattend.xml` for inspiration.
+
+Timezone values can be found from running:
+
+    tzutil /l
+
+For example: "Eastern Standard Time".
+
+If you don't want daylight settings to be observed you can append "_dstoff"
+to the timezone string. For example: Eastern Standard Time_dstoff
+
+== Headless install
+
+For Windows Vista and 7 here are the settings that you need to minimally
+provide in the `Autounattend.xml` file in order to have no prompts during the
+installation of the OS:
+
+https://technet.microsoft.com/en-us/library/dd744547%28WS.10%29.aspx
+
+== Installation is not automated and stalls at Windows variant selection
+
+The image specified in the Autounattended.xml doesn't match what's on the DVD
+provided. ImageX can extract that information from the `install.wim` file in
+the `sources` directory of the installation media.
+
+ImageX is part of Windows AIK (Automated Installation Kit) which seems to be
+version specific.
+
+Once AIK is installed open a `Deployment Tools` Prompt (under AIK's menu).
+Then put the Windows CD in.
+
+    E:\sources>imagex /info install.wim
+
+    [...]
+
+    Available Image Choices:
+    ------------------------
+    [...]
+    <IMAGE INDEX="3">
+        [...]
+        <NAME>Windows 7 HOMEPREMIUM</NAME>
+        <DESCRIPTION>Windows 7 HOMEPREMIUM</DESCRIPTION>
+        [...]
+    </IMAGE>
+    [...]
+
+== References
+
+* https://github.com/m-dwyer/packer-malware/issues/2
+* ImageX doc: https://technet.microsoft.com/en-au/library/cc749447%28v=ws.10%29.aspx
+* Windows 7 AIK: http://www.microsoft.com/en-ca/download/details.aspx?id=5753
+* Windows Timezones: https://technet.microsoft.com/en-us/library/ff715394%28WS.10%29.aspx
