@@ -26,7 +26,7 @@
 
 		"output_directory": "builds",
 
-		"iso_url": "en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso",
+		"iso_url": "file://{{ user `iso_path` }}/en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso",
 		"iso_checksum": "d89937df3a9bc2ec1a1486195fd308cd3dade928",
 		"iso_checksum_type": "sha1",
 
@@ -39,7 +39,7 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"installconfig/windows_7/Autounattend.xml",
+			"config_cache/Autounattend.xml",
 			"installconfig/windows_7/enablewinrm.ps1"
 		]
 	}],

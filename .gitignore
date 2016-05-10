@@ -1,5 +1,6 @@
 *~
 *.swp
 packer_cache/
+config_cache/
 boxes/
 builds/
