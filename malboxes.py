@@ -117,7 +117,7 @@ def run_packer(os_config):
 
 def list_profiles():
     print("Supported profiles:\n")
-    for f in glob.glob('profiles/*.json'):
+    for f in sorted(glob.glob('profiles/*.json')):
         m = re.search(r'^profiles\/(.*).json$', f)
         print(m.group(1))
     print()
