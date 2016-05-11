@@ -1,3 +1,27 @@
+= Malboxes
+
+Vagrant box builder for malware analysis
+
+https://github.com/gosecure/malboxes
+
+== Requirements
+
+* Python 3
+* jinja2
+
+== Usage
+
+Copy `config-example.json` to `config.json`. Modify it and run:
+
+    ./malboxes.py <profile>
+
+You can also list all supported profiles with:
+
+    ./malboxes.py
+
+// FIXME
+
+== Old README
 Intro:
 
 Packer templates for creating a basic malware analysis lab, as per the
