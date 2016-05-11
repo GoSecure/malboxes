@@ -8,6 +8,8 @@ https://github.com/gosecure/malboxes
 
 * Python 3
 * jinja2
+* packer (sometimes called packer-io)
+* vagrant
 
 == Usage
 

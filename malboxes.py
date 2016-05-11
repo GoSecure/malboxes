@@ -95,11 +95,9 @@ def cleanup():
         os.remove(CONFIG_CACHE + f)
 
 
-def run_packer(os_config):
-    print("Starting packer to generate the VM")
-    print("----------------------------------")
-    p = subprocess.Popen(['packer-io', 'build', '-var-file=config.json', os_config],
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+def run_foreground(command):
+    p = subprocess.Popen(command, stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT)
     try:
         for line in iter(p.stdout.readline, b''):
             print(line.rstrip().decode('utf-8'))
@@ -111,8 +109,24 @@ def run_packer(os_config):
             print(line.rstrip().decode('utf-8'))
         raise
 
+def run_packer(os_config):
+    print("Starting packer to generate the VM")
+    print("----------------------------------")
+
+    run_foreground(['packer-io', 'build', '-var-file=config.json', os_config])
+
     print("----------------------------------")
     print("packer completed")
+
+
+def import_box(boxname):
+    print("Importing box into vagrant")
+    print("--------------------------")
+
+    run_foreground(['vagrant', 'box', 'add', '--name={}'.format(boxname)])
+
+    print("----------------------------")
+    print("vagrant box import completed")
 
 
 def list_profiles():
@@ -140,6 +154,14 @@ if __name__ == "__main__":
         prepare_autounattend(config)
         print("Configuration files are ready")
         run_packer('profiles/{}.json'.format(args.profile))
+
+        import_box(args.profile)
+        create_vagrantfile(config)
+
+        print("A base box was imported into your local Vagrant box repository")
+        print("You can re-use this base box several times by using the "
+                "following statement in your Vagrantfile:")
+        print('config.vm.box = "{}"'.format(args.profile))
 
     finally:
         cleanup()
