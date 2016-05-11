@@ -13,13 +13,22 @@ https://github.com/gosecure/malboxes
 
 == Usage
 
+=== Box creation
+
 Copy `config-example.json` to `config.json`. Modify it and run:
 
-    ./malboxes.py <profile>
+    ./malboxes.py build <profile>
 
 You can also list all supported profiles with:
 
-    ./malboxes.py
+    ./malboxes.py list
+
+This will build a Vagrant box ready for malware investigation you can now
+include it in a Vagrantfile afterwards.
+
+For example:
+
+    ./malboxes.py build win10_64_analyst
 
 // FIXME
 

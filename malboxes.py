@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Malboxes - Vagrant box builder for malware analysis
+# Malboxes - Vagrant box builder and config generator for malware analysis
 # https://github.com/gosecure/malboxes
 #
 # Olivier Bilodeau <obilodeau@gosecure.ca>
@@ -30,6 +30,39 @@ from jinja2 import Environment, FileSystemLoader
 from sh import packer_io
 
 CONFIG_CACHE = 'config_cache/'
+
+
+def initialize():
+    parser = argparse.ArgumentParser(description=
+            "Vagrant box builder and config generator for malware analysis")
+    subparsers = parser.add_subparsers()
+
+    # list command
+    parser_list = subparsers.add_parser('list', help=
+            "Lists available profiles")
+    parser_list.set_defaults(func=list_profiles)
+
+    # build command
+    parser_build = subparsers.add_parser('build',
+            help="Builds a Vagrant box based on a given profile")
+    parser_build.add_argument('profile', help='Name of the profile to build. '
+            'Use list command to view available profiles.')
+    parser_build.set_defaults(func=build)
+
+    # spin command
+    parser_spin = subparsers.add_parser('spin', help=
+            "Creates a Vagrantfile for your profile / Vagrant box")
+    parser_spin.add_argument('profile', help='Name of the profile to spin.')
+    parser_spin.add_argument('name', help='Name of the target VM. '
+            'Must be unique on your system. Ex: Cryptolocker_XYZ')
+    parser_spin.set_defaults(func=spin)
+
+    # no command
+    parser.set_defaults(func=default)
+
+    args = parser.parse_args()
+    return parser, args
+
 
 def prepare_autounattend(config):
     """
@@ -79,16 +112,6 @@ def create_configfd(filename):
     return open(CONFIG_CACHE + filename, 'w')
 
 
-def initialize():
-    parser = argparse.ArgumentParser(description=
-            "Vagrant box builder for malware analysis")
-    parser.add_argument('profile', nargs='?', default=None,
-            help='Name of the profile to build. '
-            'Will list the profiles if no profile is given.')
-    args = parser.parse_args()
-    return parser, args
-
-
 def cleanup():
     """Removes temporary files"""
     for f in tempfiles:
@@ -114,11 +137,11 @@ def run_foreground(command):
         return p.returncode
 
 
-def run_packer(os_config):
+def run_packer(packer_config):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
-    cmd = ['packer-io', 'build', '-var-file=config.json', os_config]
+    cmd = ['packer-io', 'build', '-var-file=config.json', packer_config]
     ret = run_foreground(cmd)
 
     print("----------------------------------")
@@ -126,49 +149,69 @@ def run_packer(os_config):
     return ret
 
 
-def import_box(boxname):
+def import_box(config, args):
     print("Importing box into vagrant")
     print("--------------------------")
 
-    run_foreground(['vagrant', 'box', 'add', '--name={}'.format(boxname)])
+    box = config['post-processors'][0]['output']
+    box = box.replace('{{user `name`}}', args.profile)
+
+    cmd = ['vagrant', 'box', 'add', box, '--name={}'.format(args.profile)]
+    ret = run_foreground(cmd)
 
     print("----------------------------")
-    print("vagrant box import completed")
+    print("vagrant box import completed with return code: {}".format(ret))
+    return ret
 
 
-def list_profiles():
-    print("Supported profiles:\n")
+def default(parser, args):
+    parser.print_help()
+    print("\n")
+    list_profiles(parser, args)
+    sys.exit(1)
+
+
+def list_profiles(parser, args):
+    print("supported profiles:\n")
     for f in sorted(glob.glob('profiles/*.json')):
         m = re.search(r'^profiles\/(.*).json$', f)
         print(m.group(1))
     print()
 
 
+def build(parser, args):
+    print("Generating configuration files...")
+    result, config = load_config(args.profile)
+    if not result:
+        print("Profile doesn't exist")
+        sys.exit(2)
+
+    prepare_autounattend(config)
+    print("Configuration files are ready")
+    ret = run_packer('profiles/{}.json'.format(args.profile))
+    if ret != 0:
+        print("Packer failed. Build failed. Exiting...")
+        sys.exit(3)
+
+    ret = import_box(config, args)
+    if ret != 0:
+        print("'vagrant box add' failed. Build failed. Exiting...")
+        sys.exit(4)
+
+    print("A base box was imported into your local Vagrant box repository")
+    print("You can re-use this base box several times by using the "
+            "following statement in your Vagrantfile:")
+    print('config.vm.box = "{}"'.format(args.profile))
+
+
+def spin(parser, args):
+    print("spin called, nothing to see here")
+    #create_vagrantfile(config)
+
 if __name__ == "__main__":
     try:
         parser, args = initialize()
-        if not args.profile:
-            list_profiles()
-            parser.print_usage()
-            sys.exit(1)
-
-        print("Generating configuration files...")
-        result, config = load_config(args.profile)
-        if not result:
-            print("Profile doesn't exist")
-            sys.exit(2)
-
-        prepare_autounattend(config)
-        print("Configuration files are ready")
-        run_packer('profiles/{}.json'.format(args.profile))
-
-        import_box(args.profile)
-        create_vagrantfile(config)
-
-        print("A base box was imported into your local Vagrant box repository")
-        print("You can re-use this base box several times by using the "
-                "following statement in your Vagrantfile:")
-        print('config.vm.box = "{}"'.format(args.profile))
+        args.func(parser, args)
 
     finally:
         cleanup()
