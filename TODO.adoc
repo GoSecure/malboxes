@@ -1,7 +1,5 @@
 = TODO
 
-* Make work with trial ISOs
-
 == Minimal malware analist use case
 
 * push sample w/ IDA debugger
@@ -10,6 +8,7 @@
 * vagrant update box + send on network (archiving)
 * vagrant team workflow
 * git malware analysis template integrated with malboxes
+* Integrate virtualbox and wireshark tips: https://www.virtualbox.org/wiki/Network_tips
 
 === inetsim json config
 
@@ -62,3 +61,9 @@ https://github.com/joefitzgerald/packer-windows/blob/master/answer_files/7/Autou
   # Bridged networks make the machine appear as another physical device on
   # your network.
   # config.vm.network "public_network"
+
+=== In the box Vagranfile
+
+To communicate with the user:
+
+    config.vm.post_up_message
