@@ -109,14 +109,21 @@ def run_foreground(command):
             print(line.rstrip().decode('utf-8'))
         raise
 
+    finally:
+        p.wait()
+        return p.returncode
+
+
 def run_packer(os_config):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
-    run_foreground(['packer-io', 'build', '-var-file=config.json', os_config])
+    cmd = ['packer-io', 'build', '-var-file=config.json', os_config]
+    ret = run_foreground(cmd)
 
     print("----------------------------------")
-    print("packer completed")
+    print("packer completed with return code: {}".format(ret))
+    return ret
 
 
 def import_box(boxname):
