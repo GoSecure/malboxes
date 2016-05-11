@@ -14,5 +14,5 @@ cinst 7zip -y
 cinst putty -y
 cinst fiddler -y
 cinst processhacker -y
-cinst apm -y
 cinst regshot -y
+cinst apm -y
