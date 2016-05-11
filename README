@@ -35,7 +35,7 @@ Usage:
 
 packer build debian-8.2.0-amd64.json
 packer build windows-10-victim.json
-vagrant box add boxes/debian820.box --name=debian820
-vagrant box add boxes/win10victim.box --name=win10victim
+vagrant box add debian820 boxes/debian820.box
+vagrant box add win10victim boxes/win10victim.box
 vagrant up d
 vagrant up v
