@@ -78,6 +78,7 @@ def prepare_autounattend(config):
     template = env.get_template("{}/Autounattend.xml".format(os_type))
     f = create_configfd('Autounattend.xml')
     f.write(template.render(config))
+    f.close()
 
 
 def load_config(profile):
@@ -87,7 +88,8 @@ def load_config(profile):
     profile_file = 'profiles/{}.json'.format(profile)
     # validate if profile is present
     if not os.path.isfile(profile_file):
-        return False, None
+        print("Profile doesn't exist")
+        sys.exit(2)
 
     # load general config
     config = {}
@@ -98,7 +100,7 @@ def load_config(profile):
     with open(profile_file, 'r') as f:
         config.update(json.load(f))
 
-    return True, config
+    return config
 
 
 tempfiles = []
@@ -180,12 +182,9 @@ def list_profiles(parser, args):
 
 
 def build(parser, args):
-    print("Generating configuration files...")
-    result, config = load_config(args.profile)
-    if not result:
-        print("Profile doesn't exist")
-        sys.exit(2)
+    config = load_config(args.profile)
 
+    print("Generating configuration files...")
     prepare_autounattend(config)
     print("Configuration files are ready")
     ret = run_packer('profiles/{}.json'.format(args.profile))
@@ -205,8 +204,27 @@ def build(parser, args):
 
 
 def spin(parser, args):
-    print("spin called, nothing to see here")
-    #create_vagrantfile(config)
+    """
+    Creates a Vagrantfile based on a template using the jinja2 engine
+    """
+    config = load_config(args.profile)
+
+    print("Creating a Vagrantfile")
+    env = Environment(loader=FileSystemLoader('vagrantfiles/'))
+    template = env.get_template("analyst_single.rb")
+
+    if os.path.isfile('Vagrantfile'):
+        print("Vagrantfile already exists. Please move away.")
+        sys.exit(5)
+
+    config['profile'] = args.profile
+    config['name'] = args.name
+
+    f = open("Vagrantfile", 'w')
+    f.write(template.render(config))
+    print("Vagrantfile generated. You can move it in your analysis directory "
+            "and issue a `vagrant up` to get started with your VM.")
+
 
 if __name__ == "__main__":
     try:

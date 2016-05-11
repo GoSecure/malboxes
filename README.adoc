@@ -1,6 +1,6 @@
 = Malboxes
 
-Vagrant box builder for malware analysis
+Vagrant box builder and config generator for malware analysis
 
 https://github.com/gosecure/malboxes
 
@@ -30,47 +30,31 @@ For example:
 
     ./malboxes.py build win10_64_analyst
 
+=== Per analysis instances
+
+    ./malboxes.py spin win10_64_analyst <name>
+
+This will create a `Vagrantfile` prepared to use for malware analysis. Move it
+into the analysis folder of your choice and issue:
+
+    vagrant up
+
+From that folder to get the VM started. By default the local directory will be
+shared in the VM. This can be changed by commenting the relevant part of the
+`Vagrantfile`.
+
+For example:
+
+    ./malboxes.py spin win7_32_analyst 20160519.cryptolocker.xyz
+
 // FIXME
 
-== Old README
-Intro:
+== Credits
 
-Packer templates for creating a basic malware analysis lab, as per the
-recommended setup in Practical Malware Analysis, but using VirtualBox instead
-of VMware.
+After I had the idea for an improved malware analyst workflow based on what
+I've been using for development on Linux servers (Vagrant) I quickly Googled
+if someone was already doing something in that regard.
 
-This will create a Debian VM serving up DHCP with INetSim, in addition to a
-Windows host for testing, reverse engineering and otherwise analysing malware.
-This will allow you to (relatively) quickly and easily spin up a lab for
-performing malware analysis which you can then quickly destroy once complete.
-
-VMs are isolated from the outside world on an internal network.  You can
-ignore any SSH connection timeouts for this reason.
-
-Windows VMs are fairly vanilla and do not include any anti-anti-VM changes to
-stop malware from detecting an underlying VM.  I hope to include some methods
-soon.
-
-Modify any URLs for ISO downloads accordingly.
-
-Any recommendations, feedback, pull requests welcome.
-
-Templates:
-
-debian-8.2.0-amd64.json - Base Debian install with static IP 10.0.0.1 serving
-DHCP on 10.0.0.0/24.  Includes INetSim.
-
-windows-10-victim.json - Base Windows 10 Enterprise RTM install with a dynamic
-IP pulled from the Debian box.  Now includes some basic apps installed via
-Chocolatey (see scripts/windows/installtools.ps1).  I may make some Chocolatey packages for other tools
-(disassemblers, etc), or possibly just add an upload directory for you to
-deploy your own favourite tools.
-
-Usage:
-
-packer build debian-8.2.0-amd64.json
-packer build windows-10-victim.json
-vagrant box add boxes/debian820.box --name=debian820
-vagrant box add boxes/win10victim.box --name=win10victim
-vagrant up d
-vagrant up v
+I found the https://github.com/m-dwyer/packer-malware[packer-malware] repo on
+github by Mark Andrew Dwyer. Malboxes was boostrapped thanks to his work which
+helped me especially around the areas of `Autounattend.xml` files.
