@@ -3,13 +3,13 @@
 * Make work with trial ISOs
 
 == Minimal malware analyst use case
-=======
 
 * push sample w/ IDA debugger
 * open ports for remote IDA debugging
 * vagrant no net, NAT
 * vagrant update box + send on network (archiving)
 * vagrant team workflow
+** vagrant box repackaging covered here: http://huestones.co.uk/node/305
 * git malware analysis template integrated with malboxes
 * Integrate virtualbox and wireshark tips: https://www.virtualbox.org/wiki/Network_tips
 
