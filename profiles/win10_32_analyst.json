@@ -42,7 +42,7 @@
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{user `name`}}.box",
-		"vagrantfile_template": "vagrantfiles/windows-10-malware.rb"
+		"vagrantfile_template": "vagrantfiles/box_win.rb"
 	}],
 
 	"provisioners": [{
