@@ -1,0 +1,100 @@
+#!/usr/bin/python
+# Copyright (C) 2016 Hugo Genesse.
+# This file is part of VMCloak - http://vmcloak.org.
+# See the file 'docs/LICENSE.txt' for copying permission.
+
+import argparse
+import logging
+import os
+from vmcloak.repository import Session, Image
+# from vmcloak.agent import Agent
+from vmcloak.misc import wait_for_host
+from vmcloak.vm import VirtualBox
+from vmcloak.win7 import Windows7
+from vmcloak.winxp import WindowsXP
+import sys
+sys.path.append("../vmcloak/")
+from hide import Hide
+from agent import Agent
+
+
+logging.basicConfig()
+log = logging.getLogger("vmcloak-hide")
+
+
+def main():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("name", type=str,
+                        help="Name of the instance to apply the profile.")
+    parser.add_argument("profile", type=str,
+                        help="Name of the profile to apply.")
+    # parser.add_argument("", type=str, help="")
+
+    args = parser.parse_args()
+
+    session = Session()
+
+    image = session.query(Image).filter_by(name=args.name).first()
+
+    if not image:
+        log.error("Image not found: %s", args.name)
+        exit(1)
+
+    if image.mode != "normal":
+        log.error("You can't modify this image as you have already made "
+                  "snapshots with it!")
+        log.error("Please vmcloak-clone it and modify the clone.")
+        exit(1)
+
+    m = VirtualBox(name=args.name)
+
+    if image.osversion == "winxp":
+        h = WindowsXP()
+        ramsize = 1024
+    if image.osversion == "win7" or image.osversion == "win7x64":
+        h = Windows7()
+        ramsize = 2048
+
+    m.create_vm()
+    m.os_type(image.osversion)
+    m.cpus(image.cpus)
+    m.mouse("usbtablet")
+    m.ramsize(ramsize)
+    m.attach_hd(image.path, multi=False)
+    m.detach_iso()
+    m.hostonly(nictype=h.nictype, adapter=image.adapter)
+    m.start_vm(visible=True)
+    print "[*] Waiting for host..."
+    wait_for_host(image.ipaddr, image.port)
+
+    a = Agent(image.ipaddr, image.port)
+
+    """ Hide main logic."""
+
+    """ Creating instance with the Agent."""
+    hide = Hide(a)
+
+    """ Loading the specified profile."""
+    profile_path = os.path.join(os.getenv('HOME'), ".vmcloak", "profiles", "%s.json" % args.profile)
+    profile_content = hide.load_json(profile_path)
+
+    for action in profile_content:
+        """ Parsing the action item."""
+        if action["mod_type"].find("dir") > 0:
+            hide.modify_directory(action)
+        elif action["mod_type"].find("key") > 0:
+            hide.modify_registry(action)
+        else:
+            print "Modification type not valid."     
+
+    # a.shutdown()
+    m.wait_for_state(shutdown=True)
+
+    m.remove_hd()
+    m.compact_hd(image.path)
+    m.delete_vm()
+
+if __name__ == "__main__":
+
+    main()

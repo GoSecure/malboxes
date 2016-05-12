@@ -1,0 +1,36 @@
+= Windows Licenses
+
+== Trial
+
+Trial versions of Windows use a different .ISO. You can find them here:
+https://www.microsoft.com/en-us/evalcenter/evaluate-windows
+
+If you want to use a trial version make sure you have the following in your
+`config.json`:
+
+    "trial": true
+
+NOTE: Trial versions of Windows 7 were not tested since evaluation ISOs are no
+longer available. Open an issue if you can provide missing information.
+
+== Registered
+
+Specify your product key in your `config.json` file. For example:
+
+    "trial": false,
+    "product_key": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"
+
+For registered versions the following ISOs are known to work:
+
+=== Windows 7 32 bits
+
+* filename: en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso
+* sha1 checksum: d89937df3a9bc2ec1a1486195fd308cd3dade928
+
+=== Volume licensing
+
+Volume license install keys are available from Microsoft here:
+https://technet.microsoft.com/en-us/library/jj612867.aspx
+
+These are untested. Please report if they work or not and if they require a
+different ISO.

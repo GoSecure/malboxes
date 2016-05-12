@@ -2,7 +2,7 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win10victim"
+		"name": "win10_64_analyst"
 	},
 
 	"builders": [{
@@ -15,11 +15,6 @@
 		"vboxmanage": [
 			["modifyvm", "{{.Name}}", "--memory", "4096"],
 			["modifyvm", "{{.Name}}", "--cpus", "1"]
-		],
-
-		"vboxmanage_post": [
-			["modifyvm", "{{.Name}}", "--nic1", "intnet"],
-			["modifyvm", "{{.Name}}", "--intnet1", "malwarelab"]
 		],
 
 		"disk_size": "15360",
@@ -39,15 +34,15 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"installconfig/windows_10/Autounattend.xml",
-			"installconfig/windows_10/enablewinrm.ps1"
+			"installconfig/windows10_64/Autounattend.xml",
+			"installconfig/windows10_64/enablewinrm.ps1"
 		]
 	}],
 
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{user `name`}}.box",
-		"vagrantfile_template": "vagrantfiles/windows-10-malware.rb"
+		"vagrantfile_template": "vagrantfiles/box_win.rb"
 	}],
 
 	"provisioners": [{

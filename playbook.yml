@@ -1,0 +1,15 @@
+---
+- name: test raw module
+  hosts: analyst
+  tasks:
+    - name: run ipconfig
+      raw: ipconfig
+      register: ipconfig
+    - debug: var=ipconfig
+
+- name: regkey
+  hosts: analyst
+  tasks:
+    - name: add regkey
+      win_regedit:
+        key: HKCU:\Software\MyCompany

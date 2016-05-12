@@ -2,7 +2,7 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win7dirty"
+		"name": "win7_32_analyst"
 	},
 
 	"builders": [{
@@ -17,16 +17,11 @@
 			["modifyvm", "{{.Name}}", "--cpus", "1"]
 		],
 
-		"vboxmanage_post": [
-			["modifyvm", "{{.Name}}", "--nic1", "intnet"],
-			["modifyvm", "{{.Name}}", "--intnet1", "malwarelab"]
-		],
-
 		"disk_size": "15360",
 
 		"output_directory": "builds",
 
-		"iso_url": "en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso",
+		"iso_url": "file://{{ user `iso_path` }}/en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso",
 		"iso_checksum": "d89937df3a9bc2ec1a1486195fd308cd3dade928",
 		"iso_checksum_type": "sha1",
 
@@ -39,15 +34,15 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"installconfig/windows_7/Autounattend.xml",
-			"installconfig/windows_7/enablewinrm.ps1"
+			"config_cache/Autounattend.xml",
+			"installconfig/windows7/enablewinrm.ps1"
 		]
 	}],
 
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{user `name`}}.box",
-		"vagrantfile_template": "vagrantfiles/windows-7-dirty.rb"
+		"vagrantfile_template": "vagrantfiles/box_win.rb"
 	}],
 
 	"provisioners": [{

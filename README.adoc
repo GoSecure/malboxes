@@ -1,0 +1,60 @@
+= Malboxes
+
+Vagrant box builder and config generator for malware analysis
+
+https://github.com/gosecure/malboxes
+
+== Requirements
+
+* Python 3
+* jinja2
+* packer (sometimes called packer-io)
+* vagrant
+
+== Usage
+
+=== Box creation
+
+Copy `config-example.json` to `config.json`. Modify it and run:
+
+    ./malboxes.py build <profile>
+
+You can also list all supported profiles with:
+
+    ./malboxes.py list
+
+This will build a Vagrant box ready for malware investigation you can now
+include it in a Vagrantfile afterwards.
+
+For example:
+
+    ./malboxes.py build win10_64_analyst
+
+=== Per analysis instances
+
+    ./malboxes.py spin win10_64_analyst <name>
+
+This will create a `Vagrantfile` prepared to use for malware analysis. Move it
+into the analysis folder of your choice and issue:
+
+    vagrant up
+
+From that folder to get the VM started. By default the local directory will be
+shared in the VM. This can be changed by commenting the relevant part of the
+`Vagrantfile`.
+
+For example:
+
+    ./malboxes.py spin win7_32_analyst 20160519.cryptolocker.xyz
+
+// FIXME
+
+== Credits
+
+After I had the idea for an improved malware analyst workflow based on what
+I've been using for development on Linux servers (Vagrant) I quickly Googled
+if someone was already doing something in that regard.
+
+I found the https://github.com/m-dwyer/packer-malware[packer-malware] repo on
+github by Mark Andrew Dwyer. Malboxes was boostrapped thanks to his work which
+helped me especially around the areas of `Autounattend.xml` files.
