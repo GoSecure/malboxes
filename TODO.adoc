@@ -2,7 +2,7 @@
 
 * Make work with trial ISOs
 
-== Minimal malware analist use case
+== Minimal malware analyst use case
 
 * push sample w/ IDA debugger
 * open ports for remote IDA debugging
