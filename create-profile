@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--datatype", type=str, default="string",
                         help="Registry data type.")
     parser.add_argument("--data", type=str, default="", help="Key data.")
+    parser.add_argument("--state", type=str, default="present", help="Key state(present or absent).")
     # parser.add_argument("--directory", type=str,
     # help="Used for directory manipulation.")
     parser.add_argument("--dirpath", type=str, default="",
@@ -35,11 +36,13 @@ def main():
     if args.modtype.find("key") != -1:
         """ Dumps the YAML key in a profile file."""
         d = dict({
-            "mod_type": args.modtype,
-            "location": args.location,
+            'win_regedit': {
+            "key": args.location,
             "value": args.value,
             "datatype": args.datatype,
-            "data": args.data
+            "data": args.data,
+            "state": state,
+            }
             })
 
     elif args.dirpath != "":
@@ -64,17 +67,20 @@ def main():
 
         if mod_type.find("key") != -1:
             """ Registry key dictionnary."""
-            location = input("Location: ")
+            location = input("Key: ")
             value = input("Value: ")
             data_type = input("Date type: ")
             data = input("Data: ")
+            state = input("State: ")
 
             d = dict({
-                "mod_type": mod_type,
-                "location": location,
+                "win_regedit": {
+                "key": location,
                 "value": value,
                 "datatype": data_type,
-                "data": data
+                "data": data,
+                "state": state
+                }
                 })
         elif mod_type.find("dir") != -1:
             """ Directory modification dictionnary."""
