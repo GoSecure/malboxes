@@ -18,14 +18,17 @@ def main():
     # parser.add_argument("--key", help="Used for registry keys.")
     parser.add_argument("--modtype", type=str, default="",
                         help="Modification type for regisry and directories.")
-    parser.add_argument("--location", type=str, default="",
+    parser.add_argument("--key", type=str, default="",
                         help="Location of the registry key.")
     parser.add_argument("--value", type=str, default="",
                         help="Registry key name.")
     parser.add_argument("--datatype", type=str, default="string",
                         help="Registry data type.")
     parser.add_argument("--data", type=str, default="", help="Key data.")
-    parser.add_argument("--state", type=str, default="present", help="Key state(present or absent).")
+    parser.add_argument("--state", type=str, default="present",
+                        help="Key state(present or absent).")
+    parser.add_argument("--hosts", type=str, default="analyst",
+                        help="Host targeted by the play.")
     # parser.add_argument("--directory", type=str,
     # help="Used for directory manipulation.")
     parser.add_argument("--dirpath", type=str, default="",
@@ -35,15 +38,20 @@ def main():
 
     if args.modtype.find("key") != -1:
         """ Dumps the YAML key in a profile file."""
-        d = dict({
-            'win_regedit': {
-            "key": args.location,
-            "value": args.value,
-            "datatype": args.datatype,
-            "data": args.data,
-            "state": state,
+        d = {
+            "hosts": args.hosts,
+            "name": args.name,
+            "tasks": [{
+                "name": args.name,
+                'win_regedit': {
+                    "key": args.key,
+                    "value": args.value,
+                    "datatype": args.datatype,
+                    "data": args.data,
+                    "state": args.state,
+                    }
+                }]
             }
-            })
 
     elif args.dirpath != "":
         """Handles the YAML keys to specify directories manipulation."""
@@ -67,21 +75,28 @@ def main():
 
         if mod_type.find("key") != -1:
             """ Registry key dictionnary."""
-            location = input("Key: ")
+            key = input("Key: ")
             value = input("Value: ")
             data_type = input("Date type: ")
             data = input("Data: ")
             state = input("State: ")
 
-            d = dict({
-                "win_regedit": {
-                "key": location,
-                "value": value,
-                "datatype": data_type,
-                "data": data,
-                "state": state
-                }
-                })
+        """ Dumps the YAML key in a profile file."""
+        d = {
+            "hosts": args.hosts,
+            "name": args.name,
+            "tasks": [{
+                "name": args.name,
+                'win_regedit': {
+                    "key": args.key,
+                    "value": args.value,
+                    "datatype": args.datatype,
+                    "data": args.data,
+                    "state": args.state,
+                    }
+                }]
+            }
+
         elif mod_type.find("dir") != -1:
             """ Directory modification dictionnary."""
             dirpath = input("Directory path: ")
@@ -96,7 +111,7 @@ def main():
     try:
         """ Check if profile already exists to avoid overwriting."""
         with open(
-                os.path.join(PROFILE_PATH, "%s.json" % args.name),
+                os.path.join(PROFILE_PATH, "%s.yml" % args.name),
                 "r") as profile:
             profile_content = profile.read()
             if profile_content:
@@ -116,7 +131,7 @@ def main():
 
     """ Writes the updated profile."""
     with open(
-            os.path.join(PROFILE_PATH, "%s.json" % args.name), "w") as profile:
+            os.path.join(PROFILE_PATH, "%s.yml" % args.name), "w") as profile:
         profile.write(dump(profile_content, default_flow_style=False))
         profile.close()
 
