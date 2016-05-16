@@ -58,10 +58,10 @@ def initialize():
     parser_spin.set_defaults(func=spin)
 
     # reg command
-    parser_reg = subparsers.add_parser('reg', help=
+    parser_reg = subparsers.add_parser('registry', help=
             "Modifies a registry key.")
     parser_reg.add_argument('profile', help=
-            'Name of the profile to add the regkey modification.')
+            'Name of the profile to modify.')
     parser_reg.add_argument('modtype', help=
             'The modification type (add, delete or modify).')
     parser_reg.add_argument('key', help=
@@ -76,10 +76,10 @@ def initialize():
     parser_reg.set_defaults(func=reg)
 
     # dir command
-    parser_dir = subparsers.add_parser('dir', help=
+    parser_dir = subparsers.add_parser('directory', help=
             'Modifies a directory')
     parser_dir.add_argument('profile', help=
-            'Name of the profile to apply modifications.')
+            'Name of the profile to modify.')
     parser_dir.add_argument('modtype', help=
             'Modification type (delete or add).')
     parser_dir.add_argument('dirpath', help=
@@ -90,6 +90,15 @@ def initialize():
 
     # parser_wallpaper = subparsers.add_parser('wallpaper', help=
     #       '')
+
+    # package command
+    parser_package = subparsers.add_parser('package', help=
+            'Adds package to install')
+    parser_package.add_argument('profile', help=
+            'Name of the profile to modify.')
+    parser_package.add_argument('package', help=
+            'Name of the package to install')
+    parser_package.set_defaults(func=package)
 
     # no command
     parser.set_defaults(func=default)
@@ -304,12 +313,12 @@ def directory(parser, args):
     if args.modtype == "add":
         command = "New-Item"
         line = "{0} -Path {1} -Type directory\r\n".format(command, args.dirpath)
-        print("Adding: " + line)
+        print("Adding directory: {}".format(args.dirpath))
     elif args.modtype == "delete":
         command = "Remove-Item"
         line = "{0} -Path {1}\r\n".format(
                 command, args.dirpath)
-        print("Adding: " + line)
+        print("Removing directory: {}".format(args.dirpath))
     else:
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
@@ -329,6 +338,24 @@ def directory(parser, args):
         json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.close()
 
+def package(parser, args):
+    """ Adds a package to install with Chocolatey."""
+    line = "cinst {} -y\r\n".format(args.package)
+    print("Adding Chocolatey package: {}".format(args.package))
+    filename = "scripts/windows/{}.ps1".format(args.profile)
+    f = open(filename, "a")
+    f.write(line)
+    f.close()
+
+    """ Add the script to the profile."""
+    config = load_config(args.profile)
+    provisioners_list = config["provisioners"][0]["scripts"]
+    """ If the script is not already in the profile."""
+    if filename not in provisioners_list:
+        provisioners_list.append(filename)
+        f = open("profiles/{}.json".format(args.profile), "w")
+        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
+        f.close()
 
 if __name__ == "__main__":
     try:
