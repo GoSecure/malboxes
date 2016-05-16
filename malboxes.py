@@ -27,35 +27,69 @@ import subprocess
 import sys
 
 from jinja2 import Environment, FileSystemLoader
-from sh import packer_io
+# from sh import packer_io
 
 CONFIG_CACHE = 'config_cache/'
 
 
 def initialize():
     parser = argparse.ArgumentParser(description=
-            "Vagrant box builder and config generator for malware analysis")
+            "Vagrant box builder and config generator for malware analysis.")
     subparsers = parser.add_subparsers()
 
     # list command
     parser_list = subparsers.add_parser('list', help=
-            "Lists available profiles")
+            "Lists available profiles.")
     parser_list.set_defaults(func=list_profiles)
 
     # build command
     parser_build = subparsers.add_parser('build',
-            help="Builds a Vagrant box based on a given profile")
+            help="Builds a Vagrant box based on a given profile.")
     parser_build.add_argument('profile', help='Name of the profile to build. '
             'Use list command to view available profiles.')
     parser_build.set_defaults(func=build)
 
     # spin command
     parser_spin = subparsers.add_parser('spin', help=
-            "Creates a Vagrantfile for your profile / Vagrant box")
+            "Creates a Vagrantfile for your profile / Vagrant box.")
     parser_spin.add_argument('profile', help='Name of the profile to spin.')
     parser_spin.add_argument('name', help='Name of the target VM. '
-            'Must be unique on your system. Ex: Cryptolocker_XYZ')
+            'Must be unique on your system. Ex: Cryptolocker_XYZ.')
     parser_spin.set_defaults(func=spin)
+
+    # reg command
+    parser_reg = subparsers.add_parser('reg', help=
+            "Modifies a registry key.")
+    parser_reg.add_argument('profile', help=
+            'Name of the profile to add the regkey modification.')
+    parser_reg.add_argument('modtype', help=
+            'The modification type (add, delete or modify).')
+    parser_reg.add_argument('key', help=
+            'Location of the key to modify.')
+    parser_reg.add_argument('name', help=
+            'Name of the key.')
+    parser_reg.add_argument('value', help=
+            'Value of the key.')
+    parser_reg.add_argument('valuetype', help=
+            'Type of the value of the key: '
+                'DWORD for integer, String for string')
+    parser_reg.set_defaults(func=reg)
+
+    # dir command
+    parser_dir = subparsers.add_parser('dir', help=
+            'Modifies a directory')
+    parser_dir.add_argument('profile', help=
+            'Name of the profile to apply modifications.')
+    parser_dir.add_argument('modtype', help=
+            'Modification type (delete or add).')
+    parser_dir.add_argument('dirpath', help=
+            'Path of the directory to modify.')
+    parser_dir.set_defaults(func=directory)
+
+    # wallpaper command
+
+    # parser_wallpaper = subparsers.add_parser('wallpaper', help=
+    #       '')
 
     # no command
     parser.set_defaults(func=default)
@@ -68,7 +102,7 @@ def prepare_autounattend(config):
     """
     Prepares an Autounattend.xml file according to configuration and writes it
     into a temporary location where packer later expects it.
-    
+
     Uses jinja2 template syntax to generate the resulting XML file.
     """
     # os type is extracted from profile json
@@ -224,6 +258,76 @@ def spin(parser, args):
     f.write(template.render(config))
     print("Vagrantfile generated. You can move it in your analysis directory "
             "and issue a `vagrant up` to get started with your VM.")
+
+
+def reg(parser, args):
+    """
+    Adds a registry key modification to a profile with PowerShell commands.
+    """
+    if args.modtype == "add":
+        command = "New-ItemProperty"
+        line = "{0} -Path {1} -Name {2} -Value {3} -PropertyType {4}\r\n".format(
+            command, args.key, args.name, args.value, args.valuetype)
+        print("Adding: " + line)
+    elif args.modtype == "modify":
+        command = "Set-ItemProperty"
+        line = "{0} -Path {1} -Name {2} -Value {3}\r\n".format(
+                command, args.key, args.name, args.value)
+        print("Adding: " + line)
+    elif args.modtype == "delete":
+        command = "Remove-ItemProperty"
+        line = "{0} -Path {1} -Name {2}\r\n".format(
+                command, args.key, args.name)
+        print("Adding: " + line)
+    else:
+        print("Registry modification type invalid.")
+        print("Valid ones are: add, delete and modify.")
+
+    filename = "scripts/windows/{}.ps1".format(args.profile)
+    f = open(filename, "a")
+    f.write(line)
+    f.close()
+
+    """ Add the script to the profile."""
+    config = load_config(args.profile)
+    provisioners_list = config["provisioners"][0]["scripts"]
+    """ If the script is not already in the profile."""
+    if filename not in provisioners_list:
+        provisioners_list.append(fiString)
+        f = open("profiles/{}.json".format(args.profile), "w")
+        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
+        f.close()
+
+
+def directory(parser, args):
+    """ Adds the directory manipulation commands to the profile."""
+    if args.modtype == "add":
+        command = "New-Item"
+        line = "{0} -Path {1} -Type directory\r\n".format(command, args.dirpath)
+        print("Adding: " + line)
+    elif args.modtype == "delete":
+        command = "Remove-Item"
+        line = "{0} -Path {1}\r\n".format(
+                command, args.dirpath)
+        print("Adding: " + line)
+    else:
+        print("Directory modification type invalid.")
+        print("Valid ones are: add, delete.")
+
+    filename = "scripts/windows/{}.ps1".format(args.profile)
+    f = open(filename, "a")
+    f.write(line)
+    f.close()
+
+    """ Add the script to the profile."""
+    config = load_config(args.profile)
+    provisioners_list = config["provisioners"][0]["scripts"]
+    """ If the script is not already in the profile."""
+    if filename not in provisioners_list:
+        provisioners_list.append(filename)
+        f = open("profiles/{}.json".format(args.profile), "w")
+        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
+        f.close()
 
 
 if __name__ == "__main__":
