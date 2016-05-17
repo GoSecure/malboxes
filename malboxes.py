@@ -104,7 +104,7 @@ def initialize():
             'Name of the profile to modify.')
     parser_document.add_argument('docpath', help=
             'Path of the file to add with the filename. Ex: C:\Document.txt')
-    parser_directory.set_defaults(func=document)
+    parser_document.set_defaults(func=document)
 
     # no command
     parser.set_defaults(func=default)
@@ -364,7 +364,7 @@ def package(parser, args):
         f.close()
 
 def document(parser, args):
-     """ Adds the file manipulation commands to the profile."""
+    """ Adds the file manipulation commands to the profile."""
     if args.modtype == "add":
         command = "New-Item"
         line = "{0} -Path {1}\r\n".format(command, args.dirpath)
