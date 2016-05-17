@@ -72,12 +72,12 @@ def initialize():
             'Value of the key.')
     parser_reg.add_argument('valuetype', help=
             'Type of the value of the key: '
-                'DWORD for integer, String for string')
+                'DWORD for integer, String for string.')
     parser_reg.set_defaults(func=reg)
 
     # dir command
     parser_dir = subparsers.add_parser('directory', help=
-            'Modifies a directory')
+            'Modifies a directory.')
     parser_dir.add_argument('profile', help=
             'Name of the profile to modify.')
     parser_dir.add_argument('modtype', help=
@@ -88,17 +88,23 @@ def initialize():
 
     # wallpaper command
 
-    # parser_wallpaper = subparsers.add_parser('wallpaper', help=
-    #       '')
-
     # package command
     parser_package = subparsers.add_parser('package', help=
-            'Adds package to install')
+            'Adds package to install.')
     parser_package.add_argument('profile', help=
             'Name of the profile to modify.')
     parser_package.add_argument('package', help=
-            'Name of the package to install')
+            'Name of the package to install.')
     parser_package.set_defaults(func=package)
+
+    #document command
+    parser_document = subparsers.add_parser('document', help=
+            'Adds a file')
+    parser_document.add_argument('profile', help=
+            'Name of the profile to modify.')
+    parser_document.add_argument('docpath', help=
+            'Path of the file to add with the filename. Ex: C:\Document.txt')
+    parser_directory.set_defaults(func=document)
 
     # no command
     parser.set_defaults(func=default)
@@ -356,6 +362,37 @@ def package(parser, args):
         f = open("profiles/{}.json".format(args.profile), "w")
         json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.close()
+
+def document(parser, args):
+     """ Adds the file manipulation commands to the profile."""
+    if args.modtype == "add":
+        command = "New-Item"
+        line = "{0} -Path {1}\r\n".format(command, args.dirpath)
+        print("Adding file: {}".format(args.dirpath))
+    elif args.modtype == "delete":
+        command = "Remove-Item"
+        line = "{0} -Path {1}\r\n".format(
+                command, args.dirpath)
+        print("Removing file: {}".format(args.dirpath))
+    else:
+        print("Directory modification type invalid.")
+        print("Valid ones are: add, delete.")
+
+    filename = "scripts/windows/{}.ps1".format(args.profile)
+    f = open(filename, "a")
+    f.write(line)
+    f.close()
+
+    """ Add the script to the profile."""
+    config = load_config(args.profile)
+    provisioners_list = config["provisioners"][0]["scripts"]
+    """ If the script is not already in the profile."""
+    if filename not in provisioners_list:
+        provisioners_list.append(filename)
+        f = open("profiles/{}.json".format(args.profile), "w")
+        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
+        f.close()
+
 
 if __name__ == "__main__":
     try:
