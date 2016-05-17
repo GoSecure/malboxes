@@ -49,6 +49,28 @@ For example:
 
 // FIXME
 
+=== Customization
+
+You can modify (add, modify or delete) registry keys, directories and files like this:
+
+Registry keys:
+
+    ./malboxes.py registry profile modtype key name value valuetype
+
+    Ex: ./malboxes registry win10_64_analyst add HKCU:\Software Malboxes IsAwesome String
+
+Directories and files:
+
+    ./malboxes.py directory profile modtype dirpath
+
+    Ex: ./malboxes.py directory BadAPT57 delete C:\Windows\System32
+
+You can add packages to install that are specific to the profile:
+
+    ./malboxes.py package profile package
+
+    Ex: ./malboxes.py package RansomwareThatINeedRevengeOn chrome
+
 == Credits
 
 After I had the idea for an improved malware analyst workflow based on what
