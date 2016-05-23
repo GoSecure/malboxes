@@ -7,6 +7,10 @@
 # Copyright (C) 2016 GoSecure Inc.
 # All rights reserved.
 #
+# Hugo Genesse <hugo.genesse@polymtl.ca>
+# Copyright (C) 2016.
+# All rights reserved.
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -274,6 +278,28 @@ def spin(parser, args):
     print("Vagrantfile generated. You can move it in your analysis directory "
             "and issue a `vagrant up` to get started with your VM.")
 
+def append_to_script(filename, line):
+	""" Appends a line to a file."""
+    f = open(filename, 'a')
+    f.write(line)
+    f.close()
+
+def add_to_user_scripts(profile):
+	""" Adds the modified script to the user scripts file."""
+	""" File names for the user scripts file and the script to be added."""
+	filename = os.path.join("scripts", "windows", "user_scripts.ps1")
+	line = "{}.ps1".format(profile)
+
+	""" Check content of the user scripts file."""
+	f = open(filename, "r")
+	content = f.read()
+	f.close()
+
+	""" If script isnt present, add it."""
+	if content.find(line) == -1:
+		f = open(filename, "a")
+		f.write(line)
+		f.close()
 
 def reg(parser, args):
     """
@@ -298,21 +324,11 @@ def reg(parser, args):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join("scripts","windows", "{}.ps1".format(args.profile))
-    f = open(filename, "a")
-    f.write(line)
-    f.close()
+    filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+    append_to_script(filename, line)
 
-    """ Add the script to the profile."""
-    config = load_config(args.profile)
-    provisioners_list = config["provisioners"][0]["scripts"]
-    """ If the script is not already in the profile."""
-    if filename not in provisioners_list:
-        provisioners_list.append(fiString)
-        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
-        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
-        f.close()
-
+	""" Adds the modified script to the user scripts."""
+	add_to_user_scripts(args.profile)
 
 def directory(parser, args):
     """ Adds the directory manipulation commands to the profile."""
@@ -329,39 +345,22 @@ def directory(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename =  os.path.join("scripts","windows","{}.ps1".format(args.profile))
-    f = open(filename, "a")
-    f.write(line)
-    f.close()
+    filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+    append_to_script(filename, line)
 
-    """ Add the script to the profile."""
-    config = load_config(args.profile)
-    provisioners_list = config["provisioners"][0]["scripts"]
-    """ If the script is not already in the profile."""
-    if filename not in provisioners_list:
-        provisioners_list.append(filename)
-        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
-        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
-        f.close()
+	""" Adds the modified script to the user scripts."""
+	add_to_user_scripts(args.profile)
 
 def package(parser, args):
     """ Adds a package to install with Chocolatey."""
     line = "cinst {} -y\r\n".format(args.package)
     print("Adding Chocolatey package: {}".format(args.package))
-    filename = os.path.join("scripts","windows","{}.ps1".format(args.profile))
-    f = open(filename, "a")
-    f.write(line)
-    f.close()
+    
+	filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+    append_to_script(filename, line)
 
-    """ Add the script to the profile."""
-    config = load_config(args.profile)
-    provisioners_list = config["provisioners"][0]["scripts"]
-    """ If the script is not already in the profile."""
-    if filename not in provisioners_list:
-        provisioners_list.append(filename)
-        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
-        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
-        f.close()
+	""" Adds the modified script to the user scripts."""
+	add_to_user_scripts(args.profile)
 
 def document(parser, args):
     """ Adds the file manipulation commands to the profile."""
@@ -378,20 +377,11 @@ def document(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join("scripts","windows","{}.ps1".format(args.profile))
-    f = open(filename, "a")
-    f.write(line)
-    f.close()
+    filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+    append_to_script(filename, line)
 
-    """ Add the script to the profile."""
-    config = load_config(args.profile)
-    provisioners_list = config["provisioners"][0]["scripts"]
-    """ If the script is not already in the profile."""
-    if filename not in provisioners_list:
-        provisioners_list.append(filename)
-        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
-        json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
-        f.close()
+	""" Adds the modified script to the user scripts."""
+	add_to_user_scripts(args.profile)
 
 
 if __name__ == "__main__":
