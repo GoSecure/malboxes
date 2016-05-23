@@ -27,9 +27,8 @@ import subprocess
 import sys
 
 from jinja2 import Environment, FileSystemLoader
-# from sh import packer_io
 
-CONFIG_CACHE = 'config_cache/'
+CONFIG_CACHE = 'config_cache'
 
 
 def initialize():
@@ -123,6 +122,7 @@ def prepare_autounattend(config):
     # os type is extracted from profile json
     os_type = config['builders'][0]['guest_os_type'].lower()
 
+    # Jinja2 splits on '/' so dont change for os.path.join
     env = Environment(loader=FileSystemLoader('installconfig/'))
     template = env.get_template("{}/Autounattend.xml".format(os_type))
     f = create_configfd('Autounattend.xml')
@@ -134,7 +134,7 @@ def load_config(profile):
     """
     Config is in JSON since we can re-use the same in both malboxes and packer
     """
-    profile_file = 'profiles/{}.json'.format(profile)
+    profile_file = os.path.join('profiles','{}.json'.format(profile))
     # validate if profile is present
     if not os.path.isfile(profile_file):
         print("Profile doesn't exist")
@@ -192,7 +192,7 @@ def run_packer(packer_config):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
-    cmd = ['packer-io', 'build', '-var-file=config.json', packer_config]
+    cmd = ['packer', 'build', '-var-file=config.json', packer_config]
     ret = run_foreground(cmd)
 
     print("----------------------------------")
@@ -224,8 +224,8 @@ def default(parser, args):
 
 def list_profiles(parser, args):
     print("supported profiles:\n")
-    for f in sorted(glob.glob('profiles/*.json')):
-        m = re.search(r'^profiles\/(.*).json$', f)
+    for f in sorted(glob.glob(os.path.join('profiles','*.json'))):
+        m = re.search(r'^profiles[\/\\](.*).json$', f)
         print(m.group(1))
     print()
 
@@ -236,7 +236,7 @@ def build(parser, args):
     print("Generating configuration files...")
     prepare_autounattend(config)
     print("Configuration files are ready")
-    ret = run_packer('profiles/{}.json'.format(args.profile))
+    ret = run_packer(os.path.join('profiles','{}.json'.format(args.profile)))
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
@@ -259,7 +259,7 @@ def spin(parser, args):
     config = load_config(args.profile)
 
     print("Creating a Vagrantfile")
-    env = Environment(loader=FileSystemLoader('vagrantfiles/'))
+    env = Environment(loader=FileSystemLoader('vagrantfiles'))
     template = env.get_template("analyst_single.rb")
 
     if os.path.isfile('Vagrantfile'):
@@ -298,7 +298,7 @@ def reg(parser, args):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = "scripts/windows/{}.ps1".format(args.profile)
+    filename = os.path.join("scripts","windows", "{}.ps1".format(args.profile))
     f = open(filename, "a")
     f.write(line)
     f.close()
@@ -309,7 +309,7 @@ def reg(parser, args):
     """ If the script is not already in the profile."""
     if filename not in provisioners_list:
         provisioners_list.append(fiString)
-        f = open("profiles/{}.json".format(args.profile), "w")
+        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
         json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.close()
 
@@ -329,7 +329,7 @@ def directory(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = "scripts/windows/{}.ps1".format(args.profile)
+    filename =  os.path.join("scripts","windows","{}.ps1".format(args.profile))
     f = open(filename, "a")
     f.write(line)
     f.close()
@@ -340,7 +340,7 @@ def directory(parser, args):
     """ If the script is not already in the profile."""
     if filename not in provisioners_list:
         provisioners_list.append(filename)
-        f = open("profiles/{}.json".format(args.profile), "w")
+        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
         json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.close()
 
@@ -348,7 +348,7 @@ def package(parser, args):
     """ Adds a package to install with Chocolatey."""
     line = "cinst {} -y\r\n".format(args.package)
     print("Adding Chocolatey package: {}".format(args.package))
-    filename = "scripts/windows/{}.ps1".format(args.profile)
+    filename = os.path.join("scripts","windows","{}.ps1".format(args.profile))
     f = open(filename, "a")
     f.write(line)
     f.close()
@@ -359,7 +359,7 @@ def package(parser, args):
     """ If the script is not already in the profile."""
     if filename not in provisioners_list:
         provisioners_list.append(filename)
-        f = open("profiles/{}.json".format(args.profile), "w")
+        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
         json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.close()
 
@@ -378,7 +378,7 @@ def document(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = "scripts/windows/{}.ps1".format(args.profile)
+    filename = os.path.join("scripts","windows","{}.ps1".format(args.profile))
     f = open(filename, "a")
     f.write(line)
     f.close()
@@ -389,7 +389,7 @@ def document(parser, args):
     """ If the script is not already in the profile."""
     if filename not in provisioners_list:
         provisioners_list.append(filename)
-        f = open("profiles/{}.json".format(args.profile), "w")
+        f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
         json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.close()
 
