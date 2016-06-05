@@ -1,4 +1,8 @@
 = Malboxes
+:toc: preamble
+:toclevels: 2
+:twob: https://twitter.com/obilodeau
+:twhg: https://twitter.com/hugospns
 
 Vagrant box builder and config generator for malware analysis
 
@@ -70,6 +74,20 @@ You can add packages to install that are specific to the profile:
     ./malboxes.py package profile package
 
     Ex: ./malboxes.py package RansomwareThatINeedRevengeOn chrome
+
+== More information
+
+=== Applying DevOps Principles for Better Malware Analysis
+
+A presentation about malboxes at
+https://www.nsec.io/2016/01/applying-devops-principles-for-better-malware-analysis/[NorthSec]
+by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
+
+* http://gosecure.github.io/presentations/2016-05-19_northsec/malboxes.html[Slides]
+  (HTML, best)
+* http://gosecure.github.io/presentations/2016-05-19_northsec/OlivierBilodeau_HugoGenesse-Malboxes.pdf[Slides]
+  (PDF, degraded)
+* Video (coming soon)
 
 == Credits
 
