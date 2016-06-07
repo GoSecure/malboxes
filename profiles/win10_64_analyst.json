@@ -51,6 +51,7 @@
 			"scripts/windows/vmtools.ps1",
 			"scripts/windows/enablerdp.ps1",
 			"scripts/windows/installtools.ps1"
+			"scripts/windows/userscripts.ps1"
 		]
 	}]
 }
