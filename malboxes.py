@@ -36,77 +36,78 @@ CONFIG_CACHE = 'config_cache'
 
 
 def initialize():
-    parser = argparse.ArgumentParser(description=
-            "Vagrant box builder and config generator for malware analysis.")
+    parser = argparse.ArgumentParser(
+                    description="Vagrant box builder "
+                                "and config generator for malware analysis.")
     subparsers = parser.add_subparsers()
 
     # list command
-    parser_list = subparsers.add_parser('list', help=
-            "Lists available profiles.")
+    parser_list = subparsers.add_parser('list',
+                                        help="Lists available profiles.")
     parser_list.set_defaults(func=list_profiles)
 
     # build command
     parser_build = subparsers.add_parser('build',
-            help="Builds a Vagrant box based on a given profile.")
+                                         help="Builds a Vagrant box based on "
+                                              "a given profile.")
     parser_build.add_argument('profile', help='Name of the profile to build. '
-            'Use list command to view available profiles.')
+                                              'Use list command to view '
+                                              'available profiles.')
     parser_build.set_defaults(func=build)
 
     # spin command
-    parser_spin = subparsers.add_parser('spin', help=
-            "Creates a Vagrantfile for your profile / Vagrant box.")
+    parser_spin = subparsers.add_parser('spin',
+                                        help="Creates a Vagrantfile for"
+                                             "your profile / Vagrant box.")
     parser_spin.add_argument('profile', help='Name of the profile to spin.')
     parser_spin.add_argument('name', help='Name of the target VM. '
-            'Must be unique on your system. Ex: Cryptolocker_XYZ.')
+                                          'Must be unique on your system. '
+                                          'Ex: Cryptolocker_XYZ.')
     parser_spin.set_defaults(func=spin)
 
     # reg command
-    parser_reg = subparsers.add_parser('registry', help=
-            "Modifies a registry key.")
-    parser_reg.add_argument('profile', help=
-            'Name of the profile to modify.')
-    parser_reg.add_argument('modtype', help=
-            'The modification type (add, delete or modify).')
-    parser_reg.add_argument('key', help=
-            'Location of the key to modify.')
-    parser_reg.add_argument('name', help=
-            'Name of the key.')
-    parser_reg.add_argument('value', help=
-            'Value of the key.')
-    parser_reg.add_argument('valuetype', help=
-            'Type of the value of the key: '
-                'DWORD for integer, String for string.')
+    parser_reg = subparsers.add_parser('registry',
+                                       help='Modifies a registry key.')
+    parser_reg.add_argument('profile', help='Name of the profile to modify.')
+    parser_reg.add_argument('modtype',
+                            help='Modification type (add, delete or modify).')
+    parser_reg.add_argument('key', help='Location of the key to modify.')
+    parser_reg.add_argument('name', help='Name of the key.')
+    parser_reg.add_argument('value', help='Value of the key.')
+    parser_reg.add_argument('valuetype',
+                            help='Type of the value of the key: '
+                                 'DWORD for integer, String for string.')
     parser_reg.set_defaults(func=reg)
 
     # dir command
-    parser_dir = subparsers.add_parser('directory', help=
-            'Modifies a directory.')
-    parser_dir.add_argument('profile', help=
-            'Name of the profile to modify.')
-    parser_dir.add_argument('modtype', help=
-            'Modification type (delete or add).')
-    parser_dir.add_argument('dirpath', help=
-            'Path of the directory to modify.')
+    parser_dir = subparsers.add_parser('directory',
+                                       help='Modifies a directory.')
+    parser_dir.add_argument('profile',
+                            help='Name of the profile to modify.')
+    parser_dir.add_argument('modtype',
+                            help='Modification type (delete or add).')
+    parser_dir.add_argument('dirpath',
+                            help='Path of the directory to modify.')
     parser_dir.set_defaults(func=directory)
 
     # wallpaper command
 
     # package command
-    parser_package = subparsers.add_parser('package', help=
-            'Adds package to install.')
-    parser_package.add_argument('profile', help=
-            'Name of the profile to modify.')
-    parser_package.add_argument('package', help=
-            'Name of the package to install.')
+    parser_package = subparsers.add_parser('package',
+                                           help='Adds package to install.')
+    parser_package.add_argument('profile',
+                                help='Name of the profile to modify.')
+    parser_package.add_argument('package',
+                                help='Name of the package to install.')
     parser_package.set_defaults(func=package)
 
-    #document command
-    parser_document = subparsers.add_parser('document', help=
-            'Adds a file')
-    parser_document.add_argument('profile', help=
-            'Name of the profile to modify.')
-    parser_document.add_argument('docpath', help=
-            'Path of the file to add with the filename. Ex: C:\Document.txt')
+    # document command
+    parser_document = subparsers.add_parser('document',
+                                            help='Adds a file')
+    parser_document.add_argument('profile',
+                                 help='Name of the profile to modify.')
+    parser_document.add_argument('docpath',
+                                 help='Path of the file to add.')
     parser_document.set_defaults(func=document)
 
     # no command
@@ -138,7 +139,7 @@ def load_config(profile):
     """
     Config is in JSON since we can re-use the same in both malboxes and packer
     """
-    profile_file = os.path.join('profiles','{}.json'.format(profile))
+    profile_file = os.path.join('profiles', '{}.json'.format(profile))
     # validate if profile is present
     if not os.path.isfile(profile_file):
         print("Profile doesn't exist")
@@ -175,7 +176,7 @@ def cleanup():
 
 def run_foreground(command):
     p = subprocess.Popen(command, stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT)
+                         stderr=subprocess.STDOUT)
     try:
         for line in iter(p.stdout.readline, b''):
             print(line.rstrip().decode('utf-8'))
@@ -228,7 +229,7 @@ def default(parser, args):
 
 def list_profiles(parser, args):
     print("supported profiles:\n")
-    for f in sorted(glob.glob(os.path.join('profiles','*.json'))):
+    for f in sorted(glob.glob(os.path.join('profiles', '*.json'))):
         m = re.search(r'^profiles[\/\\](.*).json$', f)
         print(m.group(1))
     print()
@@ -240,7 +241,8 @@ def build(parser, args):
     print("Generating configuration files...")
     prepare_autounattend(config)
     print("Configuration files are ready")
-    ret = run_packer(os.path.join('profiles','{}.json'.format(args.profile)))
+    ret = run_packer(os.path.join('profiles',
+                                  '{}.json'.format(args.profile)))
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
@@ -252,7 +254,7 @@ def build(parser, args):
 
     print("A base box was imported into your local Vagrant box repository")
     print("You can re-use this base box several times by using the "
-            "following statement in your Vagrantfile:")
+          "following statement in your Vagrantfile:")
     print('config.vm.box = "{}"'.format(args.profile))
 
 
@@ -273,33 +275,33 @@ def spin(parser, args):
     config['profile'] = args.profile
     config['name'] = args.name
 
-    f = open("Vagrantfile", 'w')
-    f.write(template.render(config))
+    with open("Vagrantfile", 'w') as f:
+        f.write(template.render(config))
     print("Vagrantfile generated. You can move it in your analysis directory "
-            "and issue a `vagrant up` to get started with your VM.")
+          "and issue a `vagrant up` to get started with your VM.")
+
 
 def append_to_script(filename, line):
-	""" Appends a line to a file."""
-    f = open(filename, 'a')
-    f.write(line)
-    f.close()
+    """ Appends a line to a file."""
+    with open(filename, 'a') as f:
+        f.write(line)
+
 
 def add_to_user_scripts(profile):
-	""" Adds the modified script to the user scripts file."""
-	""" File names for the user scripts file and the script to be added."""
-	filename = os.path.join("scripts", "windows", "user_scripts.ps1")
-	line = "{}.ps1".format(profile)
+    """ Adds the modified script to the user scripts file."""
+    """ File names for the user scripts file and the script to be added."""
+    filename = os.path.join("scripts", "windows", "user_scripts.ps1")
+    line = "{}.ps1".format(profile)
 
-	""" Check content of the user scripts file."""
-	f = open(filename, "r")
-	content = f.read()
-	f.close()
+    """ Check content of the user scripts file."""
+    with open(filename, "r") as f:
+        content = f.read()
 
-	""" If script isnt present, add it."""
-	if content.find(line) == -1:
-		f = open(filename, "a")
-		f.write(line)
-		f.close()
+    """ If script isnt present, add it."""
+    if content.find(line) == -1:
+        with open(filename, "a") as f:
+            f.write(line)
+
 
 def reg(parser, args):
     """
@@ -307,8 +309,9 @@ def reg(parser, args):
     """
     if args.modtype == "add":
         command = "New-ItemProperty"
-        line = "{0} -Path {1} -Name {2} -Value {3} -PropertyType {4}\r\n".format(
-            command, args.key, args.name, args.value, args.valuetype)
+        line = "{0} -Path {1} -Name {2} -Value {3} " +
+        "-PropertyType {4}\r\n".format(command, args.key, args.name,
+                                       args.value, args.valuetype)
         print("Adding: " + line)
     elif args.modtype == "modify":
         command = "Set-ItemProperty"
@@ -324,17 +327,20 @@ def reg(parser, args):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+    filename = os.path.join("scripts", "user",
+                            "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
-	""" Adds the modified script to the user scripts."""
-	add_to_user_scripts(args.profile)
+    """ Adds the modified script to the user scripts."""
+    add_to_user_scripts(args.profile)
+
 
 def directory(parser, args):
     """ Adds the directory manipulation commands to the profile."""
     if args.modtype == "add":
         command = "New-Item"
-        line = "{0} -Path {1} -Type directory\r\n".format(command, args.dirpath)
+        line = "{0} -Path {1} -Type directory\r\n".format(command,
+                                                          args.dirpath)
         print("Adding directory: {}".format(args.dirpath))
     elif args.modtype == "delete":
         command = "Remove-Item"
@@ -345,22 +351,26 @@ def directory(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+    filename = os.path.join("scripts", "user",
+                            "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
-	""" Adds the modified script to the user scripts."""
-	add_to_user_scripts(args.profile)
+    """ Adds the modified script to the user scripts."""
+    add_to_user_scripts(args.profile)
+
 
 def package(parser, args):
     """ Adds a package to install with Chocolatey."""
     line = "cinst {} -y\r\n".format(args.package)
     print("Adding Chocolatey package: {}".format(args.package))
-    
-	filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+
+    filename = os.path.join("scripts", "user",
+                            "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
-	""" Adds the modified script to the user scripts."""
-	add_to_user_scripts(args.profile)
+    """ Adds the modified script to the user scripts."""
+    add_to_user_scripts(args.profile)
+
 
 def document(parser, args):
     """ Adds the file manipulation commands to the profile."""
@@ -377,11 +387,14 @@ def document(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join("scripts","user","windows", "{}.ps1".format(args.profile))
+    filename = os.path.join(
+                    "scripts", "user", "windows",
+                    "{}.ps1".format(args.profile))
+
     append_to_script(filename, line)
 
-	""" Adds the modified script to the user scripts."""
-	add_to_user_scripts(args.profile)
+    """ Adds the modified script to the user scripts."""
+    add_to_user_scripts(args.profile)
 
 
 if __name__ == "__main__":
