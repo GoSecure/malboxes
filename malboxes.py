@@ -309,9 +309,7 @@ def reg(parser, args):
     """
     if args.modtype == "add":
         command = "New-ItemProperty"
-        line = "{0} -Path {1} -Name {2} -Value {3} " +
-        "-PropertyType {4}\r\n".format(command, args.key, args.name,
-                                       args.value, args.valuetype)
+        line = "{} -Path {} -Name {} -Value {} -PropertyType {}\r\n".format(command, args.key, args.name, args.value, args.valuetype)
         print("Adding: " + line)
     elif args.modtype == "modify":
         command = "Set-ItemProperty"
