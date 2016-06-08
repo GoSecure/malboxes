@@ -308,7 +308,7 @@ def reg(parser, args):
     provisioners_list = config["provisioners"][0]["scripts"]
     """ If the script is not already in the profile."""
     if filename not in provisioners_list:
-        provisioners_list.append(fiString)
+        provisioners_list.append(filename)
         f = open(os.path.join("profiles","{}.json".format(args.profile)), "w")
         json.dump(config, f, sort_keys=True, indent=4, separators=(',', ': '))
         f.close()
