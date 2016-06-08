@@ -4,11 +4,9 @@
 # https://github.com/gosecure/malboxes
 #
 # Olivier Bilodeau <obilodeau@gosecure.ca>
-# Copyright (C) 2016 GoSecure Inc.
-# All rights reserved.
-#
 # Hugo Genesse <hugo.genesse@polymtl.ca>
-# Copyright (C) 2016.
+# Copyright (C) 2016 GoSecure Inc.
+# Copyright (C) 2016 Hugo Genesse
 # All rights reserved.
 #
 # This program is free software: you can redistribute it and/or modify
