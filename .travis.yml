@@ -1,10 +1,14 @@
 language: python
 python:
 # disabled since pylint is currently broken on 3.2
-#  - "3.2"
-  - "3.3"
-  - "3.4"
-  - "3.5"
+#- "3.2"
+- "3.3"
+- "3.4"
+- "3.5"
 install: pip install -r requirements.txt && pip install pylint
 sudo: false
 script: make test
+notifications:
+  email: false
+  slack:
+    secure: RSbnXQSBhDUtYmawL2B/4s16aa8BNA2zvAyeA7B3+G84HKp4CkJrOpHR1xQKQ0BR2/uCMB1j3r0KsFg7mjdvPV8gtWHtMxzd44mviMhAqBKe17CiIVlHCgI9nQzbjff4Elfo3GNYrZ9g1Q7ZX0XkreCPM2FHzvkpju11V+9C9fWsVEgNm6OlHD+D0s4tCz9YM/E0srEQLlRbY66mpfPMJz2GzgyIXaHmUNHL1rWFyeT3lIfX+ayjE3tGGEruUYqv3U4Gh+CVOdnOlBm/dg9AVFAkEYAvRgkvgZgHgDiy10vbckFH5kWp/75Vg1M1LgKCT5evqdnEqCZYEDrkTlffyoX44mkO8rXgt0NyF+FIJu2hEcpp+g0HpfmKeDxHO3Veaj6ih6/ovyiJK/zLOU5UI3u64dLrYHkBXVkslJ0y+uXySaQmLjkvjTYz7Logku8P3rTHFL9CcteYgjjdxmTC1PsvX+4CSxFxc6YY/Ic2naXsjUbIdQ5Sdmc+PQf4uIGBzmm5KdqsCqjZ0NV/4kV3uQHEdwKvvaHFOjb0Qi3UMi7Q1079Gs4WU7QytC4mtyk/Dc3owWdtau0znJUWbneBoRACRzR+MW+ZJldD2UDgPxdATL8obc97fduGXJSgXycKhj0iSk0Uhk+EEkUOvervK8SEtwgYSYWZocpU4DpTbHg=
