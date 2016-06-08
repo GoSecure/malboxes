@@ -1,6 +1,12 @@
-*~
-*.swp
+# Our own stuff
 packer_cache/
 config_cache/
 boxes/
 builds/
+
+# Python
+__pycache__/
+
+# Generic
+*~
+*.swp
