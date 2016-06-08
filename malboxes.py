@@ -126,7 +126,7 @@ def prepare_autounattend(config):
     env = Environment(loader=FileSystemLoader('installconfig/'))
     template = env.get_template("{}/Autounattend.xml".format(os_type))
     f = create_configfd('Autounattend.xml')
-    f.write(template.render(config))
+    f.write(template.render(config)) # pylint: disable=no-member
     f.close()
 
 
@@ -270,7 +270,7 @@ def spin(parser, args):
     config['name'] = args.name
 
     f = open("Vagrantfile", 'w')
-    f.write(template.render(config))
+    f.write(template.render(config)) # pylint: disable=no-member
     print("Vagrantfile generated. You can move it in your analysis directory "
             "and issue a `vagrant up` to get started with your VM.")
 
