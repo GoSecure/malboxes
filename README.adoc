@@ -9,7 +9,7 @@ ifdef::env-github[:status:]
 // Travis Build Status
 ifdef::status[]
 .*Project health*
-image:https://img.shields.io/travis/gosecure/malboxes/master.svg[Build
+image:https://img.shields.io/travis/GoSecure/malboxes/master.svg[Build
 Status (Travis CI), link=https://travis-ci.org/gosecure/malboxes]
 endif::[]
 
