@@ -106,6 +106,8 @@ def initialize():
                                             help='Adds a file')
     parser_document.add_argument('profile',
                                  help='Name of the profile to modify.')
+    parser_document.add_argument('modtype',
+                            help='Modification type (delete or add).')
     parser_document.add_argument('docpath',
                                  help='Path of the file to add.')
     parser_document.set_defaults(func=document)
@@ -374,13 +376,13 @@ def document(parser, args):
     """ Adds the file manipulation commands to the profile."""
     if args.modtype == "add":
         command = "New-Item"
-        line = "{0} -Path {1}\r\n".format(command, args.dirpath)
-        print("Adding file: {}".format(args.dirpath))
+        line = "{0} -Path {1}\r\n".format(command, args.docpath)
+        print("Adding file: {}".format(args.docpath))
     elif args.modtype == "delete":
         command = "Remove-Item"
         line = "{0} -Path {1}\r\n".format(
-                command, args.dirpath)
-        print("Removing file: {}".format(args.dirpath))
+                command, args.docpath)
+        print("Removing file: {}".format(args.docpath))
     else:
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
