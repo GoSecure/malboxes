@@ -105,7 +105,7 @@ def initialize():
     parser_document.add_argument('profile',
                                  help='Name of the profile to modify.')
     parser_document.add_argument('modtype',
-                            help='Modification type (delete or add).')
+                                 help='Modification type (delete or add).')
     parser_document.add_argument('docpath',
                                  help='Path of the file to add.')
     parser_document.set_defaults(func=document)
@@ -309,7 +309,8 @@ def reg(parser, args):
     """
     if args.modtype == "add":
         command = "New-ItemProperty"
-        line = "{} -Path {} -Name {} -Value {} -PropertyType {}\r\n".format(command, args.key, args.name, args.value, args.valuetype)
+        line = "{} -Path {} -Name {} -Value {} -PropertyType {}\r\n".format(
+            command, args.key, args.name, args.value, args.valuetype)
         print("Adding: " + line)
     elif args.modtype == "modify":
         command = "Set-ItemProperty"
