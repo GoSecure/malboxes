@@ -8,7 +8,6 @@ cinst windbg -y
 cinst autohotkey -y
 $env:Path = "$($env:Path)C:\Program Files\AutoHotkey;" 
 
-cinst winpcap -y
 cinst wireshark -y -i
 cinst 7zip -y
 cinst putty -y
