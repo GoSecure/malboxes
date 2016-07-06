@@ -99,6 +99,12 @@ by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
   (PDF, degraded)
 * Video (coming soon)
 
+== License
+
+Code is licensed under the GPLv3+, see `LICENSE` for details. Documentation
+and presentation material is licensed under the Creative Commons
+Attribution-ShareAlike 4.0, see `docs/LICENSE` for details.
+
 == Credits
 
 After I had the idea for an improved malware analyst workflow based on what
