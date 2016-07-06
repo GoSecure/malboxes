@@ -1,5 +1,18 @@
 = TODO
 
+== pip packaging
+
+* Needs to port code to use pkg resource API
+
+See:
+* https://setuptools.readthedocs.io/en/latest/setuptools.html#accessing-data-files-at-runtime
+* http://stackoverflow.com/a/26533921
+
+* Push caches into .local/share/ (and Windows equivalent) - avoids permissions issues
+* Allow config overrides in .config/malboxes (and Windows equivalent)
+
+== Misc
+
 * Make work with trial ISOs
 
 == Minimal malware analyst use case

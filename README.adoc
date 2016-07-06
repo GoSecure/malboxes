@@ -25,6 +25,10 @@ https://github.com/gosecure/malboxes
 * packer (sometimes called packer-io)
 * vagrant
 
+== Installation
+
+    pip install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+
 == Usage
 
 === Box creation

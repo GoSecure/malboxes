@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # Malboxes - Vagrant box builder and config generator for malware analysis
 # https://github.com/gosecure/malboxes
 #
@@ -31,7 +29,7 @@ import sys
 from jinja2 import Environment, FileSystemLoader
 
 CONFIG_CACHE = 'config_cache'
-
+__version__ = "0.1.0"
 
 def initialize():
     parser = argparse.ArgumentParser(
@@ -395,11 +393,14 @@ def document(parser, args):
     """ Adds the modified script to the user scripts."""
     add_to_user_scripts(args.profile)
 
-
-if __name__ == "__main__":
+def main():
     try:
         parser, args = initialize()
         args.func(parser, args)
 
     finally:
         cleanup()
+
+
+if __name__ == "__main__":
+    main()
