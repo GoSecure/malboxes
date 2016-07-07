@@ -13,6 +13,17 @@
 * git malware analysis template integrated with malboxes
 * Integrate virtualbox and wireshark tips: https://www.virtualbox.org/wiki/Network_tips
 
+* Watch this: http://static.sstic.org/videos2016/SSTIC_2016-06-02_P07.mp4
+
+== missing things
+
+* chocolatey package for ollydbg 2
+
+== bugs
+
+* Win10 disable malware protection, cloud and automatic submission
+* Win10 desktop virtualbox share doesn't work
+
 === inetsim json config
 
 		"vboxmanage_post": [
@@ -44,6 +55,7 @@ https://github.com/joefitzgerald/packer-windows/blob/master/answer_files/7/Autou
 
 == Related projects that might be useful
 
+* https://github.com/jakobadam/packer-qemu-templates/tree/master/windows
 * http://boxstarter.org/
 
 == Cleanup
@@ -70,3 +82,21 @@ https://github.com/joefitzgerald/packer-windows/blob/master/answer_files/7/Autou
 To communicate with the user:
 
     config.vm.post_up_message
+
+== Support Linux targets
+
+TODO
+
+== Support QEMU targets (other archs)
+
+To do malware analysis on embedded systems.
+
+* QEMU on Windows, https://qemu.weilnetz.de/
+
+== Support different back-ends
+
+* Libvirt/KVM: https://github.com/jakobadam/packer-qemu-templates/tree/master/windows
+
+== Support WinXP
+
+Talk to sholmes, he did it.
