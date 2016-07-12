@@ -21,6 +21,7 @@ import argparse
 import glob
 import json
 import os
+from pkg_resources import resource_filename
 import re
 import signal
 import subprocess
@@ -227,8 +228,10 @@ def default(parser, args):
 
 def list_profiles(parser, args):
     print("supported profiles:\n")
-    for f in sorted(glob.glob(os.path.join('profiles', '*.json'))):
-        m = re.search(r'^profiles[\/\\](.*).json$', f)
+
+    filepath = resource_filename(__name__, "profiles/")
+    for f in sorted(glob.glob(os.path.join(filepath, '*.json'))):
+        m = re.search(r'profiles[\/\\](.*).json$', f)
         print(m.group(1))
     print()
 
