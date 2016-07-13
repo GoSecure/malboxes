@@ -20,6 +20,7 @@
 # GNU General Public License for more details.
 #
 import argparse
+from distutils import spawn
 import glob
 import json
 import os
@@ -197,7 +198,17 @@ def run_packer(packer_config):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
-    cmd = ['packer', 'build', '-var-file=config.json', packer_config]
+    # packer or packer-io?
+    binary = 'packer'
+    # TODO starting with python 3.3 we could use shutil.which()
+    if spawn.find_executable(binary) == None:
+        binary = 'packer-io'
+        if spawn.find_executable(binary) == None:
+            print("packer not found. Install it: "
+                  "https://www.packer.io/intro/getting-started/setup.html")
+            return 254
+
+    cmd = [binary, 'build', '-var-file=config.json', packer_config]
     ret = run_foreground(cmd)
 
     print("----------------------------------")
