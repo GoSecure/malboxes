@@ -2,7 +2,8 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win7_32_analyst"
+		"name": "win7_32_analyst",
+		"malboxes_dir": "{{ template_dir }}/../"
 	},
 
 	"builders": [{
@@ -34,23 +35,23 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"config_cache/Autounattend.xml",
-			"installconfig/windows7/enablewinrm.ps1"
+			"{{user `malboxes_cache_dir`}}/Autounattend.xml",
+			"{{user `malboxes_dir`}}/installconfig/windows7/enablewinrm.ps1"
 		]
 	}],
 
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{user `name`}}.box",
-		"vagrantfile_template": "vagrantfiles/box_win.rb"
+		"vagrantfile_template": "{{user `malboxes_dir`}}/vagrantfiles/box_win.rb"
 	}],
 
 	"provisioners": [{
 		"type": "powershell",
 		"scripts": [
-			"scripts/windows/vmtools.ps1",
-			"scripts/windows/enablerdp.ps1",
-			"scripts/windows/installtools.ps1"
+			"{{user `malboxes_dir`}}/scripts/windows/vmtools.ps1",
+			"{{user `malboxes_dir`}}/scripts/windows/enablerdp.ps1",
+			"{{user `malboxes_dir`}}/scripts/windows/installtools.ps1"
 		]
 	}]
 }

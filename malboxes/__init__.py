@@ -223,7 +223,12 @@ def run_packer(packer_config):
                   "https://www.packer.io/intro/getting-started/setup.html")
             return 254
 
-    cmd = [binary, 'build', '-var-file=config.json', packer_config]
+    # run packer with relevant config
+    configfile = os.path.join(DIRS.user_config_dir, 'config.json')
+    cmd = [binary, 'build',
+           '-var-file={}'.format(configfile),
+           "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir),
+           packer_config]
     ret = run_foreground(cmd)
 
     print("----------------------------------")

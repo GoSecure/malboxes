@@ -2,7 +2,8 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win10_32_analyst"
+		"name": "win10_32_analyst",
+		"malboxes_dir": "{{ template_dir }}/../"
 	},
 
 	"builders": [{
@@ -21,7 +22,10 @@
 
 		"output_directory": "builds",
 
-		"iso_url": "http://care.dlservice.microsoft.com/dl/download/B/B/3/BB3611B6-9781-437F-A293-AB43B85C2190/10586.0.151029-1700.TH2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO",
+		"iso_urls": [
+			"file://{{ user `iso_path` }}/10586.0.151029-1700.TH2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO",
+			"http://care.dlservice.microsoft.com/dl/download/B/B/3/BB3611B6-9781-437F-A293-AB43B85C2190/10586.0.151029-1700.TH2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO"
+		],
 		"iso_checksum": "e431a4e259a5c056a5d58b9cd0628a3c59f112f9",
 		"iso_checksum_type": "sha1",
 
@@ -34,24 +38,23 @@
 		"boot_wait": "10s",
 
 		"floppy_files": [
-			"installconfig/windows10_64/Autounattend.xml",
-			"installconfig/windows10_64/enablewinrm.ps1"
+			"{{user `malboxes_cache_dir`}}/Autounattend.xml",
+			"{{user `malboxes_dir`}}/installconfig/windows10/enablewinrm.ps1"
 		]
 	}],
 
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{user `name`}}.box",
-		"vagrantfile_template": "vagrantfiles/box_win.rb"
+		"vagrantfile_template": "{{user `malboxes_dir`}}/vagrantfiles/box_win.rb"
 	}],
 
 	"provisioners": [{
 		"type": "powershell",
 		"scripts": [
-			"scripts/windows/vmtools.ps1",
-			"scripts/windows/enablerdp.ps1",
-			"scripts/windows/installchocolatey.ps1",
-			"scripts/windows/installtools.ps1"
+			"{{user `malboxes_dir`}}/scripts/windows/vmtools.ps1",
+			"{{user `malboxes_dir`}}/scripts/windows/enablerdp.ps1",
+			"{{user `malboxes_dir`}}/scripts/windows/installtools.ps1"
 		]
 	}]
 }
