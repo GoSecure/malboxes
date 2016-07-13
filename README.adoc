@@ -73,21 +73,27 @@ You can modify (add, modify or delete) registry keys, directories and files like
 
 Registry keys:
 
-    ./malboxes.py registry profile modtype key name value valuetype
+    ./malboxes.py registry <profile> <modtype> <key name> <value> <valuetype>
 
-    Ex: ./malboxes registry win10_64_analyst add HKCU:\Software Malboxes IsAwesome String
+Example:
+
+    ./malboxes registry win10_64_analyst add HKCU:\Software "Malboxes IsAwesome" String
 
 Directories and files:
 
-    ./malboxes.py directory profile modtype dirpath
+    ./malboxes.py directory <profile> <modtype> <dirpath>
 
-    Ex: ./malboxes.py directory BadAPT57 delete C:\Windows\System32
+Example:
+
+    ./malboxes.py directory BadAPT57 delete C:\Windows\System32
 
 You can add packages to install that are specific to the profile:
 
-    ./malboxes.py package profile package
+    ./malboxes.py package <profile> <package>
 
-    Ex: ./malboxes.py package RansomwareThatINeedRevengeOn chrome
+Example:
+
+    ./malboxes.py package RansomwareThatINeedRevengeOn chrome
 
 == More information
 
