@@ -15,3 +15,7 @@ dist/
 # Generic
 *~
 *.swp
+
+# Documentation artifacts
+README.html
+docs/*.html
