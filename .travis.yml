@@ -1,7 +1,5 @@
 language: python
 python:
-# disabled since pylint is currently broken on 3.2
-#- "3.2"
 - "3.3"
 - "3.4"
 - "3.5"

@@ -20,7 +20,7 @@ https://github.com/gosecure/malboxes
 
 == Requirements
 
-* Python 3
+* Python 3.3+
 * appdirs
 * jinja2
 * packer: https://www.packer.io/intro/getting-started/setup.html

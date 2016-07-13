@@ -18,7 +18,6 @@
 # GNU General Public License for more details.
 #
 import argparse
-from distutils import spawn
 import glob
 from io import TextIOWrapper
 import json
@@ -215,10 +214,9 @@ def run_packer(packer_config):
 
     # packer or packer-io?
     binary = 'packer'
-    # TODO starting with python 3.3 we could use shutil.which()
-    if spawn.find_executable(binary) == None:
+    if shutil.which(binary) == None:
         binary = 'packer-io'
-        if spawn.find_executable(binary) == None:
+        if shutil.which(binary) == None:
             print("packer not found. Install it: "
                   "https://www.packer.io/intro/getting-started/setup.html")
             return 254
