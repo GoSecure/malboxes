@@ -309,7 +309,8 @@ def append_to_script(filename, line):
 def add_to_user_scripts(profile):
     """ Adds the modified script to the user scripts file."""
     """ File names for the user scripts file and the script to be added."""
-    filename = os.path.join("scripts", "windows", "user_scripts.ps1")
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "windows",
+                            "user_scripts.ps1")
     line = "{}.ps1".format(profile)
 
     """ Check content of the user scripts file."""
@@ -345,7 +346,7 @@ def reg(parser, args):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join("scripts", "user",
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
@@ -369,7 +370,7 @@ def directory(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join("scripts", "user",
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
@@ -382,7 +383,7 @@ def package(parser, args):
     line = "cinst {} -y\r\n".format(args.package)
     print("Adding Chocolatey package: {}".format(args.package))
 
-    filename = os.path.join("scripts", "user",
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
@@ -405,7 +406,7 @@ def document(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join(
+    filename = os.path.join(DIRS.user_config_dir,
                     "scripts", "user", "windows",
                     "{}.ps1".format(args.profile))
 
