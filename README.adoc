@@ -21,6 +21,7 @@ https://github.com/gosecure/malboxes
 == Requirements
 
 * Python 3
+* appdirs
 * jinja2
 * packer (sometimes called packer-io)
 * vagrant
@@ -33,24 +34,32 @@ https://github.com/gosecure/malboxes
 
 === Box creation
 
-Copy `config-example.json` to `config.json`. Modify it and run:
+Run:
 
-    ./malboxes.py build <profile>
+    malboxes build <profile>
 
 You can also list all supported profiles with:
 
-    ./malboxes.py list
+    malboxes list
 
 This will build a Vagrant box ready for malware investigation you can now
 include it in a Vagrantfile afterwards.
 
 For example:
 
-    ./malboxes.py build win10_64_analyst
+    malboxes build win10_64_analyst
+
+If you want to customize your configuration, look at the following location
+for a `config.json` file:
+
+* Linux/Unix: `~/.config/malboxes/`
+* Mac OS X: `~/Library/Application Support/malboxes/`
+* Win 7+: `C:\Users\<username>\AppData\Local\malboxes\malboxes\`
+
 
 === Per analysis instances
 
-    ./malboxes.py spin win10_64_analyst <name>
+    malboxes spin win10_64_analyst <name>
 
 This will create a `Vagrantfile` prepared to use for malware analysis. Move it
 into the analysis folder of your choice and issue:
@@ -63,7 +72,7 @@ shared in the VM. This can be changed by commenting the relevant part of the
 
 For example:
 
-    ./malboxes.py spin win7_32_analyst 20160519.cryptolocker.xyz
+    malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
 
 // FIXME
 
@@ -73,27 +82,27 @@ You can modify (add, modify or delete) registry keys, directories and files like
 
 Registry keys:
 
-    ./malboxes.py registry <profile> <modtype> <key name> <value> <valuetype>
+    malboxes registry <profile> <modtype> <key name> <value> <valuetype>
 
 Example:
 
-    ./malboxes registry win10_64_analyst add HKCU:\Software "Malboxes IsAwesome" String
+    malboxes registry win10_64_analyst add HKCU:\Software "Malboxes IsAwesome" String
 
 Directories and files:
 
-    ./malboxes.py directory <profile> <modtype> <dirpath>
+    malboxes directory <profile> <modtype> <dirpath>
 
 Example:
 
-    ./malboxes.py directory BadAPT57 delete C:\Windows\System32
+    malboxes directory BadAPT57 delete C:\Windows\System32
 
 You can add packages to install that are specific to the profile:
 
-    ./malboxes.py package <profile> <package>
+    malboxes package <profile> <package>
 
 Example:
 
-    ./malboxes.py package RansomwareThatINeedRevengeOn chrome
+    malboxes package RansomwareThatINeedRevengeOn chrome
 
 == More information
 

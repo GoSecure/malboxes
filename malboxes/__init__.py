@@ -19,20 +19,33 @@
 #
 import argparse
 import glob
+from io import TextIOWrapper
 import json
 import os
-from pkg_resources import resource_filename
+from pkg_resources import resource_filename, resource_stream
 import re
+import shutil
 import signal
 import subprocess
 import sys
 
+from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
 
-CONFIG_CACHE = 'config_cache'
+DIRS = AppDirs("malboxes")
 __version__ = "0.1.0"
 
 def initialize():
+    # create appdata directories if they don't exist
+    if not os.path.exists(DIRS.user_config_dir):
+        os.mkdir(DIRS.user_config_dir)
+
+    if not os.path.exists(DIRS.user_cache_dir):
+        os.mkdir(DIRS.user_cache_dir)
+
+    return init_parser()
+
+def init_parser():
     parser = argparse.ArgumentParser(
                     description="Vagrant box builder "
                                 "and config generator for malware analysis.")
@@ -126,10 +139,10 @@ def prepare_autounattend(config):
     # os type is extracted from profile json
     os_type = config['builders'][0]['guest_os_type'].lower()
 
-    # Jinja2 splits on '/' so dont change for os.path.join
-    env = Environment(loader=FileSystemLoader('installconfig/'))
+    filepath = resource_filename(__name__, "installconfig/")
+    env = Environment(loader=FileSystemLoader(filepath))
     template = env.get_template("{}/Autounattend.xml".format(os_type))
-    f = create_configfd('Autounattend.xml')
+    f = create_cachefd('Autounattend.xml')
     f.write(template.render(config)) # pylint: disable=no-member
     f.close()
 
@@ -138,39 +151,42 @@ def load_config(profile):
     """
     Config is in JSON since we can re-use the same in both malboxes and packer
     """
-    profile_file = os.path.join('profiles', '{}.json'.format(profile))
-    # validate if profile is present
-    if not os.path.isfile(profile_file):
-        print("Profile doesn't exist")
+    try:
+        profile_fd = resource_stream(__name__, 
+                                     'profiles/{}.json'.format(profile))
+    except FileNotFoundError:
+        print("Profile doesn't exist: {}".format(profile))
         sys.exit(2)
+
+    # if config does not exist, copy default one
+    config_file = os.path.join(DIRS.user_config_dir, 'config.json')
+    if not os.path.isfile(config_file):
+        print("Default configuration doesn't exist. Populating one: {}"
+              .format(config_file))
+        shutil.copy(resource_filename(__name__, 'config-example.json'),
+                    config_file)
 
     # load general config
     config = {}
-    with open('config.json', 'r') as f:
+    with open(config_file, 'r') as f:
         config = json.load(f)
 
     # merge/update with profile config
-    with open(profile_file, 'r') as f:
-        config.update(json.load(f))
+    config.update(json.load(TextIOWrapper(profile_fd)))
 
     return config
 
 
 tempfiles = []
-def create_configfd(filename):
-    try:
-        os.mkdir(CONFIG_CACHE)
-    except FileExistsError:
-        pass
-
+def create_cachefd(filename):
     tempfiles.append(filename)
-    return open(CONFIG_CACHE + filename, 'w')
+    return open(os.path.join(DIRS.user_cache_dir, filename), 'w')
 
 
 def cleanup():
     """Removes temporary files"""
     for f in tempfiles:
-        os.remove(CONFIG_CACHE + f)
+        os.remove(os.path.join(DIRS.user_cache_dir, f))
 
 
 def run_foreground(command):
@@ -180,7 +196,7 @@ def run_foreground(command):
         for line in iter(p.stdout.readline, b''):
             print(line.rstrip().decode('utf-8'))
 
-    # send Ctrl-C to packer
+    # send Ctrl-C to subprocess
     except KeyboardInterrupt:
         p.send_signal(signal.SIGINT)
         for line in iter(p.stdout.readline, b''):
@@ -242,8 +258,9 @@ def build(parser, args):
     print("Generating configuration files...")
     prepare_autounattend(config)
     print("Configuration files are ready")
-    ret = run_packer(os.path.join('profiles',
-                                  '{}.json'.format(args.profile)))
+    ret = run_packer(resource_filename(__name__,
+                                       "profiles/{}.json".format(args.profile)))
+
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
@@ -266,7 +283,8 @@ def spin(parser, args):
     config = load_config(args.profile)
 
     print("Creating a Vagrantfile")
-    env = Environment(loader=FileSystemLoader('vagrantfiles'))
+    filepath = resource_filename(__name__, "vagrantfiles/")
+    env = Environment(loader=FileSystemLoader(filepath))
     template = env.get_template("analyst_single.rb")
 
     if os.path.isfile('Vagrantfile'):
