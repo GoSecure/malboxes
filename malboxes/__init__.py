@@ -54,7 +54,7 @@ def initialize():
 
     # spin command
     parser_spin = subparsers.add_parser('spin',
-                                        help="Creates a Vagrantfile for"
+                                        help="Creates a Vagrantfile for "
                                              "your profile / Vagrant box.")
     parser_spin.add_argument('profile', help='Name of the profile to spin.')
     parser_spin.add_argument('name', help='Name of the target VM. '
