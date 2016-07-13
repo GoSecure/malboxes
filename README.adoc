@@ -23,8 +23,8 @@ https://github.com/gosecure/malboxes
 * Python 3
 * appdirs
 * jinja2
-* packer (sometimes called packer-io)
-* vagrant
+* packer: https://www.packer.io/intro/getting-started/setup.html
+* vagrant: https://www.vagrantup.com/downloads.html
 
 == Installation
 
