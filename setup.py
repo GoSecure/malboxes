@@ -10,7 +10,7 @@ from codecs import open
 from os import path, remove
 import shutil
 
-from malboxes import __version__
+from malboxes._version import __version__
 
 here = path.abspath(path.dirname(__file__))
 

@@ -32,8 +32,9 @@ import sys
 from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
 
+from malboxes._version import __version__
+
 DIRS = AppDirs("malboxes")
-__version__ = "0.1.0"
 
 def initialize():
     # create appdata directories if they don't exist
@@ -49,6 +50,8 @@ def init_parser():
     parser = argparse.ArgumentParser(
                     description="Vagrant box builder "
                                 "and config generator for malware analysis.")
+    parser.add_argument('-V', '--version', action='version',
+                        version='%(prog)s ' + __version__)
     subparsers = parser.add_subparsers()
 
     # list command
@@ -152,7 +155,7 @@ def load_config(profile):
     Config is in JSON since we can re-use the same in both malboxes and packer
     """
     try:
-        profile_fd = resource_stream(__name__, 
+        profile_fd = resource_stream(__name__,
                                      'profiles/{}.json'.format(profile))
     except FileNotFoundError:
         print("Profile doesn't exist: {}".format(profile))
