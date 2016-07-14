@@ -39,10 +39,10 @@ DIRS = AppDirs("malboxes")
 def initialize():
     # create appdata directories if they don't exist
     if not os.path.exists(DIRS.user_config_dir):
-        os.mkdir(DIRS.user_config_dir)
+        os.makedirs(DIRS.user_config_dir)
 
     if not os.path.exists(DIRS.user_cache_dir):
-        os.mkdir(DIRS.user_cache_dir)
+        os.makedirs(DIRS.user_cache_dir)
 
     return init_parser()
 
