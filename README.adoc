@@ -86,7 +86,7 @@ Registry keys:
 
 Example:
 
-    malboxes registry win10_64_analyst add HKCU:\Software "Malboxes IsAwesome" String
+    malboxes registry win10_64_analyst add HKCU:\Software Malboxes IsAwesome String
 
 Directories and files:
 
