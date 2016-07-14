@@ -28,7 +28,9 @@ https://github.com/gosecure/malboxes
 
 == Installation
 
-    sudo pip install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+=== Linux/Unix
+
+    sudo pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
 
 == Usage
 
