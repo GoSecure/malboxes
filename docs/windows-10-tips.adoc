@@ -1,0 +1,15 @@
+= Windows 10 Tips
+
+== Add a normal user
+
+NOTE: Since Edge doesn't open when running under a privileged account, it is
+useful to create a normal user.
+
+Normal account creation in settings doesn't work for a reason we don't
+understand (using Eval version).
+
+. Disable network access
+. Windows Menu
+. Run then `netplwiz`
+. Add a user
+. Re-enable network access

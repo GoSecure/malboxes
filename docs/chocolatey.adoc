@@ -1,0 +1,21 @@
+= Chocolatey Packaging tid bits
+
+== Autopackages
+
+These package use some kind of meta xml to generate actual package files.
+
+In order to test locally modified packages you must:
+
+* Install ChocolateyPackageUpdater: `choco install chocolateypackageupdater`
+* Checkout repo with auto packages: `git clone git@github.com:chocolatey/chocolatey-coreteampackages.git`
+* Go to the folder above package dir: `cd chocolatey-coreteampackages\automatic\`
+* Generate the `.nupkg` file based on the `.nuspec`: `chocopkgup -p python3-x86_32 -v 3.5.2 -u https://www.python.org/ftp/python/3.5.2/python-3.5.2.exe`
+* Go to the generated package folder: `cd _output\python3-x86_32\3.5.2\`
+* Install the local package: `choco install python3-x86_32 -fdv -s "%cd%"`
+
+=== References
+
+* https://chocolatey.org/docs/create-packages#testing-your-package
+* https://github.com/chocolatey/choco/wiki/AutomaticPackages
+
+
