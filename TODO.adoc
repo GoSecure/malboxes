@@ -1,5 +1,11 @@
 = TODO
 
+== pip packaging
+
+* where should the built boxes go?
+
+== Misc
+
 * Make work with trial ISOs
 
 == Minimal malware analyst use case

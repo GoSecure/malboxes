@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-#
 # Malboxes - Vagrant box builder and config generator for malware analysis
 # https://github.com/gosecure/malboxes
 #
@@ -20,24 +18,40 @@
 # GNU General Public License for more details.
 #
 import argparse
-from distutils import spawn
 import glob
+from io import TextIOWrapper
 import json
 import os
+from pkg_resources import resource_filename, resource_stream
 import re
+import shutil
 import signal
 import subprocess
 import sys
 
+from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
 
-CONFIG_CACHE = 'config_cache'
+from malboxes._version import __version__
 
+DIRS = AppDirs("malboxes")
 
 def initialize():
+    # create appdata directories if they don't exist
+    if not os.path.exists(DIRS.user_config_dir):
+        os.makedirs(DIRS.user_config_dir)
+
+    if not os.path.exists(DIRS.user_cache_dir):
+        os.makedirs(DIRS.user_cache_dir)
+
+    return init_parser()
+
+def init_parser():
     parser = argparse.ArgumentParser(
                     description="Vagrant box builder "
                                 "and config generator for malware analysis.")
+    parser.add_argument('-V', '--version', action='version',
+                        version='%(prog)s ' + __version__)
     subparsers = parser.add_subparsers()
 
     # list command
@@ -56,7 +70,7 @@ def initialize():
 
     # spin command
     parser_spin = subparsers.add_parser('spin',
-                                        help="Creates a Vagrantfile for"
+                                        help="Creates a Vagrantfile for "
                                              "your profile / Vagrant box.")
     parser_spin.add_argument('profile', help='Name of the profile to spin.')
     parser_spin.add_argument('name', help='Name of the target VM. '
@@ -128,10 +142,10 @@ def prepare_autounattend(config):
     # os type is extracted from profile json
     os_type = config['builders'][0]['guest_os_type'].lower()
 
-    # Jinja2 splits on '/' so dont change for os.path.join
-    env = Environment(loader=FileSystemLoader('installconfig/'))
+    filepath = resource_filename(__name__, "installconfig/")
+    env = Environment(loader=FileSystemLoader(filepath))
     template = env.get_template("{}/Autounattend.xml".format(os_type))
-    f = create_configfd('Autounattend.xml')
+    f = create_cachefd('Autounattend.xml')
     f.write(template.render(config)) # pylint: disable=no-member
     f.close()
 
@@ -140,39 +154,42 @@ def load_config(profile):
     """
     Config is in JSON since we can re-use the same in both malboxes and packer
     """
-    profile_file = os.path.join('profiles', '{}.json'.format(profile))
-    # validate if profile is present
-    if not os.path.isfile(profile_file):
-        print("Profile doesn't exist")
+    try:
+        profile_fd = resource_stream(__name__,
+                                     'profiles/{}.json'.format(profile))
+    except FileNotFoundError:
+        print("Profile doesn't exist: {}".format(profile))
         sys.exit(2)
+
+    # if config does not exist, copy default one
+    config_file = os.path.join(DIRS.user_config_dir, 'config.json')
+    if not os.path.isfile(config_file):
+        print("Default configuration doesn't exist. Populating one: {}"
+              .format(config_file))
+        shutil.copy(resource_filename(__name__, 'config-example.json'),
+                    config_file)
 
     # load general config
     config = {}
-    with open('config.json', 'r') as f:
+    with open(config_file, 'r') as f:
         config = json.load(f)
 
     # merge/update with profile config
-    with open(profile_file, 'r') as f:
-        config.update(json.load(f))
+    config.update(json.load(TextIOWrapper(profile_fd)))
 
     return config
 
 
 tempfiles = []
-def create_configfd(filename):
-    try:
-        os.mkdir(CONFIG_CACHE)
-    except FileExistsError:
-        pass
-
+def create_cachefd(filename):
     tempfiles.append(filename)
-    return open(CONFIG_CACHE + filename, 'w')
+    return open(os.path.join(DIRS.user_cache_dir, filename), 'w')
 
 
 def cleanup():
     """Removes temporary files"""
     for f in tempfiles:
-        os.remove(CONFIG_CACHE + f)
+        os.remove(os.path.join(DIRS.user_cache_dir, f))
 
 
 def run_foreground(command):
@@ -182,7 +199,7 @@ def run_foreground(command):
         for line in iter(p.stdout.readline, b''):
             print(line.rstrip().decode('utf-8'))
 
-    # send Ctrl-C to packer
+    # send Ctrl-C to subprocess
     except KeyboardInterrupt:
         p.send_signal(signal.SIGINT)
         for line in iter(p.stdout.readline, b''):
@@ -200,15 +217,19 @@ def run_packer(packer_config):
 
     # packer or packer-io?
     binary = 'packer'
-    # TODO starting with python 3.3 we could use shutil.which()
-    if spawn.find_executable(binary) == None:
+    if shutil.which(binary) == None:
         binary = 'packer-io'
-        if spawn.find_executable(binary) == None:
+        if shutil.which(binary) == None:
             print("packer not found. Install it: "
                   "https://www.packer.io/intro/getting-started/setup.html")
             return 254
 
-    cmd = [binary, 'build', '-var-file=config.json', packer_config]
+    # run packer with relevant config
+    configfile = os.path.join(DIRS.user_config_dir, 'config.json')
+    cmd = [binary, 'build',
+           '-var-file={}'.format(configfile),
+           "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir),
+           packer_config]
     ret = run_foreground(cmd)
 
     print("----------------------------------")
@@ -240,8 +261,10 @@ def default(parser, args):
 
 def list_profiles(parser, args):
     print("supported profiles:\n")
-    for f in sorted(glob.glob(os.path.join('profiles', '*.json'))):
-        m = re.search(r'^profiles[\/\\](.*).json$', f)
+
+    filepath = resource_filename(__name__, "profiles/")
+    for f in sorted(glob.glob(os.path.join(filepath, '*.json'))):
+        m = re.search(r'profiles[\/\\](.*).json$', f)
         print(m.group(1))
     print()
 
@@ -252,8 +275,9 @@ def build(parser, args):
     print("Generating configuration files...")
     prepare_autounattend(config)
     print("Configuration files are ready")
-    ret = run_packer(os.path.join('profiles',
-                                  '{}.json'.format(args.profile)))
+    ret = run_packer(resource_filename(__name__,
+                                       "profiles/{}.json".format(args.profile)))
+
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
@@ -276,7 +300,8 @@ def spin(parser, args):
     config = load_config(args.profile)
 
     print("Creating a Vagrantfile")
-    env = Environment(loader=FileSystemLoader('vagrantfiles'))
+    filepath = resource_filename(__name__, "vagrantfiles/")
+    env = Environment(loader=FileSystemLoader(filepath))
     template = env.get_template("analyst_single.rb")
 
     if os.path.isfile('Vagrantfile'):
@@ -301,7 +326,8 @@ def append_to_script(filename, line):
 def add_to_user_scripts(profile):
     """ Adds the modified script to the user scripts file."""
     """ File names for the user scripts file and the script to be added."""
-    filename = os.path.join("scripts", "windows", "user_scripts.ps1")
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "windows",
+                            "user_scripts.ps1")
     line = "{}.ps1".format(profile)
 
     """ Check content of the user scripts file."""
@@ -337,7 +363,7 @@ def reg(parser, args):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join("scripts", "user",
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
@@ -361,7 +387,7 @@ def directory(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join("scripts", "user",
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
@@ -374,7 +400,7 @@ def package(parser, args):
     line = "cinst {} -y\r\n".format(args.package)
     print("Adding Chocolatey package: {}".format(args.package))
 
-    filename = os.path.join("scripts", "user",
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "windows", "{}.ps1".format(args.profile))
     append_to_script(filename, line)
 
@@ -397,7 +423,7 @@ def document(parser, args):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join(
+    filename = os.path.join(DIRS.user_config_dir,
                     "scripts", "user", "windows",
                     "{}.ps1".format(args.profile))
 
@@ -407,10 +433,14 @@ def document(parser, args):
     add_to_user_scripts(args.profile)
 
 
-if __name__ == "__main__":
+def main():
     try:
         parser, args = initialize()
         args.func(parser, args)
 
     finally:
         cleanup()
+
+
+if __name__ == "__main__":
+    main()

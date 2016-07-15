@@ -7,6 +7,15 @@ builds/
 # Python
 __pycache__/
 
+# Python pip/setuptools packaging
+build/
+dist/
+*.egg-info/
+
 # Generic
 *~
 *.swp
+
+# Documentation artifacts
+README.html
+docs/*.html

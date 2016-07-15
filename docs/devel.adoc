@@ -1,0 +1,7 @@
+= Development guide
+
+== Install malboxes in development mode
+
+From the project's git repository root directory, execute:
+
+    sudo pip install -e . --no-deps

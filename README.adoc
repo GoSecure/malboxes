@@ -18,35 +18,96 @@ Vagrant box builder and config generator for malware analysis
 
 https://github.com/gosecure/malboxes
 
+
 == Requirements
 
-* Python 3
+* Python 3.3+
+* appdirs
 * jinja2
-* packer (sometimes called packer-io)
-* vagrant
+* packer: https://www.packer.io/intro/getting-started/setup.html
+* vagrant: https://www.vagrantup.com/downloads.html
+
+
+== Installation
+
+=== Linux/Unix
+
+* Install git, vagrant and packer using your distribution's packaging tool
+  (packer is sometimes called packer-io)
+* `pip install` malboxes:
++
+    sudo pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+
+
+=== Windows
+
+==== Manually
+
+* Install https://www.virtualbox.org/wiki/Downloads[VirtualBox],
+  https://www.vagrantup.com/downloads.html[Vagrant] and
+  https://git-scm.com/downloads[git]
+* https://www.packer.io/downloads.html[Install Packer], drop the packer binary
+  in a folder in your user's PATH like `C:\Windows\System32\`
+* https://www.python.org/downloads/[Install Python 3] (make sure to add
+  Python to your environment variables)
+* Open a console (Windows-Key + cmd)
++
+    pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+
+==== Using Chocolatey
+
+[NOTE]
+Two issues are preventing chocolatey install to work right now:
+https://github.com/chocolatey/chocolatey-coreteampackages/pull/261[Python3
+Scripts directory is not in the PATH] and
+https://github.com/chocolatey/choco/issues/836[problems with zip files on
+32-bit Windows].
+
+Assuming you have https://chocolatey.org/[Chocolatey] installed:
+
+* Install dependencies:
++
+    choco install python vagrant packer git virtualbox
++
+* Refresh the console
++
+    refreshenv
++
+* Install malboxes:
++
+    pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+
 
 == Usage
 
 === Box creation
 
-Copy `config-example.json` to `config.json`. Modify it and run:
+Run:
 
-    ./malboxes.py build <profile>
+    malboxes build <profile>
 
 You can also list all supported profiles with:
 
-    ./malboxes.py list
+    malboxes list
 
 This will build a Vagrant box ready for malware investigation you can now
 include it in a Vagrantfile afterwards.
 
 For example:
 
-    ./malboxes.py build win10_64_analyst
+    malboxes build win10_64_analyst
+
+If you want to customize your configuration, look at the following location
+for a `config.json` file:
+
+* Linux/Unix: `~/.config/malboxes/`
+* Mac OS X: `~/Library/Application Support/malboxes/`
+* Win 7+: `C:\Users\<username>\AppData\Local\malboxes\malboxes\`
+
 
 === Per analysis instances
 
-    ./malboxes.py spin win10_64_analyst <name>
+    malboxes spin win10_64_analyst <name>
 
 This will create a `Vagrantfile` prepared to use for malware analysis. Move it
 into the analysis folder of your choice and issue:
@@ -59,7 +120,7 @@ shared in the VM. This can be changed by commenting the relevant part of the
 
 For example:
 
-    ./malboxes.py spin win7_32_analyst 20160519.cryptolocker.xyz
+    malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
 
 // FIXME
 
@@ -69,21 +130,28 @@ You can modify (add, modify or delete) registry keys, directories and files like
 
 Registry keys:
 
-    ./malboxes.py registry profile modtype key name value valuetype
+    malboxes registry <profile> <modtype> <key name> <value> <valuetype>
 
-    Ex: ./malboxes registry win10_64_analyst add HKCU:\Software Malboxes IsAwesome String
+Example:
+
+    malboxes registry win10_64_analyst add HKCU:\Software Malboxes IsAwesome String
 
 Directories and files:
 
-    ./malboxes.py directory profile modtype dirpath
+    malboxes directory <profile> <modtype> <dirpath>
 
-    Ex: ./malboxes.py directory BadAPT57 delete C:\Windows\System32
+Example:
+
+    malboxes directory BadAPT57 delete C:\Windows\System32
 
 You can add packages to install that are specific to the profile:
 
-    ./malboxes.py package profile package
+    malboxes package <profile> <package>
 
-    Ex: ./malboxes.py package RansomwareThatINeedRevengeOn chrome
+Example:
+
+    malboxes package RansomwareThatINeedRevengeOn chrome
+
 
 == More information
 
@@ -98,6 +166,14 @@ by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
 * http://gosecure.github.io/presentations/2016-05-19_northsec/OlivierBilodeau_HugoGenesse-Malboxes.pdf[Slides]
   (PDF, degraded)
 * Video (coming soon)
+
+
+== License
+
+Code is licensed under the GPLv3+, see `LICENSE` for details. Documentation
+and presentation material is licensed under the Creative Commons
+Attribution-ShareAlike 4.0, see `docs/LICENSE` for details.
+
 
 == Credits
 

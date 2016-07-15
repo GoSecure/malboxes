@@ -1,0 +1,7 @@
+include LICENSE README.adoc TODO.adoc
+
+# Include the data files
+include config-example.json
+graft docs
+prune docs/presentation/
+graft malboxes
