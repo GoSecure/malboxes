@@ -18,6 +18,7 @@ Vagrant box builder and config generator for malware analysis
 
 https://github.com/gosecure/malboxes
 
+
 == Requirements
 
 * Python 3.3+
@@ -26,11 +27,56 @@ https://github.com/gosecure/malboxes
 * packer: https://www.packer.io/intro/getting-started/setup.html
 * vagrant: https://www.vagrantup.com/downloads.html
 
+
 == Installation
 
 === Linux/Unix
 
+* Install git, vagrant and packer using your distribution's packaging tool
+  (packer is sometimes called packer-io)
+* `pip install` malboxes:
++
     sudo pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+
+
+=== Windows
+
+==== Manually
+
+* Install https://www.virtualbox.org/wiki/Downloads[VirtualBox],
+  https://www.vagrantup.com/downloads.html[Vagrant] and
+  https://git-scm.com/downloads[git]
+* https://www.packer.io/downloads.html[Install Packer], drop the packer binary
+  in a folder in your user's PATH like `C:\Windows\System32\`
+* https://www.python.org/downloads/[Install Python 3] (make sure to add
+  Python to your environment variables)
+* Open a console (Windows-Key + cmd)
++
+    pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+
+==== Using Chocolatey
+
+[NOTE]
+Two issues are preventing chocolatey install to work right now:
+https://github.com/chocolatey/chocolatey-coreteampackages/pull/261[Python3
+Scripts directory is not in the PATH] and
+https://github.com/chocolatey/choco/issues/836[problems with zip files on
+32-bit Windows].
+
+Assuming you have https://chocolatey.org/[Chocolatey] installed:
+
+* Install dependencies:
++
+    choco install python vagrant packer git virtualbox
++
+* Refresh the console
++
+    refreshenv
++
+* Install malboxes:
++
+    pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+
 
 == Usage
 
@@ -106,6 +152,7 @@ Example:
 
     malboxes package RansomwareThatINeedRevengeOn chrome
 
+
 == More information
 
 === Applying DevOps Principles for Better Malware Analysis
@@ -120,11 +167,13 @@ by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
   (PDF, degraded)
 * Video (coming soon)
 
+
 == License
 
 Code is licensed under the GPLv3+, see `LICENSE` for details. Documentation
 and presentation material is licensed under the Creative Commons
 Attribution-ShareAlike 4.0, see `docs/LICENSE` for details.
+
 
 == Credits
 
