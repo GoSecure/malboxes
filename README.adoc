@@ -82,6 +82,9 @@ Assuming you have https://chocolatey.org/[Chocolatey] installed:
 
 === Box creation
 
+This creates your base box that is imported in Vagrant. Afterwards you can
+re-use the same box several times per sample analysis.
+
 Run:
 
     malboxes build <profile>
@@ -110,13 +113,12 @@ for a `config.json` file:
     malboxes spin win10_64_analyst <name>
 
 This will create a `Vagrantfile` prepared to use for malware analysis. Move it
-into the analysis folder of your choice and issue:
+into a directory of your choice and issue:
 
     vagrant up
 
-From that folder to get the VM started. By default the local directory will be
-shared in the VM. This can be changed by commenting the relevant part of the
-`Vagrantfile`.
+By default the local directory will be shared in the VM on the Desktop. This
+can be changed by commenting the relevant part of the `Vagrantfile`.
 
 For example:
 

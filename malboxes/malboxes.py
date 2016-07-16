@@ -28,6 +28,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import textwrap
 
 from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
@@ -287,10 +288,21 @@ def build(parser, args):
         print("'vagrant box add' failed. Build failed. Exiting...")
         sys.exit(4)
 
-    print("A base box was imported into your local Vagrant box repository")
-    print("You can re-use this base box several times by using the "
-          "following statement in your Vagrantfile:")
-    print('config.vm.box = "{}"'.format(args.profile))
+    print(textwrap.dedent("""
+    ===============================================================
+    A base box was imported into your local Vagrant box repository.
+    You should generate a Vagrantfile configuration in order to
+    launch an instance of your box:
+
+    malboxes spin {} <analysis_name>
+
+    You can safely remove the boxes/ directory if you don't plan on
+    hosting or sharing your base box.
+
+    You can re-use this base box several times by using `malboxes
+    spin`. Each VM will be independent of each other.
+    ===============================================================""")
+    .format(args.profile))
 
 
 def spin(parser, args):
@@ -305,7 +317,7 @@ def spin(parser, args):
     template = env.get_template("analyst_single.rb")
 
     if os.path.isfile('Vagrantfile'):
-        print("Vagrantfile already exists. Please move away.")
+        print("Vagrantfile already exists. Please move it away. Exiting...")
         sys.exit(5)
 
     config['profile'] = args.profile
