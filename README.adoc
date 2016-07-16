@@ -36,7 +36,7 @@ https://github.com/gosecure/malboxes
   (packer is sometimes called packer-io)
 * `pip install` malboxes:
 +
-    sudo pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+    sudo pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
 
 
 === Windows
@@ -52,7 +52,7 @@ https://github.com/gosecure/malboxes
   Python to your environment variables)
 * Open a console (Windows-Key + cmd)
 +
-    pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+    pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
 
 ==== Using Chocolatey
 
@@ -75,7 +75,7 @@ Assuming you have https://chocolatey.org/[Chocolatey] installed:
 +
 * Install malboxes:
 +
-    pip3 install git+https://github.com/GoSecure/malboxes.git@pip-packaging#egg=malboxes
+    pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
 
 
 == Usage
