@@ -53,7 +53,7 @@
 		"type": "powershell",
 		"scripts": [
 			"{{user `malboxes_dir`}}/scripts/windows/vmtools.ps1",
-			"{{user `malboxes_dir`}}/scripts/windows/enablerdp.ps1",
+			"{{user `malboxes_dir`}}/scripts/windows/malware_analysis.ps1",
 			"{{user `malboxes_dir`}}/scripts/windows/installtools.ps1"
 		]
 	}]
