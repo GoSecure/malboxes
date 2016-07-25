@@ -53,6 +53,7 @@ def init_parser():
                                 "and config generator for malware analysis.")
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + __version__)
+    parser.add_argument('-d', '--debug', action='store_true', help="Debug mode")
     subparsers = parser.add_subparsers()
 
     # list command
@@ -212,7 +213,7 @@ def run_foreground(command):
         return p.returncode
 
 
-def run_packer(packer_config):
+def run_packer(packer_config, args):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
@@ -227,10 +228,15 @@ def run_packer(packer_config):
 
     # run packer with relevant config
     configfile = os.path.join(DIRS.user_config_dir, 'config.json')
-    cmd = [binary, 'build',
-           '-var-file={}'.format(configfile),
-           "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir),
-           packer_config]
+
+    flags = ['-var-file={}'.format(configfile),
+             "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir)]
+    if args.debug:
+        flags.append('-debug')
+
+    cmd = [binary, 'build']
+    cmd.extend(flags)
+    cmd.append(packer_config)
     ret = run_foreground(cmd)
 
     print("----------------------------------")
@@ -277,7 +283,8 @@ def build(parser, args):
     prepare_autounattend(config)
     print("Configuration files are ready")
     ret = run_packer(resource_filename(__name__,
-                                       "profiles/{}.json".format(args.profile)))
+                                       "profiles/{}.json".format(args.profile)),
+                     args)
 
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
