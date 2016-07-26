@@ -2,8 +2,7 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win10_32_analyst",
-		"malboxes_dir": "{{ template_dir }}/../"
+		"name": "win10_32_analyst"
 	},
 
 	"builders": [{
@@ -53,7 +52,7 @@
 		"type": "powershell",
 		"scripts": [
 			"{{user `malboxes_dir`}}/scripts/windows/vmtools.ps1",
-			"{{user `malboxes_dir`}}/scripts/windows/enablerdp.ps1",
+			"{{user `malboxes_dir`}}/scripts/windows/malware_analysis.ps1",
 			"{{user `malboxes_dir`}}/scripts/windows/installtools.ps1"
 		]
 	}]

@@ -1,17 +1,8 @@
 = TODO
 
-== pip packaging
-
-* where should the built boxes go?
-
-== Misc
-
-* Make work with trial ISOs
-
 == Minimal malware analyst use case
 
 * push sample w/ IDA debugger
-* open ports for remote IDA debugging
 * vagrant no net, NAT
 * vagrant update box + send on network (archiving)
 * vagrant team workflow

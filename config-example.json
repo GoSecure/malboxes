@@ -1,9 +1,0 @@
-{
-	"iso_path": "/path/to/your/windows/isos/",
-	"_comment": "If using a registered product update the product_key and set trial to 'false'.",
-	"_comment": "See docs/windows-licenses.adoc for more information.",
-	"trial": "true",
-	"product_key": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX",
-	"username": "vagrant",
-	"password": "vagrant"
-}

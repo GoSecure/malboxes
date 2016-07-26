@@ -101,7 +101,7 @@ For example:
     malboxes build win10_64_analyst
 
 If you want to customize your configuration, look at the following location
-for a `config.json` file:
+for a `config.js` file:
 
 * Linux/Unix: `~/.config/malboxes/`
 * Mac OS X: `~/Library/Application Support/malboxes/`

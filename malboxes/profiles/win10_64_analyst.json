@@ -2,8 +2,7 @@
 	"variables": {
 		"winrm_user": "vagrant",
 		"winrm_pass": "vagrant",
-		"name": "win10_64_analyst",
-		"malboxes_dir": "{{ template_dir }}/../"
+		"name": "win10_64_analyst"
 	},
 
 	"builders": [{
@@ -21,7 +20,6 @@
 		"disk_size": "15360",
 
 		"output_directory": "builds",
-
 
 		"iso_urls": [
 			"file://{{ user `iso_path` }}/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
@@ -54,7 +52,7 @@
 		"type": "powershell",
 		"scripts": [
 			"{{user `malboxes_dir`}}/scripts/windows/vmtools.ps1",
-			"{{user `malboxes_dir`}}/scripts/windows/enablerdp.ps1",
+			"{{user `malboxes_dir`}}/scripts/windows/malware_analysis.ps1",
 			"{{user `malboxes_dir`}}/scripts/windows/installtools.ps1"
 		]
 	}]

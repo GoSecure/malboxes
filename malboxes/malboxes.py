@@ -32,6 +32,7 @@ import textwrap
 
 from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
+from jsmin import jsmin
 
 from malboxes._version import __version__
 
@@ -53,6 +54,7 @@ def init_parser():
                                 "and config generator for malware analysis.")
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + __version__)
+    parser.add_argument('-d', '--debug', action='store_true', help="Debug mode")
     subparsers = parser.add_subparsers()
 
     # list command
@@ -67,6 +69,12 @@ def init_parser():
     parser_build.add_argument('profile', help='Name of the profile to build. '
                                               'Use list command to view '
                                               'available profiles.')
+    parser_build.add_argument('--skip-packer-build', action='store_true',
+                              help='Skip packer build phase. '
+                                   'Only useful for debugging.')
+    parser_build.add_argument('--skip-vagrant-box-add', action='store_true',
+                              help='Skip vagrant box add phase. '
+                                   'Only useful for debugging.')
     parser_build.set_defaults(func=build)
 
     # spin command
@@ -140,8 +148,7 @@ def prepare_autounattend(config):
 
     Uses jinja2 template syntax to generate the resulting XML file.
     """
-    # os type is extracted from profile json
-    os_type = config['builders'][0]['guest_os_type'].lower()
+    os_type = _get_os_type(config)
 
     filepath = resource_filename(__name__, "installconfig/")
     env = Environment(loader=FileSystemLoader(filepath))
@@ -151,9 +158,51 @@ def prepare_autounattend(config):
     f.close()
 
 
+def prepare_packer_template(config, template_name):
+    """
+    Prepares a packer template JSON file according to configuration and writes
+    it into a temporary location where packer later expects it.
+
+    We need to do this since we are composing several JSON snippets based on
+    features enabled in configuration.
+    """
+    template_fd = resource_stream(__name__,
+                                 'profiles/{}.json'.format(template_name))
+    template = json.load(TextIOWrapper(template_fd))
+
+    # merge optional configurations
+    # IDA remote debugger, based on target architecture
+    if config.get('ida_path'):
+        if _is_os_32bits(config):
+            template['provisioners'].append(fetch_snippet('ida_remote_32'))
+        else:
+            template['provisioners'].append(fetch_snippet('ida_remote_64'))
+
+    # tools_path for tools upload
+    if config.get('tools_path'):
+        template['provisioners'].append(fetch_snippet('tools'))
+
+    # write to temporary file
+    f = create_cachefd('{}.json'.format(template_name))
+    f.write(json.dumps(template))
+    f.close()
+    return f.name
+
+
 def load_config(profile):
     """
-    Config is in JSON since we can re-use the same in both malboxes and packer
+    Load Malboxes configuration and merge with Packer profile configuration
+
+    Packer uses a configuration in JSON so we decided to go with JSON as well.
+    However since we have features that should be easily "toggled" by our users
+    I wanted to add an easy way of "commenting out" or "uncommenting" a
+    particular feature. JSON doesn't support comments. However JSON's author
+    gives a nice suggestion here[1] that I will follow.
+
+    In a nutshell, our configuration is Javascript, which when minified gives
+    JSON and then it gets merged with the selected profile.
+
+    [1]: https://plus.google.com/+DouglasCrockfordEsq/posts/RK8qyGVaGSr
     """
     try:
         profile_fd = resource_stream(__name__,
@@ -163,22 +212,39 @@ def load_config(profile):
         sys.exit(2)
 
     # if config does not exist, copy default one
-    config_file = os.path.join(DIRS.user_config_dir, 'config.json')
+    config_file = os.path.join(DIRS.user_config_dir, 'config.js')
     if not os.path.isfile(config_file):
         print("Default configuration doesn't exist. Populating one: {}"
               .format(config_file))
-        shutil.copy(resource_filename(__name__, 'config-example.json'),
+        shutil.copy(resource_filename(__name__, 'config-example.js'),
                     config_file)
 
     # load general config
     config = {}
     with open(config_file, 'r') as f:
-        config = json.load(f)
+        # minify then load as JSON
+        config = json.loads(jsmin(f.read()))
 
     # merge/update with profile config
     config.update(json.load(TextIOWrapper(profile_fd)))
 
     return config
+
+
+def fetch_snippet(filename):
+    """Returns given snippet filename parsed as json"""
+    snippet = resource_stream(__name__,
+                              'profiles/snippets/{}.json'.format(filename))
+    return json.load(TextIOWrapper(snippet))
+
+
+def _get_os_type(config):
+    """OS Type is extracted from profile json config"""
+    return config['builders'][0]['guest_os_type'].lower()
+
+
+def _is_os_32bits(config):
+    return not _get_os_type(config)[-3:] == '_64'
 
 
 tempfiles = []
@@ -212,44 +278,63 @@ def run_foreground(command):
         return p.returncode
 
 
-def run_packer(packer_config):
+def run_packer(packer_tmpl, args):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
-    # packer or packer-io?
-    binary = 'packer'
-    if shutil.which(binary) == None:
-        binary = 'packer-io'
-        if shutil.which(binary) == None:
-            print("packer not found. Install it: "
-                  "https://www.packer.io/intro/getting-started/setup.html")
-            return 254
+    prev_cwd = os.getcwd()
+    os.chdir(DIRS.user_cache_dir)
 
-    # run packer with relevant config
-    configfile = os.path.join(DIRS.user_config_dir, 'config.json')
-    cmd = [binary, 'build',
-           '-var-file={}'.format(configfile),
-           "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir),
-           packer_config]
-    ret = run_foreground(cmd)
+    try:
+        # packer or packer-io?
+        binary = 'packer'
+        if shutil.which(binary) == None:
+            binary = 'packer-io'
+            if shutil.which(binary) == None:
+                print("packer not found. Install it: "
+                      "https://www.packer.io/intro/getting-started/setup.html")
+                return 254
+
+        # run packer with relevant config minified
+        configfile = os.path.join(DIRS.user_config_dir, 'config.js')
+        with open(configfile, 'r') as config:
+            f = create_cachefd('packer_var_file.json')
+            f.write(jsmin(config.read()))
+            f.close()
+
+        filepath = resource_filename(__name__, "")
+        flags = ['-var-file={}'.format(f.name),
+                 "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir),
+                 "-var", "malboxes_dir={}".format(filepath)]
+        if args.debug:
+            flags.append('-debug')
+
+        cmd = [binary, 'build']
+        cmd.extend(flags)
+        cmd.append(packer_tmpl)
+        ret = run_foreground(cmd)
+
+    finally:
+        os.chdir(prev_cwd)
 
     print("----------------------------------")
     print("packer completed with return code: {}".format(ret))
     return ret
 
 
-def import_box(config, args):
-    print("Importing box into vagrant")
+def add_box(config, args):
+    print("Adding box into vagrant")
     print("--------------------------")
 
     box = config['post-processors'][0]['output']
+    box = os.path.join(DIRS.user_cache_dir, box)
     box = box.replace('{{user `name`}}', args.profile)
 
     cmd = ['vagrant', 'box', 'add', box, '--name={}'.format(args.profile)]
     ret = run_foreground(cmd)
 
     print("----------------------------")
-    print("vagrant box import completed with return code: {}".format(ret))
+    print("vagrant box add completed with return code: {}".format(ret))
     return ret
 
 
@@ -275,15 +360,22 @@ def build(parser, args):
 
     print("Generating configuration files...")
     prepare_autounattend(config)
+    filename = prepare_packer_template(config, args.profile)
     print("Configuration files are ready")
-    ret = run_packer(resource_filename(__name__,
-                                       "profiles/{}.json".format(args.profile)))
+    if not args.skip_packer_build:
+        ret = run_packer(filename, args)
+    else:
+        ret = 0
 
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
 
-    ret = import_box(config, args)
+    if not args.skip_vagrant_box_add:
+        ret = add_box(config, args)
+    else:
+        ret = 0
+
     if ret != 0:
         print("'vagrant box add' failed. Build failed. Exiting...")
         sys.exit(4)
@@ -296,13 +388,13 @@ def build(parser, args):
 
     malboxes spin {} <analysis_name>
 
-    You can safely remove the boxes/ directory if you don't plan on
-    hosting or sharing your base box.
+    You can safely remove the {}/boxes/
+    directory if you don't plan on hosting or sharing your base box.
 
     You can re-use this base box several times by using `malboxes
     spin`. Each VM will be independent of each other.
     ===============================================================""")
-    .format(args.profile))
+    .format(args.profile, DIRS.user_cache_dir))
 
 
 def spin(parser, args):
