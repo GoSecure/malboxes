@@ -68,6 +68,12 @@ def init_parser():
     parser_build.add_argument('profile', help='Name of the profile to build. '
                                               'Use list command to view '
                                               'available profiles.')
+    parser_build.add_argument('--skip-packer-build', action='store_true',
+                              help='Skip packer build phase. '
+                                   'Only useful for debugging.')
+    parser_build.add_argument('--skip-vagrant-box-add', action='store_true',
+                              help='Skip vagrant box add phase. '
+                                   'Only useful for debugging.')
     parser_build.set_defaults(func=build)
 
     # spin command
@@ -251,8 +257,8 @@ def run_packer(packer_config, args):
     return ret
 
 
-def import_box(config, args):
-    print("Importing box into vagrant")
+def add_box(config, args):
+    print("Adding box into vagrant")
     print("--------------------------")
 
     box = config['post-processors'][0]['output']
@@ -263,7 +269,7 @@ def import_box(config, args):
     ret = run_foreground(cmd)
 
     print("----------------------------")
-    print("vagrant box import completed with return code: {}".format(ret))
+    print("vagrant box add completed with return code: {}".format(ret))
     return ret
 
 
@@ -290,15 +296,21 @@ def build(parser, args):
     print("Generating configuration files...")
     prepare_autounattend(config)
     print("Configuration files are ready")
-    ret = run_packer(resource_filename(__name__,
-                                       "profiles/{}.json".format(args.profile)),
-                     args)
+    if not args.skip_packer_build:
+        profile = "profiles/{}.json".format(args.profile)
+        ret = run_packer(resource_filename(__name__, profile), args)
+    else:
+        ret = 0
 
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
 
-    ret = import_box(config, args)
+    if not args.skip_vagrant_box_add:
+        ret = add_box(config, args)
+    else:
+        ret = 0
+
     if ret != 0:
         print("'vagrant box add' failed. Build failed. Exiting...")
         sys.exit(4)
