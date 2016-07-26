@@ -217,27 +217,34 @@ def run_packer(packer_config, args):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
-    # packer or packer-io?
-    binary = 'packer'
-    if shutil.which(binary) == None:
-        binary = 'packer-io'
+    prev_cwd = os.getcwd()
+    os.chdir(DIRS.user_cache_dir)
+
+    try:
+        # packer or packer-io?
+        binary = 'packer'
         if shutil.which(binary) == None:
-            print("packer not found. Install it: "
-                  "https://www.packer.io/intro/getting-started/setup.html")
-            return 254
+            binary = 'packer-io'
+            if shutil.which(binary) == None:
+                print("packer not found. Install it: "
+                    "https://www.packer.io/intro/getting-started/setup.html")
+                return 254
 
-    # run packer with relevant config
-    configfile = os.path.join(DIRS.user_config_dir, 'config.json')
+        # run packer with relevant config
+        configfile = os.path.join(DIRS.user_config_dir, 'config.json')
 
-    flags = ['-var-file={}'.format(configfile),
-             "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir)]
-    if args.debug:
-        flags.append('-debug')
+        flags = ['-var-file={}'.format(configfile),
+                "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir)]
+        if args.debug:
+            flags.append('-debug')
 
-    cmd = [binary, 'build']
-    cmd.extend(flags)
-    cmd.append(packer_config)
-    ret = run_foreground(cmd)
+        cmd = [binary, 'build']
+        cmd.extend(flags)
+        cmd.append(packer_config)
+        ret = run_foreground(cmd)
+
+    finally:
+        os.chdir(prev_cwd)
 
     print("----------------------------------")
     print("packer completed with return code: {}".format(ret))
@@ -249,6 +256,7 @@ def import_box(config, args):
     print("--------------------------")
 
     box = config['post-processors'][0]['output']
+    box = os.path.join(DIRS.user_cache_dir, box)
     box = box.replace('{{user `name`}}', args.profile)
 
     cmd = ['vagrant', 'box', 'add', box, '--name={}'.format(args.profile)]
@@ -303,13 +311,13 @@ def build(parser, args):
 
     malboxes spin {} <analysis_name>
 
-    You can safely remove the boxes/ directory if you don't plan on
-    hosting or sharing your base box.
+    You can safely remove the {}/boxes/
+    directory if you don't plan on hosting or sharing your base box.
 
     You can re-use this base box several times by using `malboxes
     spin`. Each VM will be independent of each other.
     ===============================================================""")
-    .format(args.profile))
+    .format(args.profile, DIRS.user_cache_dir))
 
 
 def spin(parser, args):
