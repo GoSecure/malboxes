@@ -32,6 +32,7 @@ import textwrap
 
 from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
+from jsmin import jsmin
 
 from malboxes._version import __version__
 
@@ -147,8 +148,7 @@ def prepare_autounattend(config):
 
     Uses jinja2 template syntax to generate the resulting XML file.
     """
-    # os type is extracted from profile json
-    os_type = config['builders'][0]['guest_os_type'].lower()
+    os_type = _get_os_type(config)
 
     filepath = resource_filename(__name__, "installconfig/")
     env = Environment(loader=FileSystemLoader(filepath))
@@ -158,9 +158,51 @@ def prepare_autounattend(config):
     f.close()
 
 
+def prepare_packer_template(config, template_name):
+    """
+    Prepares a packer template JSON file according to configuration and writes
+    it into a temporary location where packer later expects it.
+
+    We need to do this since we are composing several JSON snippets based on
+    features enabled in configuration.
+    """
+    template_fd = resource_stream(__name__,
+                                 'profiles/{}.json'.format(template_name))
+    template = json.load(TextIOWrapper(template_fd))
+
+    # merge optional configurations
+    # IDA remote debugger, based on target architecture
+    if config.get('ida_path'):
+        if _is_os_32bits(config):
+            template['provisioners'].append(fetch_snippet('ida_remote_32'))
+        else:
+            template['provisioners'].append(fetch_snippet('ida_remote_64'))
+
+    # tools_path for tools upload
+    if config.get('tools_path'):
+        template['provisioners'].append(fetch_snippet('tools'))
+
+    # write to temporary file
+    f = create_cachefd('{}.json'.format(template_name))
+    f.write(json.dumps(template))
+    f.close()
+    return f.name
+
+
 def load_config(profile):
     """
-    Config is in JSON since we can re-use the same in both malboxes and packer
+    Load Malboxes configuration and merge with Packer profile configuration
+
+    Packer uses a configuration in JSON so we decided to go with JSON as well.
+    However since we have features that should be easily "toggled" by our users
+    I wanted to add an easy way of "commenting out" or "uncommenting" a
+    particular feature. JSON doesn't support comments. However JSON's author
+    gives a nice suggestion here[1] that I will follow.
+
+    In a nutshell, our configuration is Javascript, which when minified gives
+    JSON and then it gets merged with the selected profile.
+
+    [1]: https://plus.google.com/+DouglasCrockfordEsq/posts/RK8qyGVaGSr
     """
     try:
         profile_fd = resource_stream(__name__,
@@ -170,22 +212,39 @@ def load_config(profile):
         sys.exit(2)
 
     # if config does not exist, copy default one
-    config_file = os.path.join(DIRS.user_config_dir, 'config.json')
+    config_file = os.path.join(DIRS.user_config_dir, 'config.js')
     if not os.path.isfile(config_file):
         print("Default configuration doesn't exist. Populating one: {}"
               .format(config_file))
-        shutil.copy(resource_filename(__name__, 'config-example.json'),
+        shutil.copy(resource_filename(__name__, 'config-example.js'),
                     config_file)
 
     # load general config
     config = {}
     with open(config_file, 'r') as f:
-        config = json.load(f)
+        # minify then load as JSON
+        config = json.loads(jsmin(f.read()))
 
     # merge/update with profile config
     config.update(json.load(TextIOWrapper(profile_fd)))
 
     return config
+
+
+def fetch_snippet(filename):
+    """Returns given snippet filename parsed as json"""
+    snippet = resource_stream(__name__,
+                              'profiles/snippets/{}.json'.format(filename))
+    return json.load(TextIOWrapper(snippet))
+
+
+def _get_os_type(config):
+    """OS Type is extracted from profile json config"""
+    return config['builders'][0]['guest_os_type'].lower()
+
+
+def _is_os_32bits(config):
+    return not _get_os_type(config)[-3:] == '_64'
 
 
 tempfiles = []
@@ -219,7 +278,7 @@ def run_foreground(command):
         return p.returncode
 
 
-def run_packer(packer_config, args):
+def run_packer(packer_tmpl, args):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
@@ -233,20 +292,26 @@ def run_packer(packer_config, args):
             binary = 'packer-io'
             if shutil.which(binary) == None:
                 print("packer not found. Install it: "
-                    "https://www.packer.io/intro/getting-started/setup.html")
+                      "https://www.packer.io/intro/getting-started/setup.html")
                 return 254
 
-        # run packer with relevant config
-        configfile = os.path.join(DIRS.user_config_dir, 'config.json')
+        # run packer with relevant config minified
+        configfile = os.path.join(DIRS.user_config_dir, 'config.js')
+        with open(configfile, 'r') as config:
+            f = create_cachefd('packer_var_file.json')
+            f.write(jsmin(config.read()))
+            f.close()
 
-        flags = ['-var-file={}'.format(configfile),
-                "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir)]
+        filepath = resource_filename(__name__, "")
+        flags = ['-var-file={}'.format(f.name),
+                 "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir),
+                 "-var", "malboxes_dir={}".format(filepath)]
         if args.debug:
             flags.append('-debug')
 
         cmd = [binary, 'build']
         cmd.extend(flags)
-        cmd.append(packer_config)
+        cmd.append(packer_tmpl)
         ret = run_foreground(cmd)
 
     finally:
@@ -295,10 +360,10 @@ def build(parser, args):
 
     print("Generating configuration files...")
     prepare_autounattend(config)
+    filename = prepare_packer_template(config, args.profile)
     print("Configuration files are ready")
     if not args.skip_packer_build:
-        profile = "profiles/{}.json".format(args.profile)
-        ret = run_packer(resource_filename(__name__, profile), args)
+        ret = run_packer(filename, args)
     else:
         ret = 0
 

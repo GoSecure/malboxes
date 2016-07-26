@@ -1,6 +1,8 @@
 #!/bin/bash
 
-for F in `ls malboxes/profiles/*.json`; do
+DIRS="malboxes/profiles/*.json malboxes/profiles/snippets/*.json"
+
+for F in `ls $DIRS`; do
 	echo "Processing file $F";
 	python3 -m json.tool $F 1>/dev/null
 	if [[ $? -ne 0 ]]; then
