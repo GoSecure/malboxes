@@ -37,6 +37,7 @@ from jsmin import jsmin
 from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
+DEBUG = False
 
 def initialize():
     # create appdata directories if they don't exist
@@ -244,12 +245,15 @@ def create_cachefd(filename):
 
 
 def cleanup():
-    """Removes temporary files"""
-    for f in tempfiles:
-        os.remove(os.path.join(DIRS.user_cache_dir, f))
+    """Removes temporary files. Keep them in debug mode."""
+    if not DEBUG:
+        for f in tempfiles:
+            os.remove(os.path.join(DIRS.user_cache_dir, f))
 
 
 def run_foreground(command):
+    if DEBUG:
+        print("DEBUG: Executing {}".format(command))
     p = subprocess.Popen(command, stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
     try:
@@ -293,7 +297,7 @@ def run_packer(packer_tmpl, args):
             f.close()
 
         flags = ['-var-file={}'.format(f.name)]
-        if args.debug:
+        if DEBUG:
             flags.append('-debug')
 
         cmd = [binary, 'build']
@@ -527,6 +531,8 @@ def document(parser, args):
 def main():
     try:
         parser, args = initialize()
+        if args.debug:
+            DEBUG = True
         args.func(parser, args)
 
     finally:
