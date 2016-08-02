@@ -227,8 +227,9 @@ def load_config(config_file, profile):
         config = json.loads(jsmin(f.read()))
 
     # add packer required variables
-    config['cache_dir'] = DIRS.user_cache_dir
-    config['dir'] = resource_filename(__name__, "")
+    # Note: Backslashes are replaced with forward slashes (Packer on Windows)
+    config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
+    config['dir'] = resource_filename(__name__, "").replace('\\', '/')
     config['profile_name'] = profile
     return config
 
