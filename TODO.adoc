@@ -2,10 +2,12 @@
 
 == Minimal malware analyst use case
 
-* push sample w/ IDA debugger
+* user/pass from config.js
+* vagrant: punch hole through NAT for IDA in firewall
+* disable Windows Defender
 * vagrant no net, NAT
-* vagrant update box + send on network (archiving)
-* vagrant team workflow
+* doc: vagrant update box + send on network (archiving)
+* doc: vagrant team workflow
 ** vagrant box repackaging covered here: http://huestones.co.uk/node/305
 * git malware analysis template integrated with malboxes
 * Integrate virtualbox and wireshark tips: https://www.virtualbox.org/wiki/Network_tips
@@ -97,3 +99,9 @@ To do malware analysis on embedded systems.
 == Support WinXP
 
 Talk to sholmes, he did it.
+
+== Optimizations
+
+=== Use VirtualBox's linked_clones Vagrant config
+
+https://www.vagrantup.com/docs/virtualbox/configuration.html
