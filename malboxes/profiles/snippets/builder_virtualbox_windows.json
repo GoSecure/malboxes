@@ -2,8 +2,8 @@
 		"guest_additions_mode": "attach",
 		"headless": "false",
 		"communicator": "winrm",
-		"winrm_username": "{{ '{{user `winrm_user`}}' }}",
-		"winrm_password": "{{ '{{user `winrm_pass`}}' }}",
+		"winrm_username": "{{ username }}",
+		"winrm_password": "{{ password }}",
 		"winrm_timeout": "30m",
 		"shutdown_command": "shutdown /s /f /t 10",
 		"vboxmanage": [

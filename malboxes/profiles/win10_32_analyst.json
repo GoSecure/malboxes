@@ -1,10 +1,4 @@
 {
-	"variables": {
-		"winrm_user": "vagrant",
-		"winrm_pass": "vagrant",
-		"name": "win10_32_analyst"
-	},
-
 	"builders": [{
 		"guest_os_type": "Windows10",
 

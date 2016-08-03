@@ -19,10 +19,10 @@
 	//"trial": "false",
 	//"product_key": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX",
 
-	// VM username and password
-	// TODO. It doesn't work now.
-	//"username": "vagrant",
-	//"password": "vagrant",
+	// VM settings
+	"username": "malboxes",
+	"password": "malboxes",
+	"computername": "dirty",
 
 	// Setting the IDA Path will copy the IDA remote debugging tools into the guest
 	//"ida_path": "/path/to/your/ida",
