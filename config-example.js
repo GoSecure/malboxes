@@ -3,6 +3,9 @@
 	 * Malboxes Example Configuration File
 	 *
 	 * Uncomment a specific section of the file to trigger a particular feature.
+     *
+     * Paths should be written using forward slashes even on Windows.
+     * For ex: C:/Tools
 	 */
 
 	// This allows you to use a local filestore for ISOs.
