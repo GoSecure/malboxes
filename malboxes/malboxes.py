@@ -530,6 +530,7 @@ def document(parser, args):
 
 
 def main():
+    global DEBUG
     try:
         parser, args = initialize()
         if args.debug:
