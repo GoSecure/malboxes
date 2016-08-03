@@ -50,9 +50,16 @@ Then put the Windows CD in.
     </IMAGE>
     [...]
 
+== Windows 10 Enterprise Evaluation Quirks
+
+* AIK is called ADK (Assesment and Deployment Kit)
+* Catalog needs to be created which requires the install CD and some space
+* From x64 you can't edit a x86 profile
+
 == References
 
 * https://github.com/m-dwyer/packer-malware/issues/2
 * ImageX doc: https://technet.microsoft.com/en-au/library/cc749447%28v=ws.10%29.aspx
 * Windows 7 AIK: http://www.microsoft.com/en-ca/download/details.aspx?id=5753
+* Windows 10 ADK: https://msdn.microsoft.com/en-us/windows/hardware/dn913721.aspx
 * Windows Timezones: https://technet.microsoft.com/en-us/library/ff715394%28WS.10%29.aspx
