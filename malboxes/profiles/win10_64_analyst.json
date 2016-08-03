@@ -6,19 +6,8 @@
 	},
 
 	"builders": [{
-		"type": "virtualbox-iso",
 		"guest_os_type": "Windows10_64",
-		"guest_additions_mode": "attach",
-		"headless": "false",
-		"communicator": "winrm",
-		"vboxmanage": [
-			["modifyvm", "{{ '{{.Name}}' }}", "--memory", "4096"],
-			["modifyvm", "{{ '{{.Name}}' }}", "--cpus", "1"]
-		],
-
-		"disk_size": "15360",
-
-		"output_directory": "builds",
+		{% include 'snippets/builder_virtualbox_windows.json' %},
 
 		"iso_urls": [
 			"file://{{ iso_path }}/10240.16384.150709-1700.TH1_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
@@ -27,25 +16,13 @@
 		"iso_checksum": "56ab095075be28a90bc0b510835280975c6bb2ce",
 		"iso_checksum_type": "sha1",
 
-		"winrm_username": "{{ '{{user `winrm_user`}}' }}",
-		"winrm_password": "{{ '{{user `winrm_pass`}}' }}",
-		"winrm_timeout": "30m",
-
-		"shutdown_command": "shutdown /s /f /t 10",
-
-		"boot_wait": "10s",
-
 		"floppy_files": [
 			"{{ cache_dir }}/Autounattend.xml",
 			"{{ dir }}/installconfig/windows10_64/enablewinrm.ps1"
 		]
 	}],
 
-	"post-processors": [{
-		"type": "vagrant",
-		"output": "boxes/{{ profile_name }}.box",
-		"vagrantfile_template": "{{ dir }}/vagrantfiles/box_win.rb"
-	}],
+	{% include 'snippets/postprocessor_vagrant.json' %},
 
 	"provisioners": [{
 		"type": "powershell",

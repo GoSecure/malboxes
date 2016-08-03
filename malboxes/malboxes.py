@@ -175,7 +175,8 @@ def prepare_packer_template(config, template_name):
         sys.exit(2)
 
     filepath = resource_filename(__name__, 'profiles/')
-    env = Environment(loader=FileSystemLoader(filepath), autoescape=False)
+    env = Environment(loader=FileSystemLoader(filepath), autoescape=False,
+                      trim_blocks=True, lstrip_blocks=True)
     template = env.get_template("{}.json".format(template_name))
 
     # write to temporary file
