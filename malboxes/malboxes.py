@@ -394,7 +394,7 @@ def spin(parser, args):
     """
     Creates a Vagrantfile based on a template using the jinja2 engine
     """
-    config = prepare_config(args.profile)
+    config, _ = prepare_config(args.profile)
 
     print("Creating a Vagrantfile")
     filepath = resource_filename(__name__, "vagrantfiles/")
