@@ -1,0 +1,8 @@
+	{
+		"type": "powershell",
+		"scripts": [
+			"{{ dir }}/scripts/windows/vmtools.ps1",
+			"{{ dir }}/scripts/windows/malware_analysis.ps1",
+			"{{ dir }}/scripts/windows/installtools.ps1"
+		]
+	}

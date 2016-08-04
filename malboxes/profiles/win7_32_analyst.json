@@ -15,19 +15,16 @@
 
 	{% include 'snippets/postprocessor_vagrant.json' %},
 
-	"provisioners": [{
-		"type": "powershell",
-		"scripts": [
-			"{{ dir }}/scripts/windows/vmtools.ps1",
-			"{{ dir }}/scripts/windows/malware_analysis.ps1",
-			"{{ dir }}/scripts/windows/installtools.ps1"
-		]
-	}
+	"provisioners": [
+
+	{% include 'snippets/provision_powershell.json' %}
+
 	{% if tools_path %},
 		{% include 'snippets/tools.json' %}
 	{% endif %}
 	{% if ida_path %},
 		{% include 'snippets/ida_remote_32.json' %}
 	{% endif %}
+
 	]
 }
