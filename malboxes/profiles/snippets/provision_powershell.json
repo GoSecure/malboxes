@@ -6,3 +6,11 @@
 			"{{ dir }}/scripts/windows/installtools.ps1"
 		]
 	}
+{% if choco_packages %},
+	{
+		"type": "powershell",
+		"inline": [
+			"cinst {{ choco_packages }} -y"
+		]
+	}
+{% endif %}
