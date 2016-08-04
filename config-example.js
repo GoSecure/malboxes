@@ -32,6 +32,8 @@
 
 	// Setting Tools Path will copy all the files under the given path into the guest.
 	// Useful to copy proprietary or unpackaged tools.
+	// Note: packer's file provisonning is really slow, avoid having more than
+	// 100 megabytes in there.
 	//"tools_path": "/path/to/your/tools",
 
 	"_comment": "last line must finish without a comma for file to be valid json"

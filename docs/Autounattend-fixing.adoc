@@ -23,6 +23,10 @@ installation of the OS:
 
 https://technet.microsoft.com/en-us/library/dd744547%28WS.10%29.aspx
 
+== List of all settings
+
+https://msdn.microsoft.com/en-us/library/windows/hardware/dn958623(v=vs.85).aspx
+
 == Installation is not automated and stalls at Windows variant selection
 
 The image specified in the Autounattended.xml doesn't match what's on the DVD
