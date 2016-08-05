@@ -1,6 +1,7 @@
 		"type": "virtualbox-iso",
 		"guest_additions_mode": "attach",
-		"headless": "false",
+		{# headless = true now due to issue #10. Will revisit later. #}
+		"headless": "true",
 		"communicator": "winrm",
 		"winrm_username": "{{ username }}",
 		"winrm_password": "{{ password }}",
