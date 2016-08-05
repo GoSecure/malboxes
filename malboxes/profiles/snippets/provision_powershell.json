@@ -10,9 +10,9 @@
 	}
 {% if choco_packages %},
 	{
-		"type": "powershell",
+		"type": "windows-shell",
 		"inline": [
-			"cinst {{ choco_packages }} -y"
+			"choco install {{ choco_packages }} -y"
 		]
 	}
 {% endif %}
