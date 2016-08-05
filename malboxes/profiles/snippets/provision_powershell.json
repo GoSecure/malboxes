@@ -1,6 +1,7 @@
 	{
 		"type": "powershell",
 		"scripts": [
+			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/vmtools.ps1",
 			"{{ dir }}/scripts/windows/malware_analysis.ps1",
 			"{{ dir }}/scripts/windows/installtools.ps1"

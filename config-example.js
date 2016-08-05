@@ -24,6 +24,9 @@
 	"password": "malboxes",
 	"computername": "dirty",
 
+	// Windows Updates: true means enabled, false means disabled. Default is false.
+	//"windows_updates": "false",
+
 	// Chocolatey packages to install on the VM
 	"choco_packages": "sysinternals dependencywalker windbg wireshark 7zip putty fiddler processhacker regshot apm",
 
