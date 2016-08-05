@@ -2,7 +2,6 @@
 
 == Minimal malware analyst use case
 
-* disable updates with an optional flag
 * vagrant: punch hole through NAT for IDA in firewall
 * vagrant no net, NAT
 * doc: vagrant update box + send on network (archiving)

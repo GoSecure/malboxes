@@ -24,6 +24,8 @@
 	"password": "malboxes",
 	"computername": "dirty",
 
+	// Windows Defender: true means enabled, false means disabled. Default is false.
+	//"windows_defender": "false",
 	// Windows Updates: true means enabled, false means disabled. Default is false.
 	//"windows_updates": "false",
 
