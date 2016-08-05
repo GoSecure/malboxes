@@ -32,10 +32,12 @@ import textwrap
 
 from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
+from jsmin import jsmin
 
 from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
+DEBUG = False
 
 def initialize():
     # create appdata directories if they don't exist
@@ -53,6 +55,7 @@ def init_parser():
                                 "and config generator for malware analysis.")
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + __version__)
+    parser.add_argument('-d', '--debug', action='store_true', help="Debug mode")
     subparsers = parser.add_subparsers()
 
     # list command
@@ -67,6 +70,12 @@ def init_parser():
     parser_build.add_argument('profile', help='Name of the profile to build. '
                                               'Use list command to view '
                                               'available profiles.')
+    parser_build.add_argument('--skip-packer-build', action='store_true',
+                              help='Skip packer build phase. '
+                                   'Only useful for debugging.')
+    parser_build.add_argument('--skip-vagrant-box-add', action='store_true',
+                              help='Skip vagrant box add phase. '
+                                   'Only useful for debugging.')
     parser_build.set_defaults(func=build)
 
     # spin command
@@ -140,8 +149,7 @@ def prepare_autounattend(config):
 
     Uses jinja2 template syntax to generate the resulting XML file.
     """
-    # os type is extracted from profile json
-    os_type = config['builders'][0]['guest_os_type'].lower()
+    os_type = _get_os_type(config)
 
     filepath = resource_filename(__name__, "installconfig/")
     env = Environment(loader=FileSystemLoader(filepath))
@@ -151,34 +159,85 @@ def prepare_autounattend(config):
     f.close()
 
 
-def load_config(profile):
+def prepare_packer_template(config, template_name):
     """
-    Config is in JSON since we can re-use the same in both malboxes and packer
+    Prepares a packer template JSON file according to configuration and writes
+    it into a temporary location where packer later expects it.
+
+    Uses jinja2 template syntax to generate the resulting JSON file.
+    Templates are in profiles/ and snippets in profiles/snippets/.
     """
     try:
         profile_fd = resource_stream(__name__,
-                                     'profiles/{}.json'.format(profile))
+                                     'profiles/{}.json'.format(template_name))
     except FileNotFoundError:
-        print("Profile doesn't exist: {}".format(profile))
+        print("Profile doesn't exist: {}".format(template_name))
         sys.exit(2)
 
+    filepath = resource_filename(__name__, 'profiles/')
+    env = Environment(loader=FileSystemLoader(filepath), autoescape=False,
+                      trim_blocks=True, lstrip_blocks=True)
+    template = env.get_template("{}.json".format(template_name))
+
+    # write to temporary file
+    f = create_cachefd('{}.json'.format(template_name))
+    f.write(template.render(config)) # pylint: disable=no-member
+    f.close()
+    return f.name
+
+
+def prepare_config(profile):
+    """
+    Prepares Malboxes configuration and merge with Packer profile configuration
+
+    Packer uses a configuration in JSON so we decided to go with JSON as well.
+    However since we have features that should be easily "toggled" by our users
+    I wanted to add an easy way of "commenting out" or "uncommenting" a
+    particular feature. JSON doesn't support comments. However JSON's author
+    gives a nice suggestion here[1] that I will follow.
+
+    In a nutshell, our configuration is Javascript, which when minified gives
+    JSON and then it gets merged with the selected profile.
+
+    [1]: https://plus.google.com/+DouglasCrockfordEsq/posts/RK8qyGVaGSr
+    """
     # if config does not exist, copy default one
-    config_file = os.path.join(DIRS.user_config_dir, 'config.json')
+    config_file = os.path.join(DIRS.user_config_dir, 'config.js')
     if not os.path.isfile(config_file):
         print("Default configuration doesn't exist. Populating one: {}"
               .format(config_file))
-        shutil.copy(resource_filename(__name__, 'config-example.json'),
+        shutil.copy(resource_filename(__name__, 'config-example.js'),
                     config_file)
 
-    # load general config
-    config = {}
-    with open(config_file, 'r') as f:
-        config = json.load(f)
+    config = load_config(config_file, profile)
+
+    packer_tmpl = prepare_packer_template(config, profile)
 
     # merge/update with profile config
-    config.update(json.load(TextIOWrapper(profile_fd)))
+    with open(packer_tmpl, 'r') as f:
+        config.update(json.loads(f.read()))
 
+    return config, packer_tmpl
+
+
+def load_config(config_file, profile):
+    """Loads the minified JSON config. Returns a dict."""
+    config = {}
+    with open(config_file, 'r') as f:
+        # minify then load as JSON
+        config = json.loads(jsmin(f.read()))
+
+    # add packer required variables
+    # Note: Backslashes are replaced with forward slashes (Packer on Windows)
+    config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
+    config['dir'] = resource_filename(__name__, "").replace('\\', '/')
+    config['profile_name'] = profile
     return config
+
+
+def _get_os_type(config):
+    """OS Type is extracted from profile json config"""
+    return config['builders'][0]['guest_os_type'].lower()
 
 
 tempfiles = []
@@ -188,12 +247,15 @@ def create_cachefd(filename):
 
 
 def cleanup():
-    """Removes temporary files"""
-    for f in tempfiles:
-        os.remove(os.path.join(DIRS.user_cache_dir, f))
+    """Removes temporary files. Keep them in debug mode."""
+    if not DEBUG:
+        for f in tempfiles:
+            os.remove(os.path.join(DIRS.user_cache_dir, f))
 
 
 def run_foreground(command):
+    if DEBUG:
+        print("DEBUG: Executing {}".format(command))
     p = subprocess.Popen(command, stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
     try:
@@ -212,44 +274,60 @@ def run_foreground(command):
         return p.returncode
 
 
-def run_packer(packer_config):
+def run_packer(packer_tmpl, args):
     print("Starting packer to generate the VM")
     print("----------------------------------")
 
-    # packer or packer-io?
-    binary = 'packer'
-    if shutil.which(binary) == None:
-        binary = 'packer-io'
-        if shutil.which(binary) == None:
-            print("packer not found. Install it: "
-                  "https://www.packer.io/intro/getting-started/setup.html")
-            return 254
+    prev_cwd = os.getcwd()
+    os.chdir(DIRS.user_cache_dir)
 
-    # run packer with relevant config
-    configfile = os.path.join(DIRS.user_config_dir, 'config.json')
-    cmd = [binary, 'build',
-           '-var-file={}'.format(configfile),
-           "-var", "malboxes_cache_dir={}".format(DIRS.user_cache_dir),
-           packer_config]
-    ret = run_foreground(cmd)
+    try:
+        # packer or packer-io?
+        binary = 'packer'
+        if shutil.which(binary) == None:
+            binary = 'packer-io'
+            if shutil.which(binary) == None:
+                print("packer not found. Install it: "
+                      "https://www.packer.io/intro/getting-started/setup.html")
+                return 254
+
+        # run packer with relevant config minified
+        configfile = os.path.join(DIRS.user_config_dir, 'config.js')
+        with open(configfile, 'r') as config:
+            f = create_cachefd('packer_var_file.json')
+            f.write(jsmin(config.read()))
+            f.close()
+
+        flags = ['-var-file={}'.format(f.name)]
+        if DEBUG:
+            flags.append('-debug')
+
+        cmd = [binary, 'build']
+        cmd.extend(flags)
+        cmd.append(packer_tmpl)
+        ret = run_foreground(cmd)
+
+    finally:
+        os.chdir(prev_cwd)
 
     print("----------------------------------")
     print("packer completed with return code: {}".format(ret))
     return ret
 
 
-def import_box(config, args):
-    print("Importing box into vagrant")
+def add_box(config, args):
+    print("Adding box into vagrant")
     print("--------------------------")
 
     box = config['post-processors'][0]['output']
+    box = os.path.join(DIRS.user_cache_dir, box)
     box = box.replace('{{user `name`}}', args.profile)
 
     cmd = ['vagrant', 'box', 'add', box, '--name={}'.format(args.profile)]
     ret = run_foreground(cmd)
 
     print("----------------------------")
-    print("vagrant box import completed with return code: {}".format(ret))
+    print("vagrant box add completed with return code: {}".format(ret))
     return ret
 
 
@@ -271,19 +349,26 @@ def list_profiles(parser, args):
 
 
 def build(parser, args):
-    config = load_config(args.profile)
 
     print("Generating configuration files...")
+    config, packer_tmpl = prepare_config(args.profile)
     prepare_autounattend(config)
     print("Configuration files are ready")
-    ret = run_packer(resource_filename(__name__,
-                                       "profiles/{}.json".format(args.profile)))
+
+    if not args.skip_packer_build:
+        ret = run_packer(packer_tmpl, args)
+    else:
+        ret = 0
 
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
 
-    ret = import_box(config, args)
+    if not args.skip_vagrant_box_add:
+        ret = add_box(config, args)
+    else:
+        ret = 0
+
     if ret != 0:
         print("'vagrant box add' failed. Build failed. Exiting...")
         sys.exit(4)
@@ -296,20 +381,20 @@ def build(parser, args):
 
     malboxes spin {} <analysis_name>
 
-    You can safely remove the boxes/ directory if you don't plan on
-    hosting or sharing your base box.
+    You can safely remove the {}/boxes/
+    directory if you don't plan on hosting or sharing your base box.
 
     You can re-use this base box several times by using `malboxes
     spin`. Each VM will be independent of each other.
     ===============================================================""")
-    .format(args.profile))
+    .format(args.profile, DIRS.user_cache_dir))
 
 
 def spin(parser, args):
     """
     Creates a Vagrantfile based on a template using the jinja2 engine
     """
-    config = load_config(args.profile)
+    config, _ = prepare_config(args.profile)
 
     print("Creating a Vagrantfile")
     filepath = resource_filename(__name__, "vagrantfiles/")
@@ -446,8 +531,11 @@ def document(parser, args):
 
 
 def main():
+    global DEBUG
     try:
         parser, args = initialize()
+        if args.debug:
+            DEBUG = True
         args.func(parser, args)
 
     finally:

@@ -6,7 +6,7 @@ Trial versions of Windows use a different .ISO. You can find them here:
 https://www.microsoft.com/en-us/evalcenter/evaluate-windows
 
 If you want to use a trial version make sure you have the following in your
-`config.json`:
+`config.js`:
 
     "trial": true
 
@@ -15,7 +15,7 @@ longer available. Open an issue if you can provide missing information.
 
 == Registered
 
-Specify your product key in your `config.json` file. For example:
+Specify your product key in your `config.js` file. For example:
 
     "trial": false,
     "product_key": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX"

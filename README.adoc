@@ -24,6 +24,7 @@ https://github.com/gosecure/malboxes
 * Python 3.3+
 * appdirs
 * jinja2
+* jsmin
 * packer: https://www.packer.io/intro/getting-started/setup.html
 * vagrant: https://www.vagrantup.com/downloads.html
 
@@ -101,7 +102,7 @@ For example:
     malboxes build win10_64_analyst
 
 If you want to customize your configuration, look at the following location
-for a `config.json` file:
+for a `config.js` file:
 
 * Linux/Unix: `~/.config/malboxes/`
 * Mac OS X: `~/Library/Application Support/malboxes/`

@@ -1,0 +1,5 @@
+	{
+		"type": "file",
+		"source": "{{ tools_path }}/",
+		"destination": "C:\\Tools"
+	}

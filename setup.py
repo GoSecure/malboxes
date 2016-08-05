@@ -21,7 +21,7 @@ def _prepare():
     # unrelated to actual build
     # pip will install data_files in an odd location so I copy them in package at
     # build time
-    root_data_files = ['LICENSE', 'README.adoc', 'TODO.adoc', 'config-example.json']
+    root_data_files = ['LICENSE', 'README.adoc', 'TODO.adoc', 'config-example.js']
 
     for f in root_data_files:
         _tempfiles.append(shutil.copy(path.join(here, f),
@@ -99,7 +99,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['appdirs', 'Jinja2'],
+    install_requires=['appdirs', 'Jinja2', 'jsmin'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,

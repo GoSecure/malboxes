@@ -1,0 +1,5 @@
+	{
+		"type": "file",
+		"source": "{{ ida_path }}/dbgsrv/win32_remote.exe",
+		"destination": "C:\\Tools\\win32_remote.exe"
+	}

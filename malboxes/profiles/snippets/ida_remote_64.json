@@ -1,0 +1,5 @@
+	{
+		"type": "file",
+		"source": "{{ ida_path }}/dbgsrv/win64_remotex64.exe",
+		"destination": "C:\\Tools\\win64_remotex64.exe"
+	}

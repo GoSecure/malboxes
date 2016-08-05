@@ -1,7 +1,7 @@
 include LICENSE README.adoc TODO.adoc
 
 # Include the data files
-include config-example.json
+include config-example.js
 graft docs
 prune docs/presentation/
 graft malboxes

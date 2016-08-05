@@ -17,14 +17,5 @@
 #
 
 def main():
-    from malboxes.malboxes import initialize, cleanup
-    try:
-        parser, args = initialize()
-        args.func(parser, args)
-
-    finally:
-        cleanup()
-
-
-if __name__ == "__main__":
+    from malboxes.malboxes import main
     main()
