@@ -23,6 +23,8 @@
 	"username": "malboxes",
 	"password": "malboxes",
 	"computername": "dirty",
+	// disk size is in megabytes
+	"disk_size": "15360",
 
 	// Windows Defender: true means enabled, false means disabled. Default is false.
 	//"windows_defender": "false",

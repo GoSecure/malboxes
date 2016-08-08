@@ -12,5 +12,5 @@
 			["modifyvm", "{{ '{{.Name}}' }}", "--cpus", "1"]
 		],
 		"boot_wait": "10s",
-		"disk_size": "15360",
+		"disk_size": "{{ disk_size }}",
 		"output_directory": "builds"
