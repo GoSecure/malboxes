@@ -12,6 +12,8 @@
 	{
 		"type": "windows-shell",
 		"inline": [
+			"choco install npcap --version 0.08 --package-parameters '/winpcap_mode=yes' -y",
+			"choco install --ignore-dependencies wireshark -y",
 			"choco install {{ choco_packages }} -y"
 		]
 	}
