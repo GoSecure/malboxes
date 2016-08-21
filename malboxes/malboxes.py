@@ -88,53 +88,6 @@ def init_parser():
                                           'Ex: Cryptolocker_XYZ.')
     parser_spin.set_defaults(func=spin)
 
-    # reg command
-    parser_reg = subparsers.add_parser('registry',
-                                       help='Modifies a registry key.')
-    parser_reg.add_argument('profile', help='Name of the profile to modify.')
-    parser_reg.add_argument('modtype',
-                            help='Modification type (add, delete or modify).')
-    parser_reg.add_argument('key', help='Location of the key to modify.')
-    parser_reg.add_argument('name', help='Name of the key.')
-    parser_reg.add_argument('value', help='Value of the key.')
-    parser_reg.add_argument('valuetype',
-                            help='Type of the value of the key: '
-                                 'DWORD for integer, String for string.')
-    parser_reg.set_defaults(func=reg)
-
-    # dir command
-    parser_dir = subparsers.add_parser('directory',
-                                       help='Modifies a directory.')
-    parser_dir.add_argument('profile',
-                            help='Name of the profile to modify.')
-    parser_dir.add_argument('modtype',
-                            help='Modification type (delete or add).')
-    parser_dir.add_argument('dirpath',
-                            help='Path of the directory to modify.')
-    parser_dir.set_defaults(func=directory)
-
-    # wallpaper command
-
-    # package command
-    parser_package = subparsers.add_parser('package',
-                                           help='Adds package to install.')
-    parser_package.add_argument('profile',
-                                help='Name of the profile to modify.')
-    parser_package.add_argument('package',
-                                help='Name of the package to install.')
-    parser_package.set_defaults(func=package)
-
-    # document command
-    parser_document = subparsers.add_parser('document',
-                                            help='Adds a file')
-    parser_document.add_argument('profile',
-                                 help='Name of the profile to modify.')
-    parser_document.add_argument('modtype',
-                                 help='Modification type (delete or add).')
-    parser_document.add_argument('docpath',
-                                 help='Path of the file to add.')
-    parser_document.set_defaults(func=document)
-
     # no command
     parser.set_defaults(func=default)
 
@@ -419,6 +372,11 @@ def append_to_script(filename, line):
     with open(filename, 'a') as f:
         f.write(line)
 
+def customize(parser, args):
+    """
+    Converts the customization profile to a powershell script.
+    """
+    
 
 def add_to_user_scripts(profile):
     """ Adds the modified script to the user scripts file."""
@@ -437,24 +395,23 @@ def add_to_user_scripts(profile):
             f.write(line)
 
 
-def reg(parser, args):
+def reg(profile, modtype, key, name, value, valuetype):
     """
     Adds a registry key modification to a profile with PowerShell commands.
     """
-    if args.modtype == "add":
+    if modtype == "add":
         command = "New-ItemProperty"
         line = "{} -Path {} -Name {} -Value {} -PropertyType {}\r\n".format(
-            command, args.key, args.name, args.value, args.valuetype)
+            command, key, name, value, valuetype)
         print("Adding: " + line)
-    elif args.modtype == "modify":
+    elif modtype == "modify":
         command = "Set-ItemProperty"
         line = "{0} -Path {1} -Name {2} -Value {3}\r\n".format(
-                command, args.key, args.name, args.value)
+            command, key, name, value)
         print("Adding: " + line)
-    elif args.modtype == "delete":
+    elif modtype == "delete":
         command = "Remove-ItemProperty"
-        line = "{0} -Path {1} -Name {2}\r\n".format(
-                command, args.key, args.name)
+        line = "{0} -Path {1} -Name {2}\r\n".format(command, key, name)
         print("Adding: " + line)
     else:
         print("Registry modification type invalid.")
@@ -468,66 +425,64 @@ def reg(parser, args):
     add_to_user_scripts(args.profile)
 
 
-def directory(parser, args):
+def directory(profile, modtype, dirpath):
     """ Adds the directory manipulation commands to the profile."""
-    if args.modtype == "add":
+    if modtype == "add":
         command = "New-Item"
-        line = "{0} -Path {1} -Type directory\r\n".format(command,
-                                                          args.dirpath)
-        print("Adding directory: {}".format(args.dirpath))
+        line = "{0} -Path {1} -Type directory\r\n".format(command, dirpath)
+        print("Adding directory: {}".format(dirpath))
     elif args.modtype == "delete":
         command = "Remove-Item"
-        line = "{0} -Path {1}\r\n".format(
-                command, args.dirpath)
-        print("Removing directory: {}".format(args.dirpath))
+        line = "{0} -Path {1}\r\n".format(command, dirpath)
+        print("Removing directory: {}".format(dirpath))
     else:
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
     filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
-                            "windows", "{}.ps1".format(args.profile))
+                            "windows", "{}.ps1".format(profile))
     append_to_script(filename, line)
 
     """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(args.profile)
+    add_to_user_scripts(profile)
 
 
-def package(parser, args):
+def package(profile, package):
     """ Adds a package to install with Chocolatey."""
-    line = "cinst {} -y\r\n".format(args.package)
-    print("Adding Chocolatey package: {}".format(args.package))
+    line = "cinst {} -y\r\n".format(package)
+    print("Adding Chocolatey package: {}".format(package))
 
     filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
-                            "windows", "{}.ps1".format(args.profile))
+                            "windows", "{}.ps1".format(profile))
     append_to_script(filename, line)
 
     """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(args.profile)
+    add_to_user_scripts(profile)
 
 
-def document(parser, args):
+def document(profile, modtype, docpath):
     """ Adds the file manipulation commands to the profile."""
-    if args.modtype == "add":
+    if modtype == "add":
         command = "New-Item"
-        line = "{0} -Path {1}\r\n".format(command, args.docpath)
-        print("Adding file: {}".format(args.docpath))
-    elif args.modtype == "delete":
+        line = "{0} -Path {1}\r\n".format(command, docpath)
+        print("Adding file: {}".format(docpath))
+    elif modtype == "delete":
         command = "Remove-Item"
         line = "{0} -Path {1}\r\n".format(
-                command, args.docpath)
-        print("Removing file: {}".format(args.docpath))
+                command, docpath)
+        print("Removing file: {}".format(docpath))
     else:
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
     filename = os.path.join(DIRS.user_config_dir,
                     "scripts", "user", "windows",
-                    "{}.ps1".format(args.profile))
+                    "{}.ps1".format(profile))
 
     append_to_script(filename, line)
 
     """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(args.profile)
+    add_to_user_scripts(profile)
 
 
 def main():
