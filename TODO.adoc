@@ -2,9 +2,7 @@
 
 == Minimal malware analyst use case
 
-* user/pass from config.js
 * vagrant: punch hole through NAT for IDA in firewall
-* disable Windows Defender
 * vagrant no net, NAT
 * doc: vagrant update box + send on network (archiving)
 * doc: vagrant team workflow
