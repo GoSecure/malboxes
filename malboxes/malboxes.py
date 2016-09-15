@@ -34,7 +34,7 @@ from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
 from jsmin import jsmin
 
-from malboxes._version import __version__
+#from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
@@ -54,7 +54,7 @@ def init_parser():
                     description="Vagrant box builder "
                                 "and config generator for malware analysis.")
     parser.add_argument('-V', '--version', action='version',
-                        version='%(prog)s ' + __version__)
+                        version='%(prog)s ' + "0.1")
     parser.add_argument('-d', '--debug', action='store_true', help="Debug mode")
     subparsers = parser.add_subparsers()
 
@@ -188,6 +188,14 @@ def load_config(config_file, profile):
     return config
 
 
+def load_customization(customization_filename):
+    """Loads the customization file, minifies it and returns the content."""
+    customization = {}
+    with open(customization_filename, 'r') as customization_file:
+        config = json.loads(jsmin(customization_file.read()))
+    return customization
+
+
 def _get_os_type(config):
     """OS Type is extracted from profile json config"""
     return config['builders'][0]['guest_os_type'].lower()
@@ -306,6 +314,8 @@ def build(parser, args):
     print("Generating configuration files...")
     config, packer_tmpl = prepare_config(args.profile)
     prepare_autounattend(config)
+    if "customization_file" in config.keys():
+        prepare_customization(args.profile, config["customization_profile"])
     print("Configuration files are ready")
 
     if not args.skip_packer_build:
@@ -372,11 +382,36 @@ def append_to_script(filename, line):
     with open(filename, 'a') as f:
         f.write(line)
 
-def customize(parser, args):
+
+def prepare_customization(profile, customization_filename):
     """
-    Converts the customization profile to a powershell script.
+    Converts the customization file to a powershell script.
     """
-    
+    customization = load_customization(customization_filename)
+    for i in range(len(customization["registry"])):
+        registry(profile,
+                 customization["registry"][i]["modtype"],
+                 customization["registry"][i]["key"],
+                 customization["registry"][i]["name"],
+                 customization["registry"][i]["value"],
+                 customization["registry"][i]["valuetype"],
+                )
+    for i in range(len(customization["directory"])):
+        directory(profile,
+                  customization["directory"][i]["filetype"],
+                  customization["directory"][i]["dirpath"]
+                 )
+    for i in range(len(customization["document"])):
+        directory(profile,
+                  customization["document"][i]["modtype"],
+                  customization["document"][i]["docpath"]
+                 )
+    for i in range(len(customization["package"])):
+        print("YAAA")
+        package(profile,
+                customization["package"][i]
+               )
+
 
 def add_to_user_scripts(profile):
     """ Adds the modified script to the user scripts file."""
@@ -395,7 +430,7 @@ def add_to_user_scripts(profile):
             f.write(line)
 
 
-def reg(profile, modtype, key, name, value, valuetype):
+def registry(profile, modtype, key, name, value, valuetype):
     """
     Adds a registry key modification to a profile with PowerShell commands.
     """
@@ -418,11 +453,11 @@ def reg(profile, modtype, key, name, value, valuetype):
         print("Valid ones are: add, delete and modify.")
 
     filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
-                            "windows", "{}.ps1".format(args.profile))
+                            "windows", "{}.ps1".format(profile))
     append_to_script(filename, line)
 
     """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(args.profile)
+    add_to_user_scripts(profile)
 
 
 def directory(profile, modtype, dirpath):
@@ -431,7 +466,7 @@ def directory(profile, modtype, dirpath):
         command = "New-Item"
         line = "{0} -Path {1} -Type directory\r\n".format(command, dirpath)
         print("Adding directory: {}".format(dirpath))
-    elif args.modtype == "delete":
+    elif modtype == "delete":
         command = "Remove-Item"
         line = "{0} -Path {1}\r\n".format(command, dirpath)
         print("Removing directory: {}".format(dirpath))
@@ -447,10 +482,10 @@ def directory(profile, modtype, dirpath):
     add_to_user_scripts(profile)
 
 
-def package(profile, package):
+def package(profile, package_name):
     """ Adds a package to install with Chocolatey."""
-    line = "cinst {} -y\r\n".format(package)
-    print("Adding Chocolatey package: {}".format(package))
+    line = "cinst {} -y\r\n".format(package_name)
+    print("Adding Chocolatey package: {}".format(package_name))
 
     filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "windows", "{}.ps1".format(profile))
