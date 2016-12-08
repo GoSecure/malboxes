@@ -22,11 +22,9 @@ https://github.com/gosecure/malboxes
 == Requirements
 
 * Python 3.3+
-* appdirs
-* jinja2
-* jsmin
 * packer: https://www.packer.io/intro/getting-started/setup.html
 * vagrant: https://www.vagrantup.com/downloads.html
+* VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
 
 == Installation
