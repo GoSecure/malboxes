@@ -32,7 +32,8 @@
 	//"windows_updates": "false",
 
 	// Chocolatey packages to install on the VM
-	"choco_packages": "sysinternals dependencywalker windbg wireshark 7zip putty fiddler4 processhacker regshot apm",
+	// TODO re-add dependencywalker and regshot once upstream choco package provides a checksum
+	"choco_packages": "sysinternals windbg wireshark 7zip putty fiddler4 processhacker apm",
 
 	// Setting the IDA Path will copy the IDA remote debugging tools into the guest
 	//"ida_path": "/path/to/your/ida",
