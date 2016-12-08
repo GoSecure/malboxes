@@ -19,16 +19,29 @@
 	//"trial": "false",
 	//"product_key": "XXXXX-XXXXX-XXXXX-XXXXX-XXXXX",
 
-	// VM username and password
-	// TODO. It doesn't work now.
-	//"username": "vagrant",
-	//"password": "vagrant",
+	// VM settings
+	"username": "malboxes",
+	"password": "malboxes",
+	"computername": "dirty",
+	// disk size is in megabytes
+	"disk_size": "15360",
+
+	// Windows Defender: true means enabled, false means disabled. Default is false.
+	//"windows_defender": "false",
+	// Windows Updates: true means enabled, false means disabled. Default is false.
+	//"windows_updates": "false",
+
+	// Chocolatey packages to install on the VM
+	// TODO re-add dependencywalker and regshot once upstream choco package provides a checksum
+	"choco_packages": "sysinternals windbg wireshark 7zip putty fiddler4 processhacker apm",
 
 	// Setting the IDA Path will copy the IDA remote debugging tools into the guest
 	//"ida_path": "/path/to/your/ida",
 
 	// Setting Tools Path will copy all the files under the given path into the guest.
 	// Useful to copy proprietary or unpackaged tools.
+	// Note: packer's file provisonning is really slow, avoid having more than
+	// 100 megabytes in there.
 	//"tools_path": "/path/to/your/tools",
 
 	"_comment": "last line must finish without a comma for file to be valid json"

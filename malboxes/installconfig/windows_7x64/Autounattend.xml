@@ -21,25 +21,25 @@
             <AutoLogon>
                 <Enabled>true</Enabled>
                 <LogonCount>5</LogonCount>
-                <Username>Administrator</Username>
+		<Username>{{ username }}</Username>
                 <Password>
-                    <Value>cuckoo</Value>
+                    <Value>{{ password }}</Value>
                     <PlainText>true</PlainText>
                 </Password>
             </AutoLogon>
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value>cuckoo</Value>
+                    <Value>{{ password }}</Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
                 <LocalAccounts>
                     <LocalAccount wcm:action="add">
                         <Password>
-                            <Value>malboxes</Value>
+                            <Value>{{ password }}</Value>
                             <PlainText>true</PlainText>
                         </Password>
-                        <Name>malboxes</Name>
-                        <DisplayName>malboxes</DisplayName>
+			<Name>{{ username }}</Name>
+			<DisplayName>{{ username }}</DisplayName>
                     </LocalAccount>
                 </LocalAccounts>
             </UserAccounts>
@@ -67,9 +67,6 @@
             <ComputerName>Malboxes</ComputerName>
             <ShowWindowsLive>false</ShowWindowsLive>
         </component>
-        <component name="Security-Malware-Windows-Defender" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <DisableAntiSpyware>true</DisableAntiSpyware>
-        </component>
         <component name="Networking-MPSSVC-Svc" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <DisableStatefulFTP>true</DisableStatefulFTP>
             <DisableStatefulPPTP>true</DisableStatefulPPTP>
@@ -90,13 +87,6 @@
             </SetupUILanguage>
         </component>
         <component name="Microsoft-Windows-Setup" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <Diagnostics>
-                <OptIn>false</OptIn>
-            </Diagnostics>
-            <DynamicUpdate>
-                <Enable>false</Enable>
-                <WillShowUI>OnError</WillShowUI>
-            </DynamicUpdate>
             <DiskConfiguration>
                 <WillShowUI>OnError</WillShowUI>
                 <Disk>
@@ -140,7 +130,11 @@
                     <InstallFrom>
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME</Key>
+                            {% if trial != 'true' %}
                             <Value>Windows 7 PROFESSIONAL</Value>
+                            {% else %}
+                            <Value>Windows 7 ENTERPRISE</Value>
+                            {% endif %}
                         </MetaData>
                     </InstallFrom>
                     <InstallTo>
@@ -150,11 +144,13 @@
                 </OSImage>
             </ImageInstall>
             <UserData>
-                <AcceptEula>true</AcceptEula>
                 <ProductKey>
-                    <Key>33PXH-7Y6KF-2VJC9-XBBR8-HVTHH</Key>
+                {% if trial != 'true' %}
+                    <Key>{{ product_key }}</Key>
+                {% endif %}
                     <WillShowUI>OnError</WillShowUI>
                 </ProductKey>
+                <AcceptEula>true</AcceptEula>
             </UserData>
         </component>
         <component name="Microsoft-Windows-TCPIP" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">

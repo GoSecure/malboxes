@@ -139,6 +139,20 @@ def prepare_packer_template(config, template_name):
     return f.name
 
 
+def _prepare_vagrantfile(config, source, fd_dest):
+    """
+    Creates Vagrantfile based on a template using the jinja2 engine. Used for
+    spin and also for the packer box Vagrantfile. Based on templates in
+    vagrantfiles/.
+    """
+    filepath = resource_filename(__name__, "vagrantfiles/")
+    env = Environment(loader=FileSystemLoader(filepath))
+    template = env.get_template(source)
+
+    fd_dest.write(template.render(config)) # pylint: disable=no-member
+    fd_dest.close()
+
+
 def prepare_config(profile):
     """
     Prepares Malboxes configuration and merge with Packer profile configuration
@@ -316,6 +330,7 @@ def build(parser, args):
     prepare_autounattend(config)
     if "customization_file" in config.keys():
         prepare_customization(args.profile, config["customization_profile"])
+    _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
 
     if not args.skip_packer_build:
@@ -355,24 +370,20 @@ def build(parser, args):
 
 def spin(parser, args):
     """
-    Creates a Vagrantfile based on a template using the jinja2 engine
+    Creates a Vagrantfile meant for user-interaction in the current directory.
     """
-    config, _ = prepare_config(args.profile)
-
-    print("Creating a Vagrantfile")
-    filepath = resource_filename(__name__, "vagrantfiles/")
-    env = Environment(loader=FileSystemLoader(filepath))
-    template = env.get_template("analyst_single.rb")
-
     if os.path.isfile('Vagrantfile'):
         print("Vagrantfile already exists. Please move it away. Exiting...")
         sys.exit(5)
 
+    config, _ = prepare_config(args.profile)
+
     config['profile'] = args.profile
     config['name'] = args.name
 
+    print("Creating a Vagrantfile")
     with open("Vagrantfile", 'w') as f:
-        f.write(template.render(config)) # pylint: disable=no-member
+        _prepare_vagrantfile(config, "analyst_single.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
 

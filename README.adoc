@@ -168,7 +168,7 @@ by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
   (HTML, best)
 * http://gosecure.github.io/presentations/2016-05-19_northsec/OlivierBilodeau_HugoGenesse-Malboxes.pdf[Slides]
   (PDF, degraded)
-* Video (coming soon)
+* https://www.youtube.com/watch?v=rfmUcYGGrls&list=PLuUtcRxSUZUpg-z0MkDrFrwMiiFMVr1yI[Video]
 
 
 == License
