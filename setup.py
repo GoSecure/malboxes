@@ -21,7 +21,7 @@ def _prepare():
     # unrelated to actual build
     # pip will install data_files in an odd location so I copy them in package at
     # build time
-    root_data_files = ['LICENSE', 'README.adoc', 'TODO.adoc', 'config-example.js']
+    root_data_files = ['LICENSE', 'README.adoc', 'TODO.adoc']
 
     for f in root_data_files:
         _tempfiles.append(shutil.copy(path.join(here, f),
