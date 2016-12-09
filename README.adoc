@@ -55,13 +55,6 @@ https://github.com/gosecure/malboxes
 
 ==== Using Chocolatey
 
-[NOTE]
-Two issues are preventing chocolatey install to work right now:
-https://github.com/chocolatey/chocolatey-coreteampackages/pull/261[Python3
-Scripts directory is not in the PATH] and
-https://github.com/chocolatey/choco/issues/836[problems with zip files on
-32-bit Windows].
-
 Assuming you have https://chocolatey.org/[Chocolatey] installed:
 
 * Install dependencies:
