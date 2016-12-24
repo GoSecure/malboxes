@@ -199,10 +199,12 @@ def load_config(config_file, profile):
     config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
     config['dir'] = resource_filename(__name__, "").replace('\\', '/')
     config['profile_name'] = profile
+    config['config_dir'] = DIRS.user_config_dir.replace('\\', '/')
     return config
 
 
 def load_customization(customization_filename):
+    #filename = os.path.join(DIRS.user_cache_dir.replace('\\', '/'), "scripts", "user",
     """Loads the customization file, minifies it and returns the content."""
     customization = {}
     with open(customization_filename, 'r') as customization_file:
@@ -328,8 +330,8 @@ def build(parser, args):
     print("Generating configuration files...")
     config, packer_tmpl = prepare_config(args.profile)
     prepare_autounattend(config)
-    if "customization_file" in config.keys():
-        prepare_customization(args.profile, config["customization_profile"])
+    if "customization_profile" in config.keys():
+        prepare_customization(args.profile, config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
 
@@ -394,11 +396,11 @@ def append_to_script(filename, line):
         f.write(line)
 
 
-def prepare_customization(profile, customization_filename):
+def prepare_customization(profile, config):
     """
     Converts the customization file to a powershell script.
     """
-    customization = load_customization(customization_filename)
+    customization = load_customization(profile)
     for i in range(len(customization["registry"])):
         registry(profile,
                  customization["registry"][i]["modtype"],
@@ -413,12 +415,11 @@ def prepare_customization(profile, customization_filename):
                   customization["directory"][i]["dirpath"]
                  )
     for i in range(len(customization["document"])):
-        directory(profile,
+        document(profile,
                   customization["document"][i]["modtype"],
                   customization["document"][i]["docpath"]
                  )
     for i in range(len(customization["package"])):
-        print("YAAA")
         package(profile,
                 customization["package"][i]
                )
@@ -463,8 +464,8 @@ def registry(profile, modtype, key, name, value, valuetype):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
-                            "windows", "{}.ps1".format(profile))
+    filename = os.path.join(DIRS.user_cache_dir.replace('\\', '/'), "scripts", "user",
+                            "{}.ps1".format(profile))
     append_to_script(filename, line)
 
     """ Adds the modified script to the user scripts."""
@@ -544,4 +545,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    print(prepare_config("win10_64_analyst"))
+    #main()
