@@ -5,10 +5,10 @@
 		{% include 'snippets/builder_virtualbox_windows.json' %},
 
 		"iso_urls": [
-			"file://{{ iso_path }}/10586.0.151029-1700.TH2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO",
-			"http://care.dlservice.microsoft.com/dl/download/B/B/3/BB3611B6-9781-437F-A293-AB43B85C2190/10586.0.151029-1700.TH2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO"
+			"file://{{ iso_path }}/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO",
+			"http://care.dlservice.microsoft.com/dl/download/2/5/4/254230E8-AEA5-43C5-94F6-88CE222A5846/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO"
 		],
-		"iso_checksum": "e431a4e259a5c056a5d58b9cd0628a3c59f112f9",
+		"iso_checksum": "0b8e56772c71dc7bb73654c61e53998a997e1e4d",
 		"iso_checksum_type": "sha1",
 
 
