@@ -4,4 +4,12 @@
 
 From the project's git repository root directory, execute:
 
-    sudo pip install -e . --no-deps
+    sudo pip3 install -e . --no-deps
+
+
+== Install a specific branch from github
+
+Useful for testing pull requests. Replace `branchname` with the name of the
+branch to test in the following command:
+
+    pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git@branchname#egg=malboxes
