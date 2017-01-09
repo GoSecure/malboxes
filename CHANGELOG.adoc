@@ -26,6 +26,7 @@ Bug fixes::
   * Packer binary is called `packer-io` on certain platforms ({uri-issue}3[#3])
   * Windows 10 x86 Automatic Installation issues ({uri-issue}4[#4])
   * Temporarily removed depwalker and regshot from choco packages ({uri-issue}16[#16])
+  * VirtualBox Guest Additions: Support for the new certificate name ({uri-issue}24[#24])
 
 ////
 
