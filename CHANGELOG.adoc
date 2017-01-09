@@ -59,6 +59,12 @@ version of Windows 10 which is automatically downloaded.
 
 Released by @obilodeau on 2016-05-17.
 
+Announced live at the https://nsec.io/[NorthSec conference]. Here are
+http://gosecure.github.io/presentations/2016-05-19_northsec/malboxes.html[the slides]
+(http://gosecure.github.io/presentations/2016-05-19_northsec/OlivierBilodeau_HugoGenesse-Malboxes.pdf[PDF])
+and here is
+https://www.youtube.com/watch?v=rfmUcYGGrls&list=PLuUtcRxSUZUpg-z0MkDrFrwMiiFMVr1yI[the video].
+
 === Credits
 
 Thanks to the following people who contributed to this release:
