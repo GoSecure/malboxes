@@ -17,7 +17,8 @@ Enhancements::
   * Config: `tools_path` will upload all of this Path's content into `C:\Tools` ({uri-issue}8[#8])
   * Config: `username` and `password` support ({uri-issue}11[#11])
   * Config: Added `windows_defender`, `windows_updates`, `disk_size` and `choco_packages` options ({uri-issue}11[#11], {uri-issue}14[#14])
-  * Installing `fiddler4` instead of `fiddler`
+  * Provides `fiddler4` instead of `fiddler`
+  * Provides `npcap` instead of `winpcap` which works with Windows 10 ({uri-issue}2[#2], {uri-issue}26[#26])
   * Added `--debug` and `--skip` command-line flags ({uri-issue}20[#20])
   * Added tests
 
