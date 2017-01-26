@@ -187,12 +187,12 @@ def prepare_config(profile):
     return config, packer_tmpl
 
 
-def load_config(config_file, profile):
+def load_config(config_filename, profile):
     """Loads the minified JSON config. Returns a dict."""
     config = {}
-    with open(config_file, 'r') as f:
+    with open(config_filename, 'r') as config_file:
         # minify then load as JSON
-        config = json.loads(jsmin(f.read()))
+        config = json.loads(jsmin(config_file.read()))
 
     # add packer required variables
     # Note: Backslashes are replaced with forward slashes (Packer on Windows)
@@ -203,8 +203,13 @@ def load_config(config_file, profile):
     return config
 
 
-def load_customization(customization_filename):
-    #filename = os.path.join(DIRS.user_cache_dir.replace('\\', '/'), "scripts", "user",
+def load_customization(customization_profile):
+    customization_filename = os.path.join(
+        DIRS.user_config_dir.replace('\\', '/'),
+        "customization",
+        customization_profile,
+        ".js")
+
     """Loads the customization file, minifies it and returns the content."""
     customization = {}
     with open(customization_filename, 'r') as customization_file:
@@ -331,7 +336,7 @@ def build(parser, args):
     config, packer_tmpl = prepare_config(args.profile)
     prepare_autounattend(config)
     if "customization_profile" in config.keys():
-        prepare_customization(args.profile, config)
+        prepare_customization(config["customization_profile"])
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
 
@@ -391,18 +396,16 @@ def spin(parser, args):
 
 
 def append_to_script(filename, line):
-    """ Appends a line to a file."""
-    with open(filename, 'a') as f:
-        f.write(line)
+    """ Appends a line to a script."""
+    with open(filename, 'a') as script:
+        script.write(line)
 
 
-def prepare_customization(profile, config):
-    """
-    Converts the customization file to a powershell script.
-    """
-    customization = load_customization(profile)
+def prepare_customization(customization_profile):
+    """Converts the customization file to a powershell script."""
+    customization = load_customization(customization_profile)
     for i in range(len(customization["registry"])):
-        registry(profile,
+        registry(customization_profile,
                  customization["registry"][i]["modtype"],
                  customization["registry"][i]["key"],
                  customization["registry"][i]["name"],
@@ -410,39 +413,22 @@ def prepare_customization(profile, config):
                  customization["registry"][i]["valuetype"],
                 )
     for i in range(len(customization["directory"])):
-        directory(profile,
+        directory(customization_profile,
                   customization["directory"][i]["filetype"],
                   customization["directory"][i]["dirpath"]
                  )
     for i in range(len(customization["document"])):
-        document(profile,
-                  customization["document"][i]["modtype"],
-                  customization["document"][i]["docpath"]
-                 )
+        document(customization_profile,
+                 customization["document"][i]["modtype"],
+                 customization["document"][i]["docpath"]
+                )
     for i in range(len(customization["package"])):
-        package(profile,
+        package(customization_profile,
                 customization["package"][i]
                )
 
 
-def add_to_user_scripts(profile):
-    """ Adds the modified script to the user scripts file."""
-    """ File names for the user scripts file and the script to be added."""
-    filename = os.path.join(DIRS.user_config_dir, "scripts", "windows",
-                            "user_scripts.ps1")
-    line = "{}.ps1".format(profile)
-
-    """ Check content of the user scripts file."""
-    with open(filename, "r") as f:
-        content = f.read()
-
-    """ If script isnt present, add it."""
-    if content.find(line) == -1:
-        with open(filename, "a") as f:
-            f.write(line)
-
-
-def registry(profile, modtype, key, name, value, valuetype):
+def registry(customization_profile, modtype, key, name, value, valuetype):
     """
     Adds a registry key modification to a profile with PowerShell commands.
     """
@@ -464,15 +450,12 @@ def registry(profile, modtype, key, name, value, valuetype):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join(DIRS.user_cache_dir.replace('\\', '/'), "scripts", "user",
-                            "{}.ps1".format(profile))
+    filename = os.path.join(DIRS.user_config_dir.replace('\\', '/'), "scripts", "user",
+                            "{}.ps1".format(customization_profile))
     append_to_script(filename, line)
 
-    """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(profile)
 
-
-def directory(profile, modtype, dirpath):
+def directory(customization_profile, modtype, dirpath):
     """ Adds the directory manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
@@ -487,27 +470,21 @@ def directory(profile, modtype, dirpath):
         print("Valid ones are: add, delete.")
 
     filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
-                            "windows", "{}.ps1".format(profile))
+                            "{}.ps1".format(customization_profile))
     append_to_script(filename, line)
 
-    """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(profile)
 
-
-def package(profile, package_name):
+def package(customization_profile, package_name):
     """ Adds a package to install with Chocolatey."""
     line = "cinst {} -y\r\n".format(package_name)
     print("Adding Chocolatey package: {}".format(package_name))
 
     filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
-                            "windows", "{}.ps1".format(profile))
+                            "{}.ps1".format(customization_profile))
     append_to_script(filename, line)
 
-    """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(profile)
 
-
-def document(profile, modtype, docpath):
+def document(customization_profile, modtype, docpath):
     """ Adds the file manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
@@ -522,14 +499,10 @@ def document(profile, modtype, docpath):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join(DIRS.user_config_dir,
-                    "scripts", "user", "windows",
-                    "{}.ps1".format(profile))
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
+                            "{}.ps1".format(customization_profile))
 
     append_to_script(filename, line)
-
-    """ Adds the modified script to the user scripts."""
-    add_to_user_scripts(profile)
 
 
 def main():
@@ -545,5 +518,4 @@ def main():
 
 
 if __name__ == "__main__":
-    print(prepare_config("win10_64_analyst"))
-    #main()
+    main()
