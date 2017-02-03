@@ -4,4 +4,33 @@
 
 From the project's git repository root directory, execute:
 
-    sudo pip install -e . --no-deps
+    sudo pip3 install -e . --no-deps
+
+
+== Install a specific branch from github
+
+Useful for testing pull requests. Replace `branchname` with the name of the
+branch to test in the following command:
+
+    pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git@branchname#egg=malboxes
+
+== Making a release
+
+. Update the version in `malboxes/_version.py`
+. Update the changelog
+** Generate author list with:
++
+    git log <commit>.. --format="%aN" --reverse | perl -e 'my %dedupe; while (<STDIN>) { print unless $dedupe{$_}++}' | sort
+
+. Prepare release commit
+** commit msg: Prepare %version% release
+** release commit (--allow-empty) msg: Release %version%
+
+. Tag the release commit
+** Annotated Tag msg: Version %version%
+
+. Push your changes (including the tag)
+. Make a release on github (from changelog and copy from previous releases)
+
+. Update version in `malboxes/_version.py` (+1 feature, append 'dev') and commit
+** commit msg: Begin development on next release

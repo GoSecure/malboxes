@@ -1,0 +1,73 @@
+= {project-name} Changelog
+:project-name: malboxes
+:uri-repo: https://github.com/GoSecure/malboxes
+:uri-issue: {uri-repo}/issues/
+
+This document provides a high-level view of the changes introduced in {project-name} by release.
+For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
+
+== 0.2.0dev
+
+The _yes, we exist_ release!
+
+Enhancements::
+  * Updated Windows 10 to Anniversary Edition ({uri-issue}21[#21])
+  * `pip install` support and documentation ({uri-issue}5[#5])
+  * Config: `ida_path` will upload IDA Remote Debugger and open appropriate ports ({uri-issue}8[#8])
+  * Config: `tools_path` will upload all of this Path's content into `C:\Tools` ({uri-issue}8[#8])
+  * Config: `username` and `password` support ({uri-issue}11[#11])
+  * Config: Added `windows_defender`, `windows_updates`, `disk_size` and `choco_packages` options ({uri-issue}11[#11], {uri-issue}14[#14])
+  * Provides `fiddler4` instead of `fiddler`
+  * Provides `npcap` instead of `winpcap` which works with Windows 10 ({uri-issue}2[#2], {uri-issue}26[#26])
+  * Added `--debug` and `--skip` command-line flags ({uri-issue}20[#20])
+  * Added tests
+
+Bug fixes::
+  * Workaround for virtualbox 5.1.0 regression ({uri-issue}10[#10])
+  * Packer binary is called `packer-io` on certain platforms ({uri-issue}3[#3])
+  * Windows 10 x86 Automatic Installation issues ({uri-issue}4[#4])
+  * Temporarily removed depwalker and regshot from choco packages ({uri-issue}16[#16])
+  * VirtualBox Guest Additions: Support for the new certificate name ({uri-issue}24[#24])
+
+////
+
+=== Release meta
+
+Released by @obilodeau
+
+{uri-repo}/issues?q=milestone%3A1.0.0[issues resolved] |
+{uri-repo}/releases/tag/v1.0.0[git tag]
+// TODO full-diff when we can at the next release
+
+=== Credits
+
+Thanks to the following people who contributed to this release:
+
+Olivier Bilodeau, Hugo Genesse
+////
+
+== 0.1.0
+
+_NorthSec 2016 edition_
+
+First proof of concept release of {project-name}.
+
+We can build Windows 7 and Windows 10 virtual machines with useful malware
+analysis tools pre-installed. Without a license key it will use the evaluation
+version of Windows 10 which is automatically downloaded.
+
+=== Release meta
+
+Released by @obilodeau on 2016-05-17.
+
+Announced live at the https://nsec.io/[NorthSec conference]. Here are
+http://gosecure.github.io/presentations/2016-05-19_northsec/malboxes.html[the slides]
+(http://gosecure.github.io/presentations/2016-05-19_northsec/OlivierBilodeau_HugoGenesse-Malboxes.pdf[PDF])
+and here is
+https://www.youtube.com/watch?v=rfmUcYGGrls&list=PLuUtcRxSUZUpg-z0MkDrFrwMiiFMVr1yI[the video].
+
+=== Credits
+
+Thanks to the following people who contributed to this release:
+
+Olivier Bilodeau, Hugo Genesse

@@ -24,7 +24,7 @@
 	"password": "malboxes",
 	"computername": "dirty",
 	// disk size is in megabytes
-	"disk_size": "15360",
+	"disk_size": "16384",
 
 	// Windows Defender: true means enabled, false means disabled. Default is false.
 	//"windows_defender": "false",
@@ -33,7 +33,7 @@
 
 	// Chocolatey packages to install on the VM
 	// TODO re-add dependencywalker and regshot once upstream choco package provides a checksum
-	"choco_packages": "sysinternals windbg wireshark 7zip putty fiddler4 processhacker apm",
+	"choco_packages": "sysinternals windbg 7zip putty fiddler4 processhacker apm wireshark",
 
 	// Setting the IDA Path will copy the IDA remote debugging tools into the guest
 	//"ida_path": "/path/to/your/ida",

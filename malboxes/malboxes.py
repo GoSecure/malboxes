@@ -235,11 +235,16 @@ def cleanup():
             os.remove(os.path.join(DIRS.user_cache_dir, f))
 
 
-def run_foreground(command):
+def run_foreground(command, env=None):
     if DEBUG:
         print("DEBUG: Executing {}".format(command))
+
+    cmd_env = os.environ.copy()
+    if env is not None:
+        cmd_env.update(env)
+
     p = subprocess.Popen(command, stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
+                         stderr=subprocess.STDOUT, env=cmd_env)
     try:
         for line in iter(p.stdout.readline, b''):
             print(line.rstrip().decode('utf-8'))
@@ -280,14 +285,17 @@ def run_packer(packer_tmpl, args):
             f.write(jsmin(config.read()))
             f.close()
 
-        flags = ['-var-file={}'.format(f.name)]
         if DEBUG:
-            flags.append('-debug')
+            special_env = {'PACKER_LOG': '1'}
+        else:
+            special_env = None
+
+        flags = ['-var-file={}'.format(f.name)]
 
         cmd = [binary, 'build']
         cmd.extend(flags)
         cmd.append(packer_tmpl)
-        ret = run_foreground(cmd)
+        ret = run_foreground(cmd, special_env)
 
     finally:
         os.chdir(prev_cwd)

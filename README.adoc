@@ -22,11 +22,9 @@ https://github.com/gosecure/malboxes
 == Requirements
 
 * Python 3.3+
-* appdirs
-* jinja2
-* jsmin
 * packer: https://www.packer.io/intro/getting-started/setup.html
 * vagrant: https://www.vagrantup.com/downloads.html
+* VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
 
 == Installation
@@ -56,13 +54,6 @@ https://github.com/gosecure/malboxes
     pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
 
 ==== Using Chocolatey
-
-[NOTE]
-Two issues are preventing chocolatey install to work right now:
-https://github.com/chocolatey/chocolatey-coreteampackages/pull/261[Python3
-Scripts directory is not in the PATH] and
-https://github.com/chocolatey/choco/issues/836[problems with zip files on
-32-bit Windows].
 
 Assuming you have https://chocolatey.org/[Chocolatey] installed:
 

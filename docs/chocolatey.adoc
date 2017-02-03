@@ -4,6 +4,14 @@
 
 These package use some kind of meta xml to generate actual package files.
 
+An auto-update of all packages in that repository is run everyday. Broken
+packages due to checksum mismatch should fix themselves automatically.
+
+Here is a link to the Auto-Update status and history:
+https://gist.github.com/gep13/bd2eaa76f2a9ab739ca0544c502dca6e
+
+=== Tests changes to autopackages
+
 In order to test locally modified packages you must:
 
 * Install ChocolateyPackageUpdater: `choco install chocolateypackageupdater`
