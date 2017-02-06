@@ -1,2 +1,2 @@
--[BASIC]
--errors-only=True
+[BASIC]
+errors-only=True
