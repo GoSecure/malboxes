@@ -207,13 +207,11 @@ def load_customization(customization_profile):
     customization_filename = os.path.join(
         DIRS.user_config_dir.replace('\\', '/'),
         "customization",
-        customization_profile,
-        ".js")
+        "{}.js".format(customization_profile))
 
     """Loads the customization file, minifies it and returns the content."""
-    customization = {}
     with open(customization_filename, 'r') as customization_file:
-        config = json.loads(jsmin(customization_file.read()))
+        customization = json.loads(jsmin(customization_file.read()))
     return customization
 
 
@@ -412,28 +410,35 @@ def append_to_script(filename, line):
 def prepare_customization(customization_profile):
     """Converts the customization file to a powershell script."""
     customization = load_customization(customization_profile)
-    for i in range(len(customization["registry"])):
-        registry(customization_profile,
-                 customization["registry"][i]["modtype"],
-                 customization["registry"][i]["key"],
-                 customization["registry"][i]["name"],
-                 customization["registry"][i]["value"],
-                 customization["registry"][i]["valuetype"],
-                )
-    for i in range(len(customization["directory"])):
-        directory(customization_profile,
-                  customization["directory"][i]["filetype"],
-                  customization["directory"][i]["dirpath"]
-                 )
-    for i in range(len(customization["document"])):
-        document(customization_profile,
-                 customization["document"][i]["modtype"],
-                 customization["document"][i]["docpath"]
-                )
-    for i in range(len(customization["package"])):
-        package(customization_profile,
-                customization["package"][i]
-               )
+
+    if "registry" in customization:
+        for i in range(len(customization["registry"])):
+            registry(customization_profile,
+                     customization["registry"][i]["modtype"],
+                     customization["registry"][i]["key"],
+                     customization["registry"][i]["name"],
+                     customization["registry"][i]["value"],
+                     customization["registry"][i]["valuetype"],
+                    )
+
+    if "directory" in customization:
+        for i in range(len(customization["directory"])):
+            directory(customization_profile,
+                      customization["directory"][i]["filetype"],
+                      customization["directory"][i]["dirpath"]
+                    )
+    if "document" in customization:
+        for i in range(len(customization["document"])):
+            document(customization_profile,
+                     customization["document"][i]["modtype"],
+                     customization["document"][i]["docpath"]
+                    )
+
+    if "package" in customization:
+        for i in range(len(customization["package"])):
+            package(customization_profile,
+                    customization["package"][i]["package"]
+                    )
 
 
 def registry(customization_profile, modtype, key, name, value, valuetype):
@@ -484,7 +489,7 @@ def directory(customization_profile, modtype, dirpath):
 
 def package(customization_profile, package_name):
     """ Adds a package to install with Chocolatey."""
-    line = "cinst {} -y\r\n".format(package_name)
+    line = "choco install {} -y\r\n".format(package_name)
     print("Adding Chocolatey package: {}".format(package_name))
 
     filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
