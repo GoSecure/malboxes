@@ -116,7 +116,8 @@ For example:
 
     malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
 
-// FIXME
+////
+FIXME: not sure we are going to keep this interface so commented for now
 
 === Customization
 
@@ -145,7 +146,7 @@ You can add packages to install that are specific to the profile:
 Example:
 
     malboxes package RansomwareThatINeedRevengeOn chrome
-
+////
 
 == More information
 
