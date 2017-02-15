@@ -151,11 +151,12 @@ Example:
 
 == More information
 
-=== Applying DevOps Principles for Better Malware Analysis
+=== Presentations
 
-A presentation about malboxes at
-https://www.nsec.io/2016/01/applying-devops-principles-for-better-malware-analysis/[NorthSec]
-by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
+malboxes was presented at
+https://www.nsec.io/2016/01/applying-devops-principles-for-better-malware-analysis/[NorthSec
+2016] in a talk titled _Applying DevOps Principles for Better Malware Analysis_
+given by link:{twob}[Olivier Bilodeau] and link:{twhg}[Hugo Genesse]
 
 * http://gosecure.github.io/presentations/2016-05-19_northsec/malboxes.html[Slides]
   (HTML, best)
