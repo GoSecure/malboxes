@@ -6,6 +6,29 @@
 This document provides a high-level view of the changes introduced in {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+== 0.3.0dev
+
+// missing release title
+
+////
+Enhancements::
+
+Bug fixes::
+
+=== Release meta
+
+Released by
+
+// {uri-repo}/issues?q=milestone%3A1.0.0[issues resolved] |
+{uri-repo}/releases/tag/0.2.0[git tag] |
+{uri-repo}/compare/0.1.0...0.2.0[full diff]
+
+=== Credits
+
+Thanks to the following people who contributed to this release:
+////
+
+
 == 0.2.0
 
 The _#RSAC gift_ release!
