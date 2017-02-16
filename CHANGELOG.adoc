@@ -6,9 +6,9 @@
 This document provides a high-level view of the changes introduced in {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== 0.2.0dev
+== 0.2.0
 
-The _yes, we exist_ release!
+The _#RSAC gift_ release!
 
 Enhancements::
   * Updated Windows 10 to Anniversary Edition ({uri-issue}21[#21])
@@ -29,22 +29,21 @@ Bug fixes::
   * Temporarily removed depwalker and regshot from choco packages ({uri-issue}16[#16])
   * VirtualBox Guest Additions: Support for the new certificate name ({uri-issue}24[#24])
 
-////
 
 === Release meta
 
-Released by @obilodeau
+Released by @obilodeau on 2017-02-16.
 
-{uri-repo}/issues?q=milestone%3A1.0.0[issues resolved] |
-{uri-repo}/releases/tag/v1.0.0[git tag]
-// TODO full-diff when we can at the next release
+// {uri-repo}/issues?q=milestone%3A1.0.0[issues resolved] |
+{uri-repo}/releases/tag/v0.2.0[git tag] |
+{uri-repo}/compare/v0.1.0...v0.2.0[full diff]
 
 === Credits
 
 Thanks to the following people who contributed to this release:
 
 Olivier Bilodeau, Hugo Genesse
-////
+
 
 == 0.1.0
 
