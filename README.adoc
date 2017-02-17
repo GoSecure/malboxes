@@ -13,8 +13,7 @@ image:https://img.shields.io/travis/GoSecure/malboxes/master.svg[Build
 Status (Travis CI), link=https://travis-ci.org/GoSecure/malboxes]
 endif::[]
 
-
-Vagrant box builder and config generator for malware analysis
+Builds malware analysis Windows virtual machines so that you don't have to.
 
 https://github.com/gosecure/malboxes
 
