@@ -150,6 +150,17 @@ Example:
 
 == More information
 
+=== Videos
+
+Introduction video
+
+image::https://img.youtube.com/vi/oq6N3WLAoe8/0.jpg[link="https://www.youtube.com/watch?v=oq6N3WLAoe8"]
+
+=== Blog posts
+
+* Introductory blog post:
+  http://gosecure.net/2017/02/16/introducing-malboxes-a-tool-to-build-malware-analysis-virtual-machines/
+
 === Presentations
 
 malboxes was presented at
