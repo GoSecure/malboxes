@@ -43,6 +43,8 @@ def initialize():
     # create appdata directories if they don't exist
     if not os.path.exists(DIRS.user_config_dir):
         os.makedirs(DIRS.user_config_dir)
+        os.makedirs(os.path.join(DIRS.user_config_dir, "customization"))
+        os.makedirs(os.path.join(DIRS.user_config_dir, "scripts", "user"))
 
     if not os.path.exists(DIRS.user_cache_dir):
         os.makedirs(DIRS.user_cache_dir)
@@ -424,7 +426,7 @@ def prepare_customization(customization_profile):
     if "directory" in customization:
         for i in range(len(customization["directory"])):
             directory(customization_profile,
-                      customization["directory"][i]["filetype"],
+                      customization["directory"][i]["modtype"],
                       customization["directory"][i]["dirpath"]
                     )
     if "document" in customization:
@@ -463,7 +465,7 @@ def registry(customization_profile, modtype, key, name, value, valuetype):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join(DIRS.user_config_dir.replace('\\', '/'), "scripts", "user",
+    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
                             "{}.ps1".format(customization_profile))
     append_to_script(filename, line)
 
