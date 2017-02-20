@@ -317,12 +317,13 @@ def run_packer(packer_tmpl, args):
             f.write(jsmin(config.read()))
             f.close()
 
+        flags = ['-var-file={}'.format(f.name)]
+
         if DEBUG:
             special_env = {'PACKER_LOG': '1'}
+            flags.append('-on-error=abort')
         else:
             special_env = None
-
-        flags = ['-var-file={}'.format(f.name)]
 
         cmd = [binary, 'build']
         cmd.extend(flags)
