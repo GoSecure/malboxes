@@ -10,9 +10,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 // missing release title
 
-////
 Enhancements::
+* debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
 
+////
 Bug fixes::
 
 === Release meta
