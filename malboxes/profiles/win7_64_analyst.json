@@ -1,0 +1,30 @@
+{
+	"builders": [{
+		"guest_os_type": "Windows7",
+		{% include 'snippets/builder_virtualbox_windows.json' %},
+
+		"iso_url": "file://{{ iso_path }}/en_windows_7_professional_with_sp1_x86_dvd_u_677056.iso",
+		"iso_checksum": "d89937df3a9bc2ec1a1486195fd308cd3dade928",
+		"iso_checksum_type": "sha1",
+
+		"floppy_files": [
+			"{{ cache_dir }}/Autounattend.xml",
+			"{{ dir }}/installconfig/windows7/enablewinrm.ps1"
+		]
+	}],
+
+	{% include 'snippets/postprocessor_vagrant.json' %},
+
+	"provisioners": [
+
+	{% include 'snippets/provision_powershell.json' %}
+
+	{% if tools_path %},
+		{% include 'snippets/tools.json' %}
+	{% endif %}
+	{% if ida_path %},
+		{% include 'snippets/ida_remote_32.json' %}
+	{% endif %}
+
+	]
+}
