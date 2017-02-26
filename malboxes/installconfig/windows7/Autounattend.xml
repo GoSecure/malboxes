@@ -89,12 +89,24 @@
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
                     <Order>2</Order>
+                    <Description>Disable Network Prompt</Description>
+                    <CommandLine>cmd.exe /c reg add "HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"</CommandLine>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>3</Order>
+                    <Description>Mark all networks as private</Description>
+                    <CommandLine>cmd.exe /c powershell -File a:\fixnetworks.ps1</CommandLine>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>4</Order>
 		    <CommandLine>cmd.exe /c wmic useraccount where &quot;name=&apos;{{ username }}&apos;&quot; set PasswordExpires=FALSE</CommandLine>
 		    <Description>Disable password expiration for user {{ username }}</Description>
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <Order>3</Order>
+                    <Order>5</Order>
                     <CommandLine>cmd.exe /c powershell -File &quot;A:\enablewinrm.ps1&quot;</CommandLine>
                     <Description>Enable WinRM for Packer/Vagrant communicator</Description>
                     <RequiresUserInput>true</RequiresUserInput>
