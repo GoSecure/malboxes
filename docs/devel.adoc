@@ -14,6 +14,7 @@ branch to test in the following command:
 
     pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git@branchname#egg=malboxes
 
+
 == Making a release
 
 . Update the version in `malboxes/_version.py`
@@ -34,3 +35,36 @@ branch to test in the following command:
 
 . Update version in `malboxes/_version.py` (+1 feature, append 'dev') and commit
 ** commit msg: Begin development on next release
+
+
+== VirtualBox Management Commands
+
+Useful commands:
+
+    VBoxManage list vms
+
+    VBoxManage showvminfo <vm>
+
+    VBoxManage controlvm packer-virtualbox-iso-1488033522 poweroff
+
+If that doesn't work, kill the VBoxHeadless process.
+
+    VBoxManage unregistervm --delete <vm>
+
+
+== How to View Errors from Scripts Called from Autounattend.xml
+
+=== PowerShell
+
+Add this to the end of PowerShell scripts:
+
+    Write-Host "Press any key to continue ..."
+    $x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyUp")
+
+This will pause scripts allowing you to see the output.
+
+=== Command (cmd.exe)
+
+    PAUSE
+
+Will stop a batch script execution until a key is pressed.
