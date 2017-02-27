@@ -80,6 +80,31 @@
                 <Enabled>true</Enabled>
 		<Username>{{ username }}</Username>
             </AutoLogon>
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+                <ProtectYourPC>3</ProtectYourPC>
+                <NetworkLocation>Home</NetworkLocation>
+            </OOBE>
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value>{{ password }}</Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+                <LocalAccounts>
+                    <LocalAccount wcm:action="add">
+                        <Password>
+                            <Value>{{ password }}</Value>
+                            <PlainText>true</PlainText>
+                        </Password>
+			<DisplayName>{{ username }}</DisplayName>
+                        <Group>Administrators</Group>
+			<Name>{{ username }}</Name>
+                    </LocalAccount>
+                </LocalAccounts>
+            </UserAccounts>
+            <RegisteredOwner>{{ username }}</RegisteredOwner>
+            <TimeZone>Eastern Standard Time</TimeZone>
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
                     <Order>1</Order>
@@ -112,31 +137,6 @@
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
             </FirstLogonCommands>
-            <OOBE>
-                <HideEULAPage>true</HideEULAPage>
-                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-                <ProtectYourPC>3</ProtectYourPC>
-                <NetworkLocation>Home</NetworkLocation>
-            </OOBE>
-            <UserAccounts>
-                <AdministratorPassword>
-                    <Value>{{ password }}</Value>
-                    <PlainText>true</PlainText>
-                </AdministratorPassword>
-                <LocalAccounts>
-                    <LocalAccount wcm:action="add">
-                        <Password>
-                            <Value>{{ password }}</Value>
-                            <PlainText>true</PlainText>
-                        </Password>
-			<DisplayName>{{ username }}</DisplayName>
-                        <Group>Administrators</Group>
-			<Name>{{ username }}</Name>
-                    </LocalAccount>
-                </LocalAccounts>
-            </UserAccounts>
-	    <RegisteredOwner>{{ username }}</RegisteredOwner>
-            <TimeZone>Eastern Standard Time</TimeZone>
         </component>
     </settings>
     <settings pass="specialize">
