@@ -1,132 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
-    <settings pass="oobeSystem">
-        <component name="Microsoft-Windows-International-Core" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <InputLocale>0409:00020409</InputLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
-            <UILanguageFallback>en-US</UILanguageFallback>
-            <UserLocale>en-US</UserLocale>
-        </component>
-        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <TimeZone>W. Europe Standard Time</TimeZone>
-            <OOBE>
-                <HideEULAPage>true</HideEULAPage>
-                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
-                <NetworkLocation>Work</NetworkLocation>
-                <ProtectYourPC>3</ProtectYourPC>
-                <SkipUserOOBE>true</SkipUserOOBE>
-                <SkipMachineOOBE>true</SkipMachineOOBE>
-            </OOBE>
-            <AutoLogon>
-                <Enabled>true</Enabled>
-                <LogonCount>5</LogonCount>
-		<Username>{{ username }}</Username>
-                <Password>
-                    <Value>{{ password }}</Value>
-                    <PlainText>true</PlainText>
-                </Password>
-            </AutoLogon>
-            <UserAccounts>
-                <AdministratorPassword>
-                    <Value>{{ password }}</Value>
-                    <PlainText>true</PlainText>
-                </AdministratorPassword>
-                <LocalAccounts>
-                    <LocalAccount wcm:action="add">
-                        <Password>
-                            <Value>{{ password }}</Value>
-                            <PlainText>true</PlainText>
-                        </Password>
-			<Name>{{ username }}</Name>
-			<DisplayName>{{ username }}</DisplayName>
-                    </LocalAccount>
-                </LocalAccounts>
-            </UserAccounts>
-        </component>
-    </settings>
-    <settings pass="specialize">
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <RunSynchronous>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>1</Order>
-                    <Path>reg add HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff</Path>
-                    <WillReboot>Never</WillReboot>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
-                    <Path>reg add HKLM\Software\Microsoft\Windows\CurrentVersion\Run /v Agent /t REG_SZ /d C:\vmcloak\bootstrap.bat</Path>
-                    <WillReboot>Never</WillReboot>
-                </RunSynchronousCommand>
-            </RunSynchronous>
-        </component>
-        <component name="Microsoft-Windows-Security-SPP-UX" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <SkipAutoActivation>true</SkipAutoActivation>
-        </component>
-        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <ComputerName>Malboxes</ComputerName>
-            <ShowWindowsLive>false</ShowWindowsLive>
-        </component>
-        <component name="Networking-MPSSVC-Svc" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <DisableStatefulFTP>true</DisableStatefulFTP>
-            <DisableStatefulPPTP>true</DisableStatefulPPTP>
-            <DomainProfile_EnableFirewall>false</DomainProfile_EnableFirewall>
-            <PrivateProfile_EnableFirewall>false</PrivateProfile_EnableFirewall>
-            <PublicProfile_EnableFirewall>false</PublicProfile_EnableFirewall>
-        </component>
-    </settings>
     <settings pass="windowsPE">
-        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <InputLocale>0409:00020409</InputLocale>
-            <SystemLocale>en-US</SystemLocale>
-            <UILanguage>en-US</UILanguage>
-            <UILanguageFallback>en-US</UILanguageFallback>
-            <UserLocale>en-US</UserLocale>
-            <SetupUILanguage>
-                <UILanguage>en-US</UILanguage>
-            </SetupUILanguage>
-        </component>
-        <component name="Microsoft-Windows-Setup" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <DiskConfiguration>
-                <WillShowUI>OnError</WillShowUI>
-                <Disk>
-                    <DiskID>0</DiskID>
-                    <WillWipeDisk>false</WillWipeDisk>
+                <Disk wcm:action="add">
                     <CreatePartitions>
-                        <CreatePartition>
-                            <Order>1</Order>
-                            <Size>300</Size>
-                            <Type>Primary</Type>
-                        </CreatePartition>
-                        <CreatePartition>
-                            <Order>2</Order>
+                        <CreatePartition wcm:action="add">
                             <Extend>true</Extend>
+                            <Order>1</Order>
                             <Type>Primary</Type>
                         </CreatePartition>
                     </CreatePartitions>
                     <ModifyPartitions>
-                        <ModifyPartition>
+                        <ModifyPartition wcm:action="add">
                             <Active>true</Active>
                             <Format>NTFS</Format>
-                            <Label>System</Label>
+                            <Letter>C</Letter>
                             <Order>1</Order>
                             <PartitionID>1</PartitionID>
                         </ModifyPartition>
-                        <ModifyPartition>
-                            <Format>NTFS</Format>
-                            <Label>Windows</Label>
-                            <Order>2</Order>
-                            <PartitionID>2</PartitionID>
-                        </ModifyPartition>
                     </ModifyPartitions>
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
                 </Disk>
+                <WillShowUI>OnError</WillShowUI>
             </DiskConfiguration>
-            <EnableNetwork>true</EnableNetwork>
-            <EnableFirewall>false</EnableFirewall>
             <ImageInstall>
                 <OSImage>
-                    <InstallToAvailablePartition>false</InstallToAvailablePartition>
-                    <WillShowUI>OnError</WillShowUI>
                     <InstallFrom>
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME</Key>
@@ -138,8 +38,8 @@
                         </MetaData>
                     </InstallFrom>
                     <InstallTo>
+                        <PartitionID>1</PartitionID>
                         <DiskID>0</DiskID>
-                        <PartitionID>2</PartitionID>
                     </InstallTo>
                 </OSImage>
             </ImageInstall>
@@ -153,32 +53,97 @@
                 <AcceptEula>true</AcceptEula>
             </UserData>
         </component>
-        <component name="Microsoft-Windows-TCPIP" processorArchitecture="x64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <Interfaces>
-                <Interface wcm:action="add">
-                    <Identifier>Local Area Connection</Identifier>
-                    <Ipv4Settings>
-                        <DhcpEnabled>false</DhcpEnabled>
-                        <Metric>1</Metric>
-                        <RouterDiscoveryEnabled>false</RouterDiscoveryEnabled>
-                    </Ipv4Settings>
-                    <Ipv6Settings>
-                        <DhcpEnabled>false</DhcpEnabled>
-                        <Metric>30</Metric>
-                        <RouterDiscoveryEnabled>true</RouterDiscoveryEnabled>
-                    </Ipv6Settings>
-                    <UnicastIpAddresses>
-                        <IpAddress wcm:action="add" wcm:keyValue="1">192.168.56.254/24</IpAddress>
-                    </UnicastIpAddresses>
-                    <Routes>
-                        <Route wcm:action="add">
-                            <Identifier>0</Identifier>
-                            <Prefix>0.0.0.0/0</Prefix>
-                            <NextHopAddress>192.168.56.1</NextHopAddress>
-                        </Route>
-                    </Routes>
-                </Interface>
-            </Interfaces>
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <SetupUILanguage>
+                <WillShowUI>Never</WillShowUI>
+                <UILanguage>en-US</UILanguage>
+            </SetupUILanguage>
+            <InputLocale>en-US</InputLocale>
+            <SystemLocale>en-US</SystemLocale>
+            <UILanguage>en-US</UILanguage>
+            <UILanguageFallback>en-US</UILanguageFallback>
+            <UserLocale>en-US</UserLocale>
         </component>
     </settings>
+    <settings pass="offlineServicing">
+        <component name="Microsoft-Windows-LUA-Settings" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <EnableLUA>false</EnableLUA>
+        </component>
+    </settings>
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <AutoLogon>
+                <Password>
+                    <Value>{{ password }}</Value>
+                    <PlainText>true</PlainText>
+                </Password>
+                <Enabled>true</Enabled>
+		<Username>{{ username }}</Username>
+            </AutoLogon>
+            <OOBE>
+                <HideEULAPage>true</HideEULAPage>
+                <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+                <ProtectYourPC>3</ProtectYourPC>
+                <NetworkLocation>Home</NetworkLocation>
+            </OOBE>
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value>{{ password }}</Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+                <LocalAccounts>
+                    <LocalAccount wcm:action="add">
+                        <Password>
+                            <Value>{{ password }}</Value>
+                            <PlainText>true</PlainText>
+                        </Password>
+			<DisplayName>{{ username }}</DisplayName>
+                        <Group>Administrators</Group>
+			<Name>{{ username }}</Name>
+                    </LocalAccount>
+                </LocalAccounts>
+            </UserAccounts>
+            <RegisteredOwner>{{ username }}</RegisteredOwner>
+            <TimeZone>Eastern Standard Time</TimeZone>
+            <FirstLogonCommands>
+                <SynchronousCommand wcm:action="add">
+                    <Order>1</Order>
+                    <Description>Set Unrestricted Execution Policy</Description>
+                    <CommandLine>cmd.exe /c powershell -Command &quot;Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force&quot;</CommandLine>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>2</Order>
+                    <Description>Disable Network Prompt</Description>
+                    <CommandLine>cmd.exe /c reg add "HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"</CommandLine>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>3</Order>
+                    <Description>Mark all networks as private</Description>
+                    <CommandLine>cmd.exe /c powershell -File a:\fixnetworks.ps1</CommandLine>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>4</Order>
+		    <CommandLine>cmd.exe /c wmic useraccount where &quot;name=&apos;{{ username }}&apos;&quot; set PasswordExpires=FALSE</CommandLine>
+		    <Description>Disable password expiration for user {{ username }}</Description>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
+                    <Order>5</Order>
+                    <CommandLine>cmd.exe /c powershell -File &quot;A:\enablewinrm.ps1&quot;</CommandLine>
+                    <Description>Enable WinRM for Packer/Vagrant communicator</Description>
+                    <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+            </FirstLogonCommands>
+        </component>
+    </settings>
+    <settings pass="specialize">
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <RegisteredOwner>{{ username }}</RegisteredOwner>
+	    <ComputerName>{{ computername }}</ComputerName>
+        </component>
+    </settings>
+    <cpi:offlineImage cpi:source="wim:e:/sources/install.wim#Windows 7 PROFESSIONAL" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
 </unattend>
