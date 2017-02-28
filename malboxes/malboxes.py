@@ -224,13 +224,11 @@ def prepare_config(profile):
                     config_file)
 
     config = load_config(config_file, profile)
-
     packer_tmpl = prepare_packer_template(config, profile)
 
     # merge/update with profile config
     with open(packer_tmpl, 'r') as f:
         config.update(json.loads(f.read()))
-
     return config, packer_tmpl
 
 
@@ -317,13 +315,12 @@ def run_packer(packer_tmpl, args):
             f.write(jsmin(config.read()))
             f.close()
 
-        flags = ['-var-file={}'.format(f.name)]
-
         if DEBUG:
             special_env = {'PACKER_LOG': '1'}
-            flags.append('-on-error=abort')
         else:
             special_env = None
+
+        flags = ['-var-file={}'.format(f.name)]
 
         cmd = [binary, 'build']
         cmd.extend(flags)
@@ -427,11 +424,18 @@ def spin(parser, args):
     config['profile'] = args.profile
     config['name'] = args.name
 
+
     print("Creating a Vagrantfile")
-    with open("Vagrantfile", 'w') as f:
-        _prepare_vagrantfile(config, "analyst_single.rb", f)
-    print("Vagrantfile generated. You can move it in your analysis directory "
-          "and issue a `vagrant up` to get started with your VM.")
+    if not config['hypervisor']:
+        with open("Vagrantfile", 'w') as f:
+            _prepare_vagrantfile(config, "analyst_single.rb", f)
+        print("Vagrantfile generated. You can move it in your analysis directory "
+              "and issue a `vagrant up` to get started with your VM.")
+    elif config['hypervisor']:
+        with open("Vagrantfile", 'w') as f:
+            _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
+        print("Vagrantfile generated. You can move it in your analysis directory "
+              "and issue a `vagrant up` to get started with your VM.")
 
 
 def append_to_script(filename, line):
