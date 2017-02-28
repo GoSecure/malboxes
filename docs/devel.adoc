@@ -68,3 +68,13 @@ This will pause scripts allowing you to see the output.
     PAUSE
 
 Will stop a batch script execution until a key is pressed.
+
+
+== Other Packer Windows Initiatives
+
+When facing problems, it is useful to check here for inspiration on how to fix
+problems.
+
+* https://github.com/joefitzgerald/packer-windows
+* https://github.com/jedi4ever/veewee/tree/master/templates
+* https://github.com/boxcutter/windows
