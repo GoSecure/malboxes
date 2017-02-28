@@ -1,5 +1,5 @@
 	"post-processors": [{
 		"type": "vagrant",
 		"output": "boxes/{{ profile_name }}.box",
-		"keep_input_artifact": false
+                "vagrantfile_template": "{{ cache_dir }}/box_win.rb"
 	}]
