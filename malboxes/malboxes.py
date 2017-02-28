@@ -55,7 +55,8 @@ def init_parser():
                                 "and config generator for malware analysis.")
     parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s ' + __version__)
-    parser.add_argument('-d', '--debug', action='store_true', help="Debug mode")
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help="Debug mode. Leaves built VMs running on failure!")
     subparsers = parser.add_subparsers()
 
     # list command
