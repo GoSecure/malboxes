@@ -3,7 +3,7 @@
 #
 # Olivier Bilodeau <obilodeau@gosecure.ca>
 # Hugo Genesse <hugo.genesse@polymtl.ca>
-# Copyright (C) 2016 GoSecure Inc.
+# Copyright (C) 2016, 2017 GoSecure Inc.
 # Copyright (C) 2016 Hugo Genesse
 # All rights reserved.
 #
