@@ -56,6 +56,7 @@ Also filed https://github.com/GoSecure/malboxes/issues/23[in issue #23].
 * http://www.securityweek.com/dyre-banking-trojan-counts-processor-cores-detect-sandboxes
 * http://unprotect.tdgt.org/index.php/Cheat_Sheets
 * http://vmcloak.readthedocs.io/en/latest/hwconfig.html#hwconfig-create
+* https://github.com/0x4D31/honeybits
 
 == Related projects that might be useful
 
