@@ -25,6 +25,10 @@ https://github.com/gosecure/malboxes
 * vagrant: https://www.vagrantup.com/downloads.html
 * VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
+.Specs for the build machine
+* At least 5 GB of RAM
+* VT-X extensions strongly recommended
+
 
 == Installation
 

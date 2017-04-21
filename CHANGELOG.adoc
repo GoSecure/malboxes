@@ -11,11 +11,15 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 // missing release title
 
 Enhancements::
+* New profile: Windows 7 64-bit: win7_64_analyst (#42)
 * debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
+* Documentation improvements
+
+Bug fixes::
+* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43)
+* Increased WinRM memory limit on Windows 7 solves errors installing .Net Framework 4.0 (#31, #44)
 
 ////
-Bug fixes::
-
 === Release meta
 
 Released by

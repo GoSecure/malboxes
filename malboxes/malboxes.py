@@ -3,7 +3,7 @@
 #
 # Olivier Bilodeau <obilodeau@gosecure.ca>
 # Hugo Genesse <hugo.genesse@polymtl.ca>
-# Copyright (C) 2016 GoSecure Inc.
+# Copyright (C) 2016, 2017 GoSecure Inc.
 # Copyright (C) 2016 Hugo Genesse
 # All rights reserved.
 #
@@ -34,7 +34,7 @@ from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
 from jsmin import jsmin
 
-#from malboxes._version import __version__
+from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
@@ -56,8 +56,9 @@ def init_parser():
                     description="Vagrant box builder "
                                 "and config generator for malware analysis.")
     parser.add_argument('-V', '--version', action='version',
-                        version='%(prog)s ' + "0.1")
-    parser.add_argument('-d', '--debug', action='store_true', help="Debug mode")
+                        version='%(prog)s ' + __version__)
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help="Debug mode. Leaves built VMs running on failure!")
     subparsers = parser.add_subparsers()
 
     # list command
