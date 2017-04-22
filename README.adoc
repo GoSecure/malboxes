@@ -25,6 +25,11 @@ https://github.com/gosecure/malboxes
 * vagrant: https://www.vagrantup.com/downloads.html
 * VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
+=== Fedora
+
+    dnf install ruby-devel gcc-c++ zlib-devel
+    vagrant plugin install winrm winrm-fs
+
 .Specs for the build machine
 * At least 5 GB of RAM
 * VT-X extensions strongly recommended
