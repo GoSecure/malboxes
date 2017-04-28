@@ -9,7 +9,9 @@
 		"shutdown_command": "shutdown /s /f /t 10",
 		"vboxmanage": [
 			["modifyvm", "{{ '{{.Name}}' }}", "--memory", "4096"],
-			["modifyvm", "{{ '{{.Name}}' }}", "--cpus", "1"]
+			["modifyvm", "{{ '{{.Name}}' }}", "--cpus", "1"],
+			["modifyvm", "{{ '{{.Name}}' }}", "--cpuexecutioncap", "80"],
+			["modifyvm", "{{ '{{.Name}}' }}", "--vram", "128"]		
 		],
 		"boot_wait": "10s",
 		"disk_size": "{{ disk_size }}",
