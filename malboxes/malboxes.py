@@ -303,9 +303,9 @@ def run_packer(packer_tmpl, args):
 
     try:
         # packer or packer-io?
-        binary = 'packer'
+        binary = 'packer-io'
         if shutil.which(binary) == None:
-            binary = 'packer-io'
+            binary = 'packer'
             if shutil.which(binary) == None:
                 print("packer not found. Install it: "
                       "https://www.packer.io/intro/getting-started/setup.html")
