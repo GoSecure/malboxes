@@ -21,18 +21,23 @@ https://github.com/gosecure/malboxes
 == Requirements
 
 * Python 3.3+
-* packer: https://www.packer.io/intro/getting-started/setup.html
+* packer: https://www.packer.io/docs/install/index.html
 * vagrant: https://www.vagrantup.com/downloads.html
 * VirtualBox: https://www.virtualbox.org/wiki/Downloads
+
+=== Minimum specs for the build machine
+
+* At least 5 GB of RAM
+* VT-X extensions strongly recommended
 
 === Fedora
 
     dnf install ruby-devel gcc-c++ zlib-devel
     vagrant plugin install winrm winrm-fs
 
-.Specs for the build machine
-* At least 5 GB of RAM
-* VT-X extensions strongly recommended
+=== Debian
+
+    apt install vagrant git python3-pip
 
 
 == Installation
