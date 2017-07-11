@@ -51,6 +51,7 @@ https://github.com/joefitzgerald/packer-windows/blob/master/answer_files/7/Autou
 Also filed https://github.com/GoSecure/malboxes/issues/23[in issue #23].
 
 * Nice overview article: https://byte-atlas.blogspot.ca/2017/02/hardening-vbox-win7x64.html
+* https://github.com/CheckPointSW/InviZzzible, new tool by checkpoint people
 * https://github.com/hfiref0x/VBoxHardenedLoader
 * https://github.com/a0rtega/pafish, vm detection tool (pass it)
 * http://www.securityweek.com/dyre-banking-trojan-counts-processor-cores-detect-sandboxes
@@ -108,6 +109,12 @@ Talk to sholmes, he did it.
 
 == Optimizations
 
+* https://github.com/W4RH4WK/Debloat-Windows-10
+
 === Use VirtualBox's linked_clones Vagrant config
 
 https://www.vagrantup.com/docs/virtualbox/configuration.html
+
+== Honeypot Workflow
+
+* https://github.com/0x4D31/honeybits
