@@ -13,6 +13,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 Enhancements::
 * New profile: Windows 7 64-bit: win7_64_analyst (#42)
 * debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
+* Better out of the box support of Fedora, CentOS and RedHat as host (#53)
 * Documentation improvements
 
 Bug fixes::
