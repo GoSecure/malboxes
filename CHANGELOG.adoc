@@ -18,7 +18,7 @@ Enhancements::
 * Documentation improvements
 
 Bug fixes::
-* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43)
+* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43, #60)
 * Increased WinRM memory limit on Windows 7 solves errors installing .Net Framework 4.0 (#31, #44)
 * More Windows 7 .Net Framework 4.0 fixes (#59)
 
