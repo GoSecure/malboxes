@@ -18,8 +18,7 @@
 
 		"floppy_files": [
 			"{{ cache_dir }}/Autounattend.xml",
-			"{{ dir }}/installconfig/windows7/enablewinrm.ps1",
-			"{{ dir }}/scripts/windows/fixnetworks.ps1"
+			"{{ dir }}/installconfig/windows7/enablewinrm.ps1"
 		]
 	}],
 
