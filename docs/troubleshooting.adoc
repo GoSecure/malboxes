@@ -1,0 +1,34 @@
+= Troubleshooting guide
+
+== WinRM issues
+
+Verify
+
+* In the VM via VNC/RDP: is the WinRM service is running? did the
+  configuration happened?
+
+    winrm get winrm/config
+
+* Host: VirtualBox NAT rule is in place and proper port is exposed to packer
+
+    VBoxManage list vms
+    VBoxManage showvminfo packer-virtualbox-iso-XXXXXXXXXX | grep "NIC.*Rule"
+
+* VM: Windows firewall rule for 5985 is in place (via GUI)
+* VM: Verified the NIC's network realm (public, work, private) and verified if firewall rule is according
+* Host: Telnet connects to host mapped port (shown in output)
+* VM: Sniffing with wireshark on port 5985 (should see SYN then SYN/ACKs)
+
+Also you can try this WinRM script (you need to install pywinrm module):
+
+[source,python]
+----
+import winrm
+
+s = winrm.Session('localhost:3935', auth=('malboxes', 'malboxes'))
+r = s.run_cmd('powershell', ['winrm', 'get', 'winrm/config/winrs'])
+
+print(r.status_code)
+print(r.std_out)
+print(r.std_err)
+----
