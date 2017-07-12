@@ -1,5 +1,6 @@
 # We need to wait for the network to come up before we can attempt to change its settings
-Start-Sleep -s 30
+# See gh#60
+Start-Sleep -s 45
 
 # --------------------------------------------------------------------------------------------------------------------
 # Enclosed section comes from the packer-windows project
