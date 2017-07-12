@@ -12,13 +12,15 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Enhancements::
 * New profile: Windows 7 64-bit: win7_64_analyst (#42)
+* Support for trial versions of Windows 7 Enterprise x86 and x64
 * debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
 * Better out of the box support of Fedora, CentOS and RedHat as host (#53)
 * Documentation improvements
 
 Bug fixes::
-* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43)
+* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43, #60)
 * Increased WinRM memory limit on Windows 7 solves errors installing .Net Framework 4.0 (#31, #44)
+* More Windows 7 .Net Framework 4.0 fixes (#59)
 
 ////
 === Release meta

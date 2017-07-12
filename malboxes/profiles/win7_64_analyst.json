@@ -3,14 +3,22 @@
 		"guest_os_type": "Windows7_64",
 		{% include 'snippets/builder_virtualbox_windows.json' %},
 
-		"iso_url": "file://{{ iso_path }}/en_windows_7_professional_with_sp1_x64_dvd_u_676939.iso",
-		"iso_checksum": "0bcfc54019ea175b1ee51f6d2b207a3d14dd2b58",
-		"iso_checksum_type": "sha1",
+		{% if trial != 'true' %}
+			"iso_url": "file://{{ iso_path }}/en_windows_7_professional_with_sp1_x64_dvd_u_676939.iso",
+			"iso_checksum": "0bcfc54019ea175b1ee51f6d2b207a3d14dd2b58",
+			"iso_checksum_type": "sha1",
+		{% else %}
+			"iso_urls": [
+				"file://{{ iso_path }}/7600.16385.090713-1255_x64fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENXEVAL_EN_DVD.iso",
+                                "http://care.dlservice.microsoft.com/dl/download/evalx/win7/x64/EN/7600.16385.090713-1255_x64fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENXEVAL_EN_DVD.iso"
+			],
+			"iso_checksum": "15ddabafa72071a06d5213b486a02d5b55cb7070",
+			"iso_checksum_type": "sha1",
+		{% endif %}
 
 		"floppy_files": [
 			"{{ cache_dir }}/Autounattend.xml",
-			"{{ dir }}/installconfig/windows7_64/enablewinrm.ps1",
-			"{{ dir }}/scripts/windows/fixnetworks.ps1"
+			"{{ dir }}/installconfig/windows7_64/enablewinrm.ps1"
 		]
 	}],
 
@@ -18,7 +26,7 @@
 
 	"provisioners": [
 
-	{% include 'snippets/provision_powershell.json' %}
+	{% include 'snippets/provision_powershell_win7.json' %}
 
 	{% if tools_path %},
 		{% include 'snippets/tools.json' %}
