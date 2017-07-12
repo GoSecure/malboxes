@@ -1,3 +1,6 @@
+# We need to wait for the network to come up before we can attempt to change its settings
+Start-Sleep -s 30
+
 # --------------------------------------------------------------------------------------------------------------------
 # Enclosed section comes from the packer-windows project
 # https://github.com/joefitzgerald/packer-windows/blob/a2b9d6fdd91a857d605fb1d7ec822f3fdfa71db4/scripts/fixnetwork.ps1
