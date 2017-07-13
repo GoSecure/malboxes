@@ -5,7 +5,7 @@
 		"communicator": "winrm",
 		"winrm_username": "{{ username }}",
 		"winrm_password": "{{ password }}",
-		"winrm_timeout": "30m",
+		"winrm_timeout": "60m",
 		"shutdown_command": "shutdown /s /f /t 10",
 		"vboxmanage": [
 			["modifyvm", "{{ '{{.Name}}' }}", "--memory", "4096"],
