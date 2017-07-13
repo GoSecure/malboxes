@@ -13,11 +13,12 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 Enhancements::
 * New profile: Windows 7 64-bit: win7_64_analyst (#42)
 * Support for trial versions of Windows 7 Enterprise x86 and x64
-* debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
 * Better out of the box support of Fedora, CentOS and RedHat as host (#53)
 * Use user cache directories for packer. This avoids caching in memory-backed locations to
   prevent unnecessary memory pressure during builds or free space issues on
   low RAM systems (#45)
+* Added a --force flag to overwrite pre-existing packer artifacts or vagrant boxes (#46)
+* debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
 * Documentation improvements
 
 Bug fixes::

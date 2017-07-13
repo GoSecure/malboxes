@@ -71,6 +71,9 @@ def init_parser():
     parser_build.add_argument('profile', help='Name of the profile to build. '
                                               'Use list command to view '
                                               'available profiles.')
+    parser_build.add_argument('--force', action='store_true',
+                              help='Force the build to happen. Overwrites '
+                                   'pre-existing builds or vagrant boxes.')
     parser_build.add_argument('--skip-packer-build', action='store_true',
                               help='Skip packer build phase. '
                                    'Only useful for debugging.')
@@ -326,6 +329,9 @@ def run_packer(packer_tmpl, args):
             special_env['PACKER_LOG']  = '1'
             flags.append('-on-error=abort')
 
+        if args.force:
+            flags.append('-force')
+
         cmd = [binary, 'build']
         cmd.extend(flags)
         cmd.append(packer_tmpl)
@@ -347,7 +353,13 @@ def add_box(config, args):
     box = os.path.join(DIRS.user_cache_dir, box)
     box = box.replace('{{user `name`}}', args.profile)
 
-    cmd = ['vagrant', 'box', 'add', box, '--name={}'.format(args.profile)]
+    flags = ['--name={}'.format(args.profile)]
+    if args.force:
+        flags.append('--force')
+
+    cmd = ['vagrant', 'box', 'add']
+    cmd.extend(flags)
+    cmd.append(box)
     ret = run_foreground(cmd)
 
     print("----------------------------")
