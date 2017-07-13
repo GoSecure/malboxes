@@ -410,21 +410,22 @@ def build(parser, args):
         print("'vagrant box add' failed. Build failed. Exiting...")
         sys.exit(4)
 
-    print(textwrap.dedent("""
-    ===============================================================
-    A base box was imported into your local Vagrant box repository.
-    You should generate a Vagrantfile configuration in order to
-    launch an instance of your box:
+    if not args.skip_vagrant_box_add:
+        print(textwrap.dedent("""
+        ===============================================================
+        A base box was imported into your local Vagrant box repository.
+        You should generate a Vagrantfile configuration in order to
+        launch an instance of your box:
 
-    malboxes spin {} <analysis_name>
+        malboxes spin {} <analysis_name>
 
-    You can safely remove the {}/boxes/
-    directory if you don't plan on hosting or sharing your base box.
+        You can safely remove the {}/boxes/
+        directory if you don't plan on hosting or sharing your base box.
 
-    You can re-use this base box several times by using `malboxes
-    spin`. Each VM will be independent of each other.
-    ===============================================================""")
-    .format(args.profile, DIRS.user_cache_dir))
+        You can re-use this base box several times by using `malboxes
+        spin`. Each VM will be independent of each other.
+        ===============================================================""")
+        .format(args.profile, DIRS.user_cache_dir))
 
 
 def spin(parser, args):
