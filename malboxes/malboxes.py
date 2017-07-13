@@ -311,7 +311,7 @@ def run_packer(packer_tmpl, args):
             binary = 'packer'
             if shutil.which(binary) == None:
                 print("packer not found. Install it: "
-                      "https://www.packer.io/intro/getting-started/setup.html")
+                      "https://www.packer.io/docs/install/index.html")
                 return 254
 
         # run packer with relevant config minified
