@@ -320,11 +320,11 @@ def run_packer(packer_tmpl, args):
 
         flags = ['-var-file={}'.format(f.name)]
 
+        special_env = {'PACKER_CACHE_DIR': DIRS.user_cache_dir}
+        special_env['TMPDIR'] = DIRS.user_cache_dir
         if DEBUG:
-            special_env = {'PACKER_LOG': '1'}
+            special_env['PACKER_LOG']  = '1'
             flags.append('-on-error=abort')
-        else:
-            special_env = None
 
         cmd = [binary, 'build']
         cmd.extend(flags)
