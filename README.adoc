@@ -53,6 +53,13 @@ https://github.com/gosecure/malboxes
 
 === Windows
 
+NOTE: Starting with Windows 10 Hyper-V is always running below the operating
+system. Since VT-X needs to be operated exclusively by only one Hypervisor
+https://github.com/GoSecure/malboxes/issues/39[this causes VirtualBox (and
+malboxes) to fail]. To disable Hyper-V and allow
+VirtualBox to run, issue the following command in an administrative command
+prompt then reboot: `bcdedit /set hypervisorlaunchtype off`
+
 ==== Using Chocolatey
 
 The following steps assume that you have https://chocolatey.org/[Chocolatey]
