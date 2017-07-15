@@ -162,6 +162,19 @@ Example:
     malboxes package RansomwareThatINeedRevengeOn chrome
 ////
 
+== Configuration
+
+Malboxes' configuration is located in a directory that follows usual operating
+system conventions:
+
+* Linux/Unix: `~/.config/malboxes/`
+* Mac OS X: `~/Library/Application Support/malboxes/`
+* Win 7+: `C:\Users\<username>\AppData\Local\malboxes\malboxes\`
+
+The file is named `config.js` and is copied from an example file on first run.
+link:malboxes/config-example.js[The example configuration] is documented.
+
+
 == More information
 
 === Videos
