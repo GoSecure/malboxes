@@ -228,11 +228,13 @@ def prepare_config(profile):
                     config_file)
 
     config = load_config(config_file, profile)
+
     packer_tmpl = prepare_packer_template(config, profile)
 
     # merge/update with profile config
     with open(packer_tmpl, 'r') as f:
         config.update(json.loads(f.read()))
+
     return config, packer_tmpl
 
 
@@ -438,7 +440,6 @@ def spin(parser, args):
 
     config['profile'] = args.profile
     config['name'] = args.name
-
 
     print("Creating a Vagrantfile")
     if not config['hypervisor']:

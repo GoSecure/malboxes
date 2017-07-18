@@ -3,9 +3,9 @@
 	 * Malboxes Example Configuration File
 	 *
 	 * Uncomment a specific section of the file to trigger a particular feature.
-     *
-     * Paths should be written using forward slashes even on Windows.
-     * For ex: C:/Tools
+	 *
+	 * Paths should be written using forward slashes even on Windows.
+	 * For ex: C:/Tools
 	 */
 
 	// This allows you to use a local filestore for ISOs.
@@ -40,7 +40,6 @@
 	"vsphere_user": "",
 	"vsphere_password": "",
 	"vsphere_insecure": "true",
-
 
 	// Windows Defender: true means enabled, false means disabled. Default is false.
 	//"windows_defender": "false",
