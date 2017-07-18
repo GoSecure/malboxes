@@ -228,13 +228,11 @@ def prepare_config(profile):
                     config_file)
 
     config = load_config(config_file, profile)
-
     packer_tmpl = prepare_packer_template(config, profile)
 
     # merge/update with profile config
     with open(packer_tmpl, 'r') as f:
         config.update(json.loads(f.read()))
-
     return config, packer_tmpl
 
 
@@ -441,11 +439,18 @@ def spin(parser, args):
     config['profile'] = args.profile
     config['name'] = args.name
 
+
     print("Creating a Vagrantfile")
-    with open("Vagrantfile", 'w') as f:
-        _prepare_vagrantfile(config, "analyst_single.rb", f)
-    print("Vagrantfile generated. You can move it in your analysis directory "
-          "and issue a `vagrant up` to get started with your VM.")
+    if not config['hypervisor']:
+        with open("Vagrantfile", 'w') as f:
+            _prepare_vagrantfile(config, "analyst_single.rb", f)
+        print("Vagrantfile generated. You can move it in your analysis directory "
+              "and issue a `vagrant up` to get started with your VM.")
+    elif config['hypervisor']:
+        with open("Vagrantfile", 'w') as f:
+            _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
+        print("Vagrantfile generated. You can move it in your analysis directory "
+              "and issue a `vagrant up` to get started with your VM.")
 
 
 def append_to_script(filename, line):
