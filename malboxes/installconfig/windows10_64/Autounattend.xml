@@ -2,30 +2,29 @@
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
     <settings pass="windowsPE">
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <DiskConfiguration>
-                        <Disk wcm:action="add">
-                            <CreatePartitions>
-                                <CreatePartition wcm:action="add">
-                                    <Order>1</Order>
-                                    <Type>Primary</Type>
-                                    <Extend>true</Extend>
-                                </CreatePartition>
-                            </CreatePartitions>
-                            <ModifyPartitions>
-                                <ModifyPartition wcm:action="add">
-                                    <Extend>false</Extend>
-                                    <Format>NTFS</Format>
-                                    <Letter>C</Letter>
-                                    <Order>1</Order>
-                                    <PartitionID>1</PartitionID>
-                                    <Label>Windows 10</Label>
-                                </ModifyPartition>
-                            </ModifyPartitions>
-                            <DiskID>0</DiskID>
-                            <WillWipeDisk>true</WillWipeDisk>
-                        </Disk>
-                        <WillShowUI>OnError</WillShowUI>
-                    </DiskConfiguration>
+            <DiskConfiguration>
+                <Disk wcm:action="add">
+                    <CreatePartitions>
+                        <CreatePartition wcm:action="add">
+                            <Extend>true</Extend>
+                            <Order>1</Order>
+                            <Type>Primary</Type>
+                        </CreatePartition>
+                    </CreatePartitions>
+                    <ModifyPartitions>
+                        <ModifyPartition wcm:action="add">
+                            <Active>true</Active>
+                            <Format>NTFS</Format>
+                            <Letter>C</Letter>
+                            <Order>1</Order>
+                            <PartitionID>1</PartitionID>
+                        </ModifyPartition>
+                    </ModifyPartitions>
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
+                </Disk>
+                <WillShowUI>OnError</WillShowUI>
+            </DiskConfiguration>
             <UserData>
                 <AcceptEula>true</AcceptEula>
 		<FullName>{{ username }}</FullName>
