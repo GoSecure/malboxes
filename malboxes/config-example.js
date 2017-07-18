@@ -26,9 +26,9 @@
 	// disk size is in megabytes
 	"disk_size": "20480",
 
-	//Provision settings
-	//Which Hypervisor for privisoning and deployment? (Options are: "virtualbox" and "vsphere") Default is "virtualbox"
-	"hypervisor": "vsphere",
+	// Provision settings
+	// Which Hypervisor for privisoning and deployment? (Options are: "virtualbox" and "vsphere") Default is "virtualbox"
+	"hypervisor": "virtualbox",
 	//If vsphere, the following configuration options are mandatory
 	"remote_host": "",
 	"remote_datastore": "",
