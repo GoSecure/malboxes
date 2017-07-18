@@ -445,13 +445,11 @@ def spin(parser, args):
     if not config['hypervisor']:
         with open("Vagrantfile", 'w') as f:
             _prepare_vagrantfile(config, "analyst_single.rb", f)
-        print("Vagrantfile generated. You can move it in your analysis directory "
-              "and issue a `vagrant up` to get started with your VM.")
-    elif config['hypervisor']:
+    elif config['hypervisor'] == 'vsphere':
         with open("Vagrantfile", 'w') as f:
             _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
-        print("Vagrantfile generated. You can move it in your analysis directory "
-              "and issue a `vagrant up` to get started with your VM.")
+    print("Vagrantfile generated. You can move it in your analysis directory "
+          "and issue a `vagrant up` to get started with your VM.")
 
 
 def append_to_script(filename, line):
