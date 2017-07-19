@@ -1,5 +1,4 @@
 "type": "vmware-iso",
-"guest_os_type": "windows8srv-64",
 "format": "ova",
 "remote_type": "esx5",
 "remote_host": "{{ remote_host }}",
@@ -15,6 +14,7 @@
 "boot_wait": "10s",
 "disk_size": "{{ disk_size }}",
 "output_directory": "builds",
+// TODO Remove hardcoded references?
 "vm_name": "malboxes",
 "vmdk_name": "malboxes-vmdk",
 "vmx_data": {
