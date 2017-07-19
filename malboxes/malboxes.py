@@ -262,8 +262,17 @@ def load_config(config_file, profile):
 
 
 def _get_os_type(config):
-    """OS Type is extracted from profile json config"""
-    return config['builders'][0]['guest_os_type'].lower()
+    """OS Type is extracted from profile json config.
+       For older hypervisor compatibility, some values needs to be updated here.
+    """
+    _os_type = config['builders'][0]['guest_os_type'].lower()
+    if config['hypervisor'] == 'vsphere':
+        if _os_type == 'windows8srv':
+            _os_type = 'windows10'
+        elif _os_type == 'windows8srv-64':
+            _os_type = 'windows10_64'
+
+    return _os_type
 
 
 tempfiles = []
