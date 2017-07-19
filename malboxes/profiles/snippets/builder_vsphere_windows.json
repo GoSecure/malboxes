@@ -14,7 +14,7 @@
 "boot_wait": "10s",
 "disk_size": "{{ disk_size }}",
 "output_directory": "builds",
-// TODO Remove hardcoded references?
+{# TODO Remove hardcoded references? #}
 "vm_name": "malboxes",
 "vmdk_name": "malboxes-vmdk",
 "vmx_data": {
