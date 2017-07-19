@@ -250,6 +250,14 @@ def load_config(config_file, profile):
     config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
     config['dir'] = resource_filename(__name__, "").replace('\\', '/')
     config['profile_name'] = profile
+
+    # add default values
+    # for users upgrading from versions where those values weren't defined
+    # I don't want default to override the config so I reversed the merge logic
+    default = {'hypervisor': 'virtualbox'}
+    default.update(config)
+    config = default
+
     return config
 
 
@@ -442,7 +450,7 @@ def spin(parser, args):
     config['name'] = args.name
 
     print("Creating a Vagrantfile")
-    if not config['hypervisor']:
+    if config['hypervisor'] == 'virtualbox':
         with open("Vagrantfile", 'w') as f:
             _prepare_vagrantfile(config, "analyst_single.rb", f)
     elif config['hypervisor'] == 'vsphere':
