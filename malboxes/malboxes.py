@@ -182,15 +182,12 @@ def prepare_config(profile):
 
     [1]: https://plus.google.com/+DouglasCrockfordEsq/posts/RK8qyGVaGSr
     """
-    # if config does not exist, copy default one
-    config_file = os.path.join(DIRS.user_config_dir, 'config.js')
-    if not os.path.isfile(config_file):
-        print("Default configuration doesn't exist. Populating one: {}"
-              .format(config_file))
-        shutil.copy(resource_filename(__name__, 'config-example.js'),
-                    config_file)
+    config = load_config(profile)
 
-    config = load_config(config_file, profile)
+    profile_config = prepare_customization(profile)
+
+    # profile_config might contain a profile not in the config file
+    config.update(profile_config)
 
     packer_tmpl = prepare_packer_template(config, profile)
 
@@ -201,10 +198,19 @@ def prepare_config(profile):
     return config, packer_tmpl
 
 
-def load_config(config_filename, profile):
+def load_config(profile):
     """Loads the minified JSON config. Returns a dict."""
+
+    # if config does not exist, copy default one
+    config_file = os.path.join(DIRS.user_config_dir, 'config.js')
+    if not os.path.isfile(config_file):
+        print("Default configuration doesn't exist. Populating one: {}"
+              .format(config_file))
+        shutil.copy(resource_filename(__name__, 'config-example.js'),
+                    config_file)
+
     config = {}
-    with open(config_filename, 'r') as config_file:
+    with open(config_file, 'r') as config_file:
         # minify then load as JSON
         config = json.loads(jsmin(config_file.read()))
 
@@ -365,7 +371,6 @@ def build(parser, args):
     print("Generating configuration files...")
     config, packer_tmpl = prepare_config(args.profile)
     prepare_autounattend(config)
-    prepare_customization(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
 
@@ -431,8 +436,10 @@ def append_to_script(filename, line):
         script.write(line)
 
 
-def prepare_customization(config):
+def prepare_customization(profile):
     """Converts the customization file to a powershell script."""
+
+    config = load_config(profile)
 
     if "customization_profile" in config.keys():
         customization_profile = config["customization_profile"]
@@ -442,6 +449,7 @@ def prepare_customization(config):
             shutil.copy(resource_filename(__name__, 'profile-example.js'),
                         profile_file)
         customization_profile = "profile"
+        config["customization_profile"] = "profile"
 
     customization = load_customization(customization_profile)
 
@@ -469,6 +477,7 @@ def prepare_customization(config):
             package(customization_profile,
                     package_mod["package"]
                     )
+    return config
 
 
 def registry(customization_profile, reg_mod):
