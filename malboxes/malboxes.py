@@ -430,10 +430,6 @@ def spin(parser, args):
           "and issue a `vagrant up` to get started with your VM.")
 
 
-def append_to_script(filename, line):
-    """ Appends a line to a script."""
-    with open(filename, 'a') as script:
-        script.write(line)
 
 
 def prepare_profile(template, config):
@@ -451,34 +447,29 @@ def prepare_profile(template, config):
 
     profile = load_profile(profile_name)
 
+    fd = create_cachefd('profile-{}.ps1'.format(profile_name))
+
     if "registry" in profile:
         for reg_mod in profile["registry"]:
-            registry(profile_name,
-                     reg_mod
-                    )
+            registry(profile_name, reg_mod, fd)
 
     if "directory" in profile:
         for dir_mod in profile["directory"]:
-            directory(profile_name,
-                      dir_mod["modtype"],
-                      dir_mod["dirpath"]
-                    )
+            directory(profile_name, dir_mod["modtype"], dir_mod["dirpath"], fd)
+
     if "document" in profile:
         for doc_mod in profile["document"]:
-            document(profile_name,
-                     doc_mod["modtype"],
-                     doc_mod["docpath"]
-                    )
+            document(profile_name, doc_mod["modtype"], doc_mod["docpath"], fd)
 
     if "package" in profile:
         for package_mod in profile["package"]:
-            package(profile_name,
-                    package_mod["package"]
-                    )
+            package(profile_name, package_mod["package"], fd)
+
+    fd.close()
     return config
 
 
-def registry(profile_name, reg_mod):
+def registry(profile_name, reg_mod, fd):
     """
     Adds a registry key modification to a profile with PowerShell commands.
     """
@@ -487,32 +478,25 @@ def registry(profile_name, reg_mod):
         line = "{} -Path {} -Name {} -Value {} -PropertyType {}\r\n".format(
             command, reg_mod["key"], reg_mod["name"],
             reg_mod["value"], reg_mod["valuetype"])
-        print("Adding: " + line)
     elif reg_mod["modtype"] == "modify":
         command = "Set-ItemProperty"
         line = "{0} -Path {1} -Name {2} -Value {3}\r\n".format(
             command, reg_mod["key"], reg_mod["name"],
             reg_mod["value"])
-        print("Adding: " + line)
     elif reg_mod["modtype"] == "delete":
         command = "Remove-ItemProperty"
-        if "name" in reg_mod.keys():
-            line = "{0} -Path {1} -Name {2}\r\n".format(
-                command, reg_mod["key"], reg_mod["name"])
-        else:
-            line = "{0} -Path {1}\r\n".format(
-                command, reg_mod["key"])
-        print("Adding: " + line)
+        line = "{0} -Path {1} -Name {2}\r\n".format(command, reg_mod["key"],
+                                                    reg_mod["name"])
     else:
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
+        return
 
-    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(profile_name))
-    append_to_script(filename, line)
+    print("Adding: " + line, end='')
+    fd.write(line)
 
 
-def directory(profile_name, modtype, dirpath):
+def directory(profile_name, modtype, dirpath, fd):
     """ Adds the directory manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
@@ -526,22 +510,18 @@ def directory(profile_name, modtype, dirpath):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(profile_name))
-    append_to_script(filename, line)
+    fd.write(line)
 
 
-def package(profile_name, package_name):
+def package(profile_name, package_name, fd):
     """ Adds a package to install with Chocolatey."""
     line = "choco install {} -y\r\n".format(package_name)
     print("Adding Chocolatey package: {}".format(package_name))
 
-    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(profile_name))
-    append_to_script(filename, line)
+    fd.write(line)
 
 
-def document(profile_name, modtype, docpath):
+def document(profile_name, modtype, docpath, fd):
     """ Adds the file manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
@@ -556,10 +536,7 @@ def document(profile_name, modtype, docpath):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(profile_name))
-
-    append_to_script(filename, line)
+    fd.write(line)
 
 
 def main():
