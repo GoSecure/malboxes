@@ -42,8 +42,7 @@ class PackerTemplateTestCase(unittest.TestCase):
 
             # process profile
             profile_name = os.path.basename(profile)
-            config = load_config('malboxes/config-example.js',
-                                 re.match('(.*).json$', profile_name).group(1))
+            config = load_config(re.match('(.*).json$', profile_name).group(1))
 
             try:
                 template = self.env.get_template(os.path.basename(profile_name))
