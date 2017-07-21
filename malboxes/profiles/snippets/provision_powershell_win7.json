@@ -5,6 +5,7 @@
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
 			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/vmtools.ps1",
+			"{{ cache_dir }}/scripts/user/{{ customization_profile }}.ps1",
 			"{{ dir }}/scripts/windows/malware_analysis.ps1"
 		]
 	},
