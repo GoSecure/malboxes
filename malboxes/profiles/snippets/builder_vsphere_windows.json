@@ -5,7 +5,9 @@
 "remote_datastore": "{{ remote_datastore }}",
 "remote_username": "{{ remote_username }}",
 "remote_password": "{{ remote_password }}",
-"keep_registered": true,
+{# TODO avoiding ovftools doesn't seem to work #}
+"keep_registered": "true",
+"vnc_disable_password": "true",
 "communicator": "winrm",
 "winrm_username": "{{ username }}",
 "winrm_password": "{{ password }}",
@@ -22,4 +24,6 @@
   "scsi0.virtualDev": "lsisas1068",
   "memsize": "4096",
   "numvcpus": "4"
-}
+},
+{# TODO validate if they are automatically installed #}
+"tools_upload_flavor": "windows"
