@@ -267,9 +267,9 @@ def _get_os_type(config):
     """
     _os_type = config['builders'][0]['guest_os_type'].lower()
     if config['hypervisor'] == 'vsphere':
-        if _os_type == 'windows8srv':
+        if _os_type == 'windows8':
             _os_type = 'windows10'
-        elif _os_type == 'windows8srv-64':
+        elif _os_type == 'windows8-64':
             _os_type = 'windows10_64'
 
     return _os_type

@@ -5,7 +5,7 @@
 			"guest_os_type": "Windows10",
 			{% include 'snippets/builder_virtualbox_windows.json' %},
 		{% elif hypervisor == "vsphere" %}
-			"guest_os_type": "windows8srv",
+			"guest_os_type": "windows8",
 			{% include 'snippets/builder_vsphere_windows.json' %},
 		{% endif %}
 
