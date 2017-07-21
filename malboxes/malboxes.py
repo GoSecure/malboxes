@@ -182,9 +182,17 @@ def prepare_config(profile):
 
     [1]: https://plus.google.com/+DouglasCrockfordEsq/posts/RK8qyGVaGSr
     """
-    config = load_config(profile)
+    # if config does not exist, copy default one
+    config_file = os.path.join(DIRS.user_config_dir, 'config.js')
+    if not os.path.isfile(config_file):
+        print("Default configuration doesn't exist. Populating one: {}"
+              .format(config_file))
+        shutil.copy(resource_filename(__name__, 'config-example.js'),
+                    config_file)
 
-    profile_config = prepare_customization(profile)
+    config = load_config(config_file, profile)
+
+    profile_config = prepare_customization(profile, config)
 
     # profile_config might contain a profile not in the config file
     config.update(profile_config)
@@ -198,19 +206,11 @@ def prepare_config(profile):
     return config, packer_tmpl
 
 
-def load_config(profile):
+def load_config(config_filename, profile):
     """Loads the minified JSON config. Returns a dict."""
 
-    # if config does not exist, copy default one
-    config_file = os.path.join(DIRS.user_config_dir, 'config.js')
-    if not os.path.isfile(config_file):
-        print("Default configuration doesn't exist. Populating one: {}"
-              .format(config_file))
-        shutil.copy(resource_filename(__name__, 'config-example.js'),
-                    config_file)
-
     config = {}
-    with open(config_file, 'r') as config_file:
+    with open(config_filename, 'r') as config_file:
         # minify then load as JSON
         config = json.loads(jsmin(config_file.read()))
 
@@ -436,10 +436,8 @@ def append_to_script(filename, line):
         script.write(line)
 
 
-def prepare_customization(profile):
+def prepare_customization(profile, config):
     """Converts the customization file to a powershell script."""
-
-    config = load_config(profile)
 
     if "customization_profile" in config.keys():
         customization_profile = config["customization_profile"]
