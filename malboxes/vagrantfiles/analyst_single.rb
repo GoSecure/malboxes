@@ -3,7 +3,7 @@
 ENV['VAGRANT_DEFAULT_PROVIDER'] = 'virtualbox'
 
 Vagrant.configure(2) do |config|
-	config.vm.box = "{{ profile }}"
+	config.vm.box = "{{ template_name }}"
 	config.vm.provider "virtualbox" do |vb|
 		vb.name = "{{ name }}"
 		vb.gui = true

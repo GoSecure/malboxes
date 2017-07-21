@@ -1,0 +1,27 @@
+		"type": "qemu",
+		"format":"qcow2",
+		"accelerator": "kvm",
+
+		"disk_size": "{{ disk_size }}",
+		"disk_interface":"virtio",
+
+		"shutdown_command": "shutdown /s /t 10 /f",
+		"boot_wait": "10s",
+
+		"floppy_files": [
+			"floppy/drivers/virtio-win-0.1.117/viostor/w10/amd64/*",
+			"floppy/drivers/virtio-win-0.1.117/NetKVM/w10/amd64/*",
+			"floppy/common/*",
+			"floppy/windows-10-enterprise//*"
+		],
+
+		"communicator": "winrm",
+
+		"winrm_username": "{{ username }}",
+		"winrm_password": "{{ password }}",
+		"winrm_timeout": "30m",
+
+		"qemuargs": [
+			[ "-m", "4048M" ],
+			[ "-cpu", "Westmere" ]
+		]
