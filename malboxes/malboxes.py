@@ -43,8 +43,6 @@ def initialize():
     # create appdata directories if they don't exist
     if not os.path.exists(DIRS.user_config_dir):
         os.makedirs(DIRS.user_config_dir)
-        os.makedirs(os.path.join(DIRS.user_config_dir, "customization"))
-        os.makedirs(os.path.join(DIRS.user_config_dir, "scripts", "user"))
 
     profile_dir = os.path.join(DIRS.user_config_dir, "customization")
 
@@ -53,6 +51,11 @@ def initialize():
 
     if not os.path.exists(DIRS.user_cache_dir):
         os.makedirs(DIRS.user_cache_dir)
+
+    cache_profile_dir = os.path.join(DIRS.user_cache_dir, "scripts", "user")
+
+    if not (os.path.exists(cache_profile_dir)):
+        os.makedirs(cache_profile_dir)
 
     return init_parser()
 
@@ -484,7 +487,7 @@ def registry(customization_profile, reg_mod):
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
 
-    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
+    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
                             "{}.ps1".format(customization_profile))
     append_to_script(filename, line)
 
@@ -503,7 +506,7 @@ def directory(customization_profile, modtype, dirpath):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
+    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
                             "{}.ps1".format(customization_profile))
     append_to_script(filename, line)
 
@@ -513,7 +516,7 @@ def package(customization_profile, package_name):
     line = "choco install {} -y\r\n".format(package_name)
     print("Adding Chocolatey package: {}".format(package_name))
 
-    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
+    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
                             "{}.ps1".format(customization_profile))
     append_to_script(filename, line)
 
@@ -533,7 +536,7 @@ def document(customization_profile, modtype, docpath):
         print("Directory modification type invalid.")
         print("Valid ones are: add, delete.")
 
-    filename = os.path.join(DIRS.user_config_dir, "scripts", "user",
+    filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
                             "{}.ps1".format(customization_profile))
 
     append_to_script(filename, line)
