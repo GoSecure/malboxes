@@ -44,7 +44,7 @@ def initialize():
     if not os.path.exists(DIRS.user_config_dir):
         os.makedirs(DIRS.user_config_dir)
 
-    profile_dir = os.path.join(DIRS.user_config_dir, "customization")
+    profile_dir = os.path.join(DIRS.user_config_dir, "profiles")
 
     if not os.path.exists(profile_dir):
         os.makedirs(profile_dir)
@@ -52,10 +52,10 @@ def initialize():
     if not os.path.exists(DIRS.user_cache_dir):
         os.makedirs(DIRS.user_cache_dir)
 
-    cache_profile_dir = os.path.join(DIRS.user_cache_dir, "scripts", "user")
+    cache_scripts_dir = os.path.join(DIRS.user_cache_dir, "scripts", "user")
 
-    if not (os.path.exists(cache_profile_dir)):
-        os.makedirs(cache_profile_dir)
+    if not (os.path.exists(cache_scripts_dir)):
+        os.makedirs(cache_scripts_dir)
 
     return init_parser()
 
@@ -71,16 +71,16 @@ def init_parser():
 
     # list command
     parser_list = subparsers.add_parser('list',
-                                        help="Lists available profiles.")
-    parser_list.set_defaults(func=list_profiles)
+                                        help="Lists available templates.")
+    parser_list.set_defaults(func=list_templates)
 
     # build command
     parser_build = subparsers.add_parser('build',
                                          help="Builds a Vagrant box based on "
-                                              "a given profile.")
-    parser_build.add_argument('profile', help='Name of the profile to build. '
+                                              "a given template.")
+    parser_build.add_argument('template', help='Name of the template to build. '
                                               'Use list command to view '
-                                              'available profiles.')
+                                              'available templates.')
     parser_build.add_argument('--force', action='store_true',
                               help='Force the build to happen. Overwrites '
                                    'pre-existing builds or vagrant boxes.')
@@ -95,8 +95,8 @@ def init_parser():
     # spin command
     parser_spin = subparsers.add_parser('spin',
                                         help="Creates a Vagrantfile for "
-                                             "your profile / Vagrant box.")
-    parser_spin.add_argument('profile', help='Name of the profile to spin.')
+                                             "your template / Vagrant box.")
+    parser_spin.add_argument('template', help='Name of the template to spin.')
     parser_spin.add_argument('name', help='Name of the target VM. '
                                           'Must be unique on your system. '
                                           'Ex: Cryptolocker_XYZ.')
@@ -132,16 +132,16 @@ def prepare_packer_template(config, template_name):
     it into a temporary location where packer later expects it.
 
     Uses jinja2 template syntax to generate the resulting JSON file.
-    Templates are in profiles/ and snippets in profiles/snippets/.
+    Templates are in templates/ and snippets in templates/snippets/.
     """
     try:
-        profile_fd = resource_stream(__name__,
-                                     'profiles/{}.json'.format(template_name))
+        template_fd = resource_stream(__name__,
+                                     'templates/{}.json'.format(template_name))
     except FileNotFoundError:
-        print("Profile doesn't exist: {}".format(template_name))
+        print("Template doesn't exist: {}".format(template_name))
         sys.exit(2)
 
-    filepath = resource_filename(__name__, 'profiles/')
+    filepath = resource_filename(__name__, 'templates/')
     env = Environment(loader=FileSystemLoader(filepath), autoescape=False,
                       trim_blocks=True, lstrip_blocks=True)
     template = env.get_template("{}.json".format(template_name))
@@ -167,9 +167,9 @@ def _prepare_vagrantfile(config, source, fd_dest):
     fd_dest.close()
 
 
-def prepare_config(profile):
+def prepare_config(template):
     """
-    Prepares Malboxes configuration and merge with Packer profile configuration
+    Prepares Malboxes configuration and merge with Packer template configuration
 
     Packer uses a configuration in JSON so we decided to go with JSON as well.
     However since we have features that should be easily "toggled" by our users
@@ -178,7 +178,7 @@ def prepare_config(profile):
     gives a nice suggestion here[1] that I will follow.
 
     In a nutshell, our configuration is Javascript, which when minified gives
-    JSON and then it gets merged with the selected profile.
+    JSON and then it gets merged with the selected template.
 
     [1]: https://plus.google.com/+DouglasCrockfordEsq/posts/RK8qyGVaGSr
     """
@@ -190,23 +190,23 @@ def prepare_config(profile):
         shutil.copy(resource_filename(__name__, 'config-example.js'),
                     config_file)
 
-    config = load_config(config_file, profile)
+    config = load_config(config_file, template)
 
-    profile_config = prepare_customization(profile, config)
+    profile_config = prepare_profile(template, config)
 
     # profile_config might contain a profile not in the config file
     config.update(profile_config)
 
-    packer_tmpl = prepare_packer_template(config, profile)
+    packer_tmpl = prepare_packer_template(config, template)
 
-    # merge/update with profile config
+    # merge/update with template config
     with open(packer_tmpl, 'r') as f:
         config.update(json.loads(f.read()))
 
     return config, packer_tmpl
 
 
-def load_config(config_filename, profile):
+def load_config(config_filename, template):
     """Loads the minified JSON config. Returns a dict."""
 
     config = {}
@@ -218,25 +218,25 @@ def load_config(config_filename, profile):
     # Note: Backslashes are replaced with forward slashes (Packer on Windows)
     config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
     config['dir'] = resource_filename(__name__, "").replace('\\', '/')
-    config['profile_name'] = profile
+    config['template_name'] = template
     config['config_dir'] = DIRS.user_config_dir.replace('\\', '/')
     return config
 
 
-def load_customization(customization_profile):
-    customization_filename = os.path.join(
+def load_profile(profile_name):
+    filename = os.path.join(
         DIRS.user_config_dir.replace('\\', '/'),
-        "customization",
-        "{}.js".format(customization_profile))
+        "profiles",
+        "{}.js".format(profile_name))
 
-    """Loads the customization file, minifies it and returns the content."""
-    with open(customization_filename, 'r') as customization_file:
-        customization = json.loads(jsmin(customization_file.read()))
-    return customization
+    """Loads the profile, minifies it and returns the content."""
+    with open(filename, 'r') as profile_file:
+        profile = json.loads(jsmin(profile_file.read()))
+    return profile
 
 
 def _get_os_type(config):
-    """OS Type is extracted from profile json config"""
+    """OS Type is extracted from template json config"""
     return config['builders'][0]['guest_os_type'].lower()
 
 
@@ -333,9 +333,9 @@ def add_box(config, args):
 
     box = config['post-processors'][0]['output']
     box = os.path.join(DIRS.user_cache_dir, box)
-    box = box.replace('{{user `name`}}', args.profile)
+    box = box.replace('{{user `name`}}', args.template)
 
-    flags = ['--name={}'.format(args.profile)]
+    flags = ['--name={}'.format(args.template)]
     if args.force:
         flags.append('--force')
 
@@ -352,16 +352,16 @@ def add_box(config, args):
 def default(parser, args):
     parser.print_help()
     print("\n")
-    list_profiles(parser, args)
+    list_templates(parser, args)
     sys.exit(1)
 
 
-def list_profiles(parser, args):
-    print("supported profiles:\n")
+def list_templates(parser, args):
+    print("supported templates:\n")
 
-    filepath = resource_filename(__name__, "profiles/")
+    filepath = resource_filename(__name__, "templates/")
     for f in sorted(glob.glob(os.path.join(filepath, '*.json'))):
-        m = re.search(r'profiles[\/\\](.*).json$', f)
+        m = re.search(r'templates[\/\\](.*).json$', f)
         print(m.group(1))
     print()
 
@@ -369,7 +369,7 @@ def list_profiles(parser, args):
 def build(parser, args):
 
     print("Generating configuration files...")
-    config, packer_tmpl = prepare_config(args.profile)
+    config, packer_tmpl = prepare_config(args.template)
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
@@ -407,7 +407,7 @@ def build(parser, args):
         You can re-use this base box several times by using `malboxes
         spin`. Each VM will be independent of each other.
         ===============================================================""")
-        .format(args.profile, DIRS.user_cache_dir))
+        .format(args.template, DIRS.user_cache_dir))
 
 
 def spin(parser, args):
@@ -418,9 +418,9 @@ def spin(parser, args):
         print("Vagrantfile already exists. Please move it away. Exiting...")
         sys.exit(5)
 
-    config, _ = prepare_config(args.profile)
+    config, _ = prepare_config(args.template)
 
-    config['profile'] = args.profile
+    config['template'] = args.template
     config['name'] = args.name
 
     print("Creating a Vagrantfile")
@@ -436,49 +436,49 @@ def append_to_script(filename, line):
         script.write(line)
 
 
-def prepare_customization(profile, config):
-    """Converts the customization file to a powershell script."""
+def prepare_profile(template, config):
+    """Converts the profile to a powershell script."""
 
-    if "customization_profile" in config.keys():
-        customization_profile = config["customization_profile"]
+    if "profile" in config.keys():
+        profile_name = config["profile"]
     else:
-        profile_file = os.path.join(DIRS.user_config_dir, "customization", 'profile.js')
+        profile_file = os.path.join(DIRS.user_config_dir, "profiles", 'profile.js')
         if not os.path.isfile(profile_file):
             shutil.copy(resource_filename(__name__, 'profile-example.js'),
                         profile_file)
-        customization_profile = "profile"
-        config["customization_profile"] = "profile"
+        profile_name = "profile"
+        config["profile"] = "profile"
 
-    customization = load_customization(customization_profile)
+    profile = load_profile(profile_name)
 
-    if "registry" in customization:
-        for reg_mod in customization["registry"]:
-            registry(customization_profile,
+    if "registry" in profile:
+        for reg_mod in profile["registry"]:
+            registry(profile_name,
                      reg_mod
                     )
 
-    if "directory" in customization:
-        for dir_mod in customization["directory"]:
-            directory(customization_profile,
+    if "directory" in profile:
+        for dir_mod in profile["directory"]:
+            directory(profile_name,
                       dir_mod["modtype"],
                       dir_mod["dirpath"]
                     )
-    if "document" in customization:
-        for doc_mod in customization["document"]:
-            document(customization_profile,
+    if "document" in profile:
+        for doc_mod in profile["document"]:
+            document(profile_name,
                      doc_mod["modtype"],
                      doc_mod["docpath"]
                     )
 
-    if "package" in customization:
-        for package_mod in customization["package"]:
-            package(customization_profile,
+    if "package" in profile:
+        for package_mod in profile["package"]:
+            package(profile_name,
                     package_mod["package"]
                     )
     return config
 
 
-def registry(customization_profile, reg_mod):
+def registry(profile_name, reg_mod):
     """
     Adds a registry key modification to a profile with PowerShell commands.
     """
@@ -508,11 +508,11 @@ def registry(customization_profile, reg_mod):
         print("Valid ones are: add, delete and modify.")
 
     filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(customization_profile))
+                            "{}.ps1".format(profile_name))
     append_to_script(filename, line)
 
 
-def directory(customization_profile, modtype, dirpath):
+def directory(profile_name, modtype, dirpath):
     """ Adds the directory manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
@@ -527,21 +527,21 @@ def directory(customization_profile, modtype, dirpath):
         print("Valid ones are: add, delete.")
 
     filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(customization_profile))
+                            "{}.ps1".format(profile_name))
     append_to_script(filename, line)
 
 
-def package(customization_profile, package_name):
+def package(profile_name, package_name):
     """ Adds a package to install with Chocolatey."""
     line = "choco install {} -y\r\n".format(package_name)
     print("Adding Chocolatey package: {}".format(package_name))
 
     filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(customization_profile))
+                            "{}.ps1".format(profile_name))
     append_to_script(filename, line)
 
 
-def document(customization_profile, modtype, docpath):
+def document(profile_name, modtype, docpath):
     """ Adds the file manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
@@ -557,7 +557,7 @@ def document(customization_profile, modtype, docpath):
         print("Valid ones are: add, delete.")
 
     filename = os.path.join(DIRS.user_cache_dir, "scripts", "user",
-                            "{}.ps1".format(customization_profile))
+                            "{}.ps1".format(profile_name))
 
     append_to_script(filename, line)
 
