@@ -81,6 +81,9 @@ def init_parser():
     parser_build.add_argument('profile', help='Name of the profile to build. '
                                               'Use list command to view '
                                               'available profiles.')
+    parser_build.add_argument('--force', action='store_true',
+                              help='Force the build to happen. Overwrites '
+                                   'pre-existing builds or vagrant boxes.')
     parser_build.add_argument('--skip-packer-build', action='store_true',
                               help='Skip packer build phase. '
                                    'Only useful for debugging.')
@@ -279,12 +282,12 @@ def run_packer(packer_tmpl, args):
 
     try:
         # packer or packer-io?
-        binary = 'packer'
+        binary = 'packer-io'
         if shutil.which(binary) == None:
-            binary = 'packer-io'
+            binary = 'packer'
             if shutil.which(binary) == None:
                 print("packer not found. Install it: "
-                      "https://www.packer.io/intro/getting-started/setup.html")
+                      "https://www.packer.io/docs/install/index.html")
                 return 254
 
         # run packer with relevant config minified
@@ -296,11 +299,14 @@ def run_packer(packer_tmpl, args):
 
         flags = ['-var-file={}'.format(f.name)]
 
+        special_env = {'PACKER_CACHE_DIR': DIRS.user_cache_dir}
+        special_env['TMPDIR'] = DIRS.user_cache_dir
         if DEBUG:
-            special_env = {'PACKER_LOG': '1'}
+            special_env['PACKER_LOG']  = '1'
             flags.append('-on-error=abort')
-        else:
-            special_env = None
+
+        if args.force:
+            flags.append('-force')
 
         cmd = [binary, 'build']
         cmd.extend(flags)
@@ -323,7 +329,13 @@ def add_box(config, args):
     box = os.path.join(DIRS.user_cache_dir, box)
     box = box.replace('{{user `name`}}', args.profile)
 
-    cmd = ['vagrant', 'box', 'add', box, '--name={}'.format(args.profile)]
+    flags = ['--name={}'.format(args.profile)]
+    if args.force:
+        flags.append('--force')
+
+    cmd = ['vagrant', 'box', 'add']
+    cmd.extend(flags)
+    cmd.append(box)
     ret = run_foreground(cmd)
 
     print("----------------------------")
@@ -375,21 +387,22 @@ def build(parser, args):
         print("'vagrant box add' failed. Build failed. Exiting...")
         sys.exit(4)
 
-    print(textwrap.dedent("""
-    ===============================================================
-    A base box was imported into your local Vagrant box repository.
-    You should generate a Vagrantfile configuration in order to
-    launch an instance of your box:
+    if not args.skip_vagrant_box_add:
+        print(textwrap.dedent("""
+        ===============================================================
+        A base box was imported into your local Vagrant box repository.
+        You should generate a Vagrantfile configuration in order to
+        launch an instance of your box:
 
-    malboxes spin {} <analysis_name>
+        malboxes spin {} <analysis_name>
 
-    You can safely remove the {}/boxes/
-    directory if you don't plan on hosting or sharing your base box.
+        You can safely remove the {}/boxes/
+        directory if you don't plan on hosting or sharing your base box.
 
-    You can re-use this base box several times by using `malboxes
-    spin`. Each VM will be independent of each other.
-    ===============================================================""")
-    .format(args.profile, DIRS.user_cache_dir))
+        You can re-use this base box several times by using `malboxes
+        spin`. Each VM will be independent of each other.
+        ===============================================================""")
+        .format(args.profile, DIRS.user_cache_dir))
 
 
 def spin(parser, args):

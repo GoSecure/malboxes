@@ -12,12 +12,22 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Enhancements::
 * New profile: Windows 7 64-bit: win7_64_analyst (#42)
+* Support for trial versions of Windows 7 Enterprise x86 and x64
+* Better out of the box support of Fedora, CentOS and RedHat as host (#53)
+* Use user cache directories for packer. This avoids caching in memory-backed locations to
+  prevent unnecessary memory pressure during builds or free space issues on
+  low RAM systems (#45)
+* Default timeout for WinRM is 60m (from 30m) to allow slower machines the time to go
+  through Windows' install process
+* Increased default disk size to 20GB
+* Added a --force flag to overwrite pre-existing packer artifacts or vagrant boxes (#46)
 * debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
 * Documentation improvements
 
 Bug fixes::
-* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43)
+* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43, #60)
 * Increased WinRM memory limit on Windows 7 solves errors installing .Net Framework 4.0 (#31, #44)
+* More Windows 7 .Net Framework 4.0 fixes (#59)
 
 ////
 === Release meta

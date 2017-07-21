@@ -21,18 +21,23 @@ https://github.com/gosecure/malboxes
 == Requirements
 
 * Python 3.3+
-* packer: https://www.packer.io/intro/getting-started/setup.html
+* packer: https://www.packer.io/docs/install/index.html
 * vagrant: https://www.vagrantup.com/downloads.html
 * VirtualBox: https://www.virtualbox.org/wiki/Downloads
+
+=== Minimum specs for the build machine
+
+* At least 5 GB of RAM
+* VT-X extensions strongly recommended
 
 === Fedora
 
     dnf install ruby-devel gcc-c++ zlib-devel
     vagrant plugin install winrm winrm-fs
 
-.Specs for the build machine
-* At least 5 GB of RAM
-* VT-X extensions strongly recommended
+=== Debian
+
+    apt install vagrant git python3-pip
 
 
 == Installation
@@ -47,6 +52,13 @@ https://github.com/gosecure/malboxes
 
 
 === Windows
+
+NOTE: Starting with Windows 10 Hyper-V is always running below the operating
+system. Since VT-X needs to be operated exclusively by only one Hypervisor
+https://github.com/GoSecure/malboxes/issues/39[this causes VirtualBox (and
+malboxes) to fail]. To disable Hyper-V and allow
+VirtualBox to run, issue the following command in an administrative command
+prompt then reboot: `bcdedit /set hypervisorlaunchtype off`
 
 ==== Using Chocolatey
 
@@ -124,6 +136,18 @@ can be changed by commenting the relevant part of the `Vagrantfile`.
 For example:
 
     malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
+
+== Configuration
+
+Malboxes' configuration is located in a directory that follows usual operating
+system conventions:
+
+* Linux/Unix: `~/.config/malboxes/`
+* Mac OS X: `~/Library/Application Support/malboxes/`
+* Win 7+: `C:\Users\<username>\AppData\Local\malboxes\malboxes\`
+
+The file is named `config.js` and is copied from an example file on first run.
+link:malboxes/config-example.js[The example configuration] is documented.
 
 == More information
 

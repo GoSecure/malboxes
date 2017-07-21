@@ -1,5 +1,10 @@
 = Chocolatey Packaging tid bits
 
+== Troubleshooting notes
+
+Force reinstalling is not reliable. Do a clean uninstall / install cycle
+instead.
+
 == Autopackages
 
 These package use some kind of meta xml to generate actual package files.
