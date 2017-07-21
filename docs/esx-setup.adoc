@@ -1,0 +1,34 @@
+= ESXi / vSphere Setup
+
+== Firewall rules required
+
+From your machine (where malboxes is installed) to the ESXi server
+
+* SSH (22)
+* VNC (packer will try allocating 5900 upwards until it finds a working port)
+
+From your machine to the running guest for provisioning
+
+* WinRM (5985)
+
+== VNC Access
+
+Opening the ESX firewall is necessary. On version 6.5 this works:
+
+    esxcli network firewall ruleset set -e true -r gdbserver
+
+Otherwise look at implementing the advice in here: https://gist.github.com/jasonberanek/4670943
+
+== Troubleshooting
+
+=== No IP Address on guest
+
+You need a DHCP server on the same network segment. ESXi doesn't seem to
+provide his own. You can create a simple DHCP server on an Ubuntu server with
+isc-dhcp-server.
+
+=== Misc.
+
+Something packer said I needed to do:
+
+    esxcli system settings advanced set -o /Net/GuestIPHack -i 1
