@@ -437,7 +437,7 @@ def prepare_customization(config):
     if "customization_profile" in config.keys():
         customization_profile = config["customization_profile"]
     else:
-        profile_file = os.path.join(DIRS.user_config_dir, "customization", 'profile.js')
+        profile_file = os.path.join(DIRS.user_cache_dir, "customization", 'profile.js')
         if not os.path.isfile(profile_file):
             shutil.copy(resource_filename(__name__, 'profile-example.js'),
                         profile_file)
