@@ -25,6 +25,11 @@ https://github.com/gosecure/malboxes
 * vagrant: https://www.vagrantup.com/downloads.html
 * VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
+=== Fedora
+
+    dnf install ruby-devel gcc-c++ zlib-devel
+    vagrant plugin install winrm winrm-fs
+
 .Specs for the build machine
 * At least 5 GB of RAM
 * VT-X extensions strongly recommended
@@ -119,38 +124,6 @@ can be changed by commenting the relevant part of the `Vagrantfile`.
 For example:
 
     malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
-
-////
-FIXME: not sure we are going to keep this interface so commented for now
-
-=== Customization
-
-You can modify (add, modify or delete) registry keys, directories and files like this:
-
-Registry keys:
-
-    malboxes registry <profile> <modtype> <key name> <value> <valuetype>
-
-Example:
-
-    malboxes registry win10_64_analyst add HKCU:\Software Malboxes IsAwesome String
-
-Directories and files:
-
-    malboxes directory <profile> <modtype> <dirpath>
-
-Example:
-
-    malboxes directory BadAPT57 delete C:\Windows\System32
-
-You can add packages to install that are specific to the profile:
-
-    malboxes package <profile> <package>
-
-Example:
-
-    malboxes package RansomwareThatINeedRevengeOn chrome
-////
 
 == More information
 
