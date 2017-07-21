@@ -5,7 +5,7 @@
 			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/vmtools.ps1",
 			"{{ dir }}/scripts/windows/installtools.ps1",
-			{% if customization_profile %}"{{ config_dir }}/scripts/user/{{ customization_profile }}.ps1",{% endif %}
+			"{{ cache_dir }}/scripts/user/{{ customization_profile }}.ps1",
 			"{{ dir }}/scripts/windows/malware_analysis.ps1"
 		]
 	}
