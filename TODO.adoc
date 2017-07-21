@@ -50,11 +50,13 @@ https://github.com/joefitzgerald/packer-windows/blob/master/answer_files/7/Autou
 
 Also filed https://github.com/GoSecure/malboxes/issues/23[in issue #23].
 
+* Nice overview article: https://byte-atlas.blogspot.ca/2017/02/hardening-vbox-win7x64.html
 * https://github.com/hfiref0x/VBoxHardenedLoader
 * https://github.com/a0rtega/pafish, vm detection tool (pass it)
 * http://www.securityweek.com/dyre-banking-trojan-counts-processor-cores-detect-sandboxes
 * http://unprotect.tdgt.org/index.php/Cheat_Sheets
 * http://vmcloak.readthedocs.io/en/latest/hwconfig.html#hwconfig-create
+* https://github.com/0x4D31/honeybits
 
 == Related projects that might be useful
 

@@ -3,7 +3,7 @@
 #
 # Olivier Bilodeau <obilodeau@gosecure.ca>
 # Hugo Genesse <hugo.genesse@polymtl.ca>
-# Copyright (C) 2016 GoSecure Inc.
+# Copyright (C) 2016, 2017 GoSecure Inc.
 # Copyright (C) 2016 Hugo Genesse
 # All rights reserved.
 #
@@ -34,7 +34,7 @@ from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
 from jsmin import jsmin
 
-#from malboxes._version import __version__
+from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
@@ -43,6 +43,11 @@ def initialize():
     # create appdata directories if they don't exist
     if not os.path.exists(DIRS.user_config_dir):
         os.makedirs(DIRS.user_config_dir)
+
+    profile_dir = os.path.join(DIRS.user_config_dir, "customization")
+
+    if not os.path.exists(profile_dir):
+        os.makedirs(profile_dir)
 
     if not os.path.exists(DIRS.user_cache_dir):
         os.makedirs(DIRS.user_cache_dir)
@@ -54,8 +59,9 @@ def init_parser():
                     description="Vagrant box builder "
                                 "and config generator for malware analysis.")
     parser.add_argument('-V', '--version', action='version',
-                        version='%(prog)s ' + "0.1")
-    parser.add_argument('-d', '--debug', action='store_true', help="Debug mode")
+                        version='%(prog)s ' + __version__)
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help="Debug mode. Leaves built VMs running on failure!")
     subparsers = parser.add_subparsers()
 
     # list command
@@ -283,12 +289,13 @@ def run_packer(packer_tmpl, args):
             f.write(jsmin(config.read()))
             f.close()
 
+        flags = ['-var-file={}'.format(f.name)]
+
         if DEBUG:
             special_env = {'PACKER_LOG': '1'}
+            flags.append('-on-error=abort')
         else:
             special_env = None
-
-        flags = ['-var-file={}'.format(f.name)]
 
         cmd = [binary, 'build']
         cmd.extend(flags)
@@ -341,8 +348,7 @@ def build(parser, args):
     print("Generating configuration files...")
     config, packer_tmpl = prepare_config(args.profile)
     prepare_autounattend(config)
-    if "customization_profile" in config.keys():
-        prepare_customization(config["customization_profile"])
+    prepare_customization(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
 
@@ -407,57 +413,70 @@ def append_to_script(filename, line):
         script.write(line)
 
 
-def prepare_customization(customization_profile):
+def prepare_customization(config):
     """Converts the customization file to a powershell script."""
+
+    if "customization_profile" in config.keys():
+        customization_profile = config["customization_profile"]
+    else:
+        profile_file = os.path.join(DIRS.user_config_dir, "customization", 'profile.js')
+        if not os.path.isfile(profile_file):
+            shutil.copy(resource_filename(__name__, 'profile-example.js'),
+                        profile_file)
+        customization_profile = "profile"
+
     customization = load_customization(customization_profile)
 
     if "registry" in customization:
-        for i in range(len(customization["registry"])):
+        for reg_mod in customization["registry"]:
             registry(customization_profile,
-                     customization["registry"][i]["modtype"],
-                     customization["registry"][i]["key"],
-                     customization["registry"][i]["name"],
-                     customization["registry"][i]["value"],
-                     customization["registry"][i]["valuetype"],
+                     reg_mod
                     )
 
     if "directory" in customization:
-        for i in range(len(customization["directory"])):
+        for dir_mod in customization["directory"]:
             directory(customization_profile,
-                      customization["directory"][i]["filetype"],
-                      customization["directory"][i]["dirpath"]
+                      dir_mod["modtype"],
+                      dir_mod["dirpath"]
                     )
     if "document" in customization:
-        for i in range(len(customization["document"])):
+        for doc_mod in customization["document"]:
             document(customization_profile,
-                     customization["document"][i]["modtype"],
-                     customization["document"][i]["docpath"]
+                     doc_mod["modtype"],
+                     doc_mod["docpath"]
                     )
 
     if "package" in customization:
-        for i in range(len(customization["package"])):
+        for package_mod in customization["package"]:
             package(customization_profile,
-                    customization["package"][i]["package"]
+                    package_mod["package"]
                     )
 
 
-def registry(customization_profile, modtype, key, name, value, valuetype):
+def registry(customization_profile, reg_mod):
     """
     Adds a registry key modification to a profile with PowerShell commands.
     """
-    if modtype == "add":
+    if reg_mod["modtype"] == "add":
         command = "New-ItemProperty"
         line = "{} -Path {} -Name {} -Value {} -PropertyType {}\r\n".format(
-            command, key, name, value, valuetype)
+            command, reg_mod["key"], reg_mod["name"],
+            reg_mod["value"], reg_mod["valuetype"])
         print("Adding: " + line)
-    elif modtype == "modify":
+    elif reg_mod["modtype"] == "modify":
         command = "Set-ItemProperty"
         line = "{0} -Path {1} -Name {2} -Value {3}\r\n".format(
-            command, key, name, value)
+            command, reg_mod["key"], reg_mod["name"],
+            reg_mod["value"])
         print("Adding: " + line)
-    elif modtype == "delete":
+    elif reg_mod["modtype"] == "delete":
         command = "Remove-ItemProperty"
-        line = "{0} -Path {1} -Name {2}\r\n".format(command, key, name)
+        if "name" in reg_mod.keys():
+            line = "{0} -Path {1} -Name {2}\r\n".format(
+                command, reg_mod["key"], reg_mod["name"])
+        else:
+            line = "{0} -Path {1}\r\n".format(
+                command, reg_mod["key"])
         print("Adding: " + line)
     else:
         print("Registry modification type invalid.")

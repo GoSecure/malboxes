@@ -19,3 +19,6 @@ dist/
 # Documentation artifacts
 README.html
 docs/*.html
+
+# IDE
+/.idea/
