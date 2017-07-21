@@ -432,7 +432,7 @@ def spin(parser, args):
 
 def append_to_script(filename, line):
     """ Appends a line to a script."""
-    with open(filename, 'w') as script:
+    with open(filename, 'a') as script:
         script.write(line)
 
 
