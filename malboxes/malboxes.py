@@ -475,18 +475,19 @@ def registry(profile_name, reg_mod, fd):
     """
     if reg_mod["modtype"] == "add":
         command = "New-ItemProperty"
-        line = "{} -Path {} -Name {} -Value {} -PropertyType {}\r\n".format(
-            command, reg_mod["key"], reg_mod["name"],
-            reg_mod["value"], reg_mod["valuetype"])
+        line = '{} -Path "{}" -Name "{}" -Value "{}" -PropertyType "{}"\r\n' \
+            .format(command, reg_mod["key"], reg_mod["name"], reg_mod["value"],
+                    reg_mod["valuetype"])
     elif reg_mod["modtype"] == "modify":
         command = "Set-ItemProperty"
-        line = "{0} -Path {1} -Name {2} -Value {3}\r\n".format(
+        line = '{0} -Path "{1}" -Name "{2}" -Value "{3}"\r\n'.format(
             command, reg_mod["key"], reg_mod["name"],
             reg_mod["value"])
     elif reg_mod["modtype"] == "delete":
         command = "Remove-ItemProperty"
-        line = "{0} -Path {1} -Name {2}\r\n".format(command, reg_mod["key"],
-                                                    reg_mod["name"])
+        line = '{0} -Path "{1}" -Name "{2}"\r\n'.format(command,
+                                                        reg_mod["key"],
+                                                        reg_mod["name"])
     else:
         print("Registry modification type invalid.")
         print("Valid ones are: add, delete and modify.")
@@ -500,11 +501,11 @@ def directory(profile_name, modtype, dirpath, fd):
     """ Adds the directory manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
-        line = "{0} -Path {1} -Type directory\r\n".format(command, dirpath)
+        line = '{0} -Path "{1}" -Type directory\r\n'.format(command, dirpath)
         print("Adding directory: {}".format(dirpath))
     elif modtype == "delete":
         command = "Remove-Item"
-        line = "{0} -Path {1}\r\n".format(command, dirpath)
+        line = '{0} -Path "{1}"\r\n'.format(command, dirpath)
         print("Removing directory: {}".format(dirpath))
     else:
         print("Directory modification type invalid.")
@@ -525,12 +526,11 @@ def document(profile_name, modtype, docpath, fd):
     """ Adds the file manipulation commands to the profile."""
     if modtype == "add":
         command = "New-Item"
-        line = "{0} -Path {1}\r\n".format(command, docpath)
+        line = '{0} -Path "{1}" -ItemType file\r\n'.format(command, docpath)
         print("Adding file: {}".format(docpath))
     elif modtype == "delete":
         command = "Remove-Item"
-        line = "{0} -Path {1}\r\n".format(
-                command, docpath)
+        line = '{0} -Path "{1}"\r\n'.format(command, docpath)
         print("Removing file: {}".format(docpath))
     else:
         print("Directory modification type invalid.")

@@ -1,6 +1,6 @@
 {
     "package": [{"package": "thunderbird"}],
-    "document": [{"modtype": "add", "docpath": "C:\\Malboxes"}],
+    "document": [{"modtype": "add", "docpath": "C:\\Test.doc"}],
     "directory": [{"modtype": "add", "dirpath": "C:\\mlbxs\\"}],
     "registry": [
         {"modtype": "add", "key": "HKLM:\\Hardware\\Description\\System", "value": "04/04/04", "name": "SystemBiosDate", "valuetype": "String"},
