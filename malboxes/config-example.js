@@ -25,6 +25,10 @@
 	"computername": "dirty",
 	// disk size is in megabytes
 	"disk_size": "20480",
+	// This example profile will attempt to load profiles/maldoc.js
+	// For more information on profiles check an example profile:
+	// https://github.com/GoSecure/malboxes/blob/master/malboxes/profile-example.js
+	//"profile": "maldoc",
 
 	// Windows Defender: true means enabled, false means disabled. Default is false.
 	//"windows_defender": "false",

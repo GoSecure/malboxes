@@ -192,10 +192,11 @@ def prepare_config(template):
 
     config = load_config(config_file, template)
 
-    profile_config = prepare_profile(template, config)
+    if "profile" in config.keys():
+        profile_config = prepare_profile(template, config)
 
-    # profile_config might contain a profile not in the config file
-    config.update(profile_config)
+        # profile_config might contain a profile not in the config file
+        config.update(profile_config)
 
     packer_tmpl = prepare_packer_template(config, template)
 
@@ -430,20 +431,20 @@ def spin(parser, args):
           "and issue a `vagrant up` to get started with your VM.")
 
 
-
-
 def prepare_profile(template, config):
     """Converts the profile to a powershell script."""
 
-    if "profile" in config.keys():
-        profile_name = config["profile"]
-    else:
-        profile_file = os.path.join(DIRS.user_config_dir, "profiles", 'profile.js')
-        if not os.path.isfile(profile_file):
-            shutil.copy(resource_filename(__name__, 'profile-example.js'),
-                        profile_file)
-        profile_name = "profile"
-        config["profile"] = "profile"
+    profile_name = config["profile"]
+
+    profile_filename = os.path.join(DIRS.user_config_dir, "profiles",
+                                    '{}.js'.format(profile_name))
+
+    # if profile file doesn't exist, populate it from default
+    if not os.path.isfile(profile_filename):
+        shutil.copy(resource_filename(__name__, 'profile-example.js'),
+                    profile_filename)
+        print("WARNING: A profile was specified but was not found on disk. "
+              "Copying a default one.")
 
     profile = load_profile(profile_name)
 
