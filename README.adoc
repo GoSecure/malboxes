@@ -100,9 +100,9 @@ re-use the same box several times per sample analysis.
 
 Run:
 
-    malboxes build <profile>
+    malboxes build <template>
 
-You can also list all supported profiles with:
+You can also list all supported templates with:
 
     malboxes list
 
