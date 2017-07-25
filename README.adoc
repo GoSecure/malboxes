@@ -100,9 +100,9 @@ re-use the same box several times per sample analysis.
 
 Run:
 
-    malboxes build <profile>
+    malboxes build <template>
 
-You can also list all supported profiles with:
+You can also list all supported templates with:
 
     malboxes list
 
@@ -113,12 +113,8 @@ For example:
 
     malboxes build win10_64_analyst
 
-If you want to customize your configuration, look at the following location
-for a `config.js` file:
-
-* Linux/Unix: `~/.config/malboxes/`
-* Mac OS X: `~/Library/Application Support/malboxes/`
-* Win 7+: `C:\Users\<username>\AppData\Local\malboxes\malboxes\`
+<<_configuration,The configuration section>> contains further information about
+what can be configured with malboxes.
 
 
 === Per analysis instances
@@ -137,37 +133,6 @@ For example:
 
     malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
 
-////
-FIXME: not sure we are going to keep this interface so commented for now
-
-=== Customization
-
-You can modify (add, modify or delete) registry keys, directories and files like this:
-
-Registry keys:
-
-    malboxes registry <profile> <modtype> <key name> <value> <valuetype>
-
-Example:
-
-    malboxes registry win10_64_analyst add HKCU:\Software Malboxes IsAwesome String
-
-Directories and files:
-
-    malboxes directory <profile> <modtype> <dirpath>
-
-Example:
-
-    malboxes directory BadAPT57 delete C:\Windows\System32
-
-You can add packages to install that are specific to the profile:
-
-    malboxes package <profile> <package>
-
-Example:
-
-    malboxes package RansomwareThatINeedRevengeOn chrome
-////
 
 == Configuration
 
@@ -180,6 +145,13 @@ system conventions:
 
 The file is named `config.js` and is copied from an example file on first run.
 link:malboxes/config-example.js[The example configuration] is documented.
+
+We are exploring with the concept of _profiles_ which are stored separately
+than the configuration and can be used to create files, alter the registry or
+install additional packages. See
+link:malboxes/profile-example.js[profile-example.js] for an example
+configuration. This new capacity is experimental and subject to change as we
+experiment with it.
 
 
 == More information

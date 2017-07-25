@@ -1,24 +1,13 @@
-{# Needed a different provision script due to chocolatey / .Net 4.0 install issues on Windows 7 (gh#59) #}
 	{
 		"type": "powershell",
 		"scripts": [
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
 			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/vmtools.ps1",
+			"{{ dir }}/scripts/windows/installtools.ps1",
+			{% if profile is defined %}"{{ cache_dir }}/profile-{{ profile }}.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/malware_analysis.ps1"
 		]
-	},
-	{
-		"type": "powershell",
-		"elevated_user": "malboxes",
-		"elevated_password": "malboxes",
-		"scripts": [
-			"{{ dir }}/scripts/windows/installtools.ps1"
-		],
-		"valid_exit_codes": [ 0, 5888 ]
-	},
-	{
-		"type": "windows-restart"
 	}
 {% if choco_packages %},
 	{
