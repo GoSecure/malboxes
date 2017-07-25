@@ -11,7 +11,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 // missing release title
 
 Enhancements::
-* New profile: Windows 7 64-bit: win7_64_analyst (#42)
+* New templates: Windows 7 64-bit: win7_64_analyst (#42)
+* Experimental profiles features: a separate configuration from OS templates
+  that enables to add new installed packages, files and registry changes (#51)
 * Support for trial versions of Windows 7 Enterprise x86 and x64
 * Better out of the box support of Fedora, CentOS and RedHat as host (#53)
 * Use user cache directories for packer. This avoids caching in memory-backed locations to

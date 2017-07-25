@@ -25,6 +25,10 @@
 	"computername": "dirty",
 	// disk size is in megabytes
 	"disk_size": "20480",
+	// This example profile will attempt to load profiles/maldoc.js
+	// For more information on profiles check an example profile:
+	// https://github.com/GoSecure/malboxes/blob/master/malboxes/profile-example.js
+	//"profile": "maldoc",
 
 	// Provision settings
 	// Which Hypervisor for privisoning and deployment? (Options are: "virtualbox" and "vsphere") Default is "virtualbox"

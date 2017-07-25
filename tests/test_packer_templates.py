@@ -33,11 +33,11 @@ from malboxes.malboxes import load_config
 class PackerTemplateTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.env = Environment(loader=FileSystemLoader('malboxes/profiles/'),
+        self.env = Environment(loader=FileSystemLoader('malboxes/templates/'),
                                autoescape=False)
 
     def test_packer_template_rendering(self):
-        for profile in glob.glob("malboxes/profiles/*.json"):
+        for profile in glob.glob("malboxes/templates/*.json"):
             print("Processing file {}".format(profile))
 
             # process profile
