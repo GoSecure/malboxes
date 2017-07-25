@@ -5,10 +5,8 @@
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
 			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
 			{% if hypervisor == "virtualbox" %}
-				"{{ dir }}/scripts/windows/vmtools.ps1",
+				"{{ dir }}/scripts/windows/vmtools.ps1"
 			{% endif %}
-			{% if profile is defined %}"{{ cache_dir }}/profile-{{ profile }}.ps1",{% endif %}
-			"{{ dir }}/scripts/windows/malware_analysis.ps1"
 		]
 	},
 	{
@@ -23,6 +21,15 @@
 	{
 		"type": "windows-restart"
 	}
+{% if profile is defined %},
+	{
+		"type": "powershell",
+		"scripts": [
+			"{{ cache_dir }}/profile-{{ profile }}.ps1",
+			"{{ dir }}/scripts/windows/malware_analysis.ps1"
+		]
+	}
+{% endif %}
 {% if choco_packages %},
 	{
 		"type": "windows-shell",
