@@ -19,6 +19,7 @@ branch to test in the following command:
 
 . Update the version in `malboxes/_version.py`
 . Update the changelog
+** linkify issues with vim's: `%s/#\(\d\d\)/{uri-issue}\1[#\1]/gc`
 ** Generate author list with:
 +
     git log <commit>.. --format="%aN" --reverse | perl -e 'my %dedupe; while (<STDIN>) { print unless $dedupe{$_}++}' | sort
