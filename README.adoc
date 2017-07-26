@@ -23,7 +23,7 @@ https://github.com/gosecure/malboxes
 * Python 3.3+
 * packer: https://www.packer.io/docs/install/index.html
 * vagrant: https://www.vagrantup.com/downloads.html
-* VirtualBox: https://www.virtualbox.org/wiki/Downloads
+* https://www.virtualbox.org/wiki/Downloads[VirtualBox] or an vSphere / ESXi server
 
 === Minimum specs for the build machine
 
@@ -145,6 +145,17 @@ system conventions:
 
 The file is named `config.js` and is copied from an example file on first run.
 link:malboxes/config-example.js[The example configuration] is documented.
+
+=== ESXi / vSphere support
+
+Malboxes uses virtualbox as a back-end by default but since version 0.3.0
+support for ESXi / vSphere has been added. Notes about the
+link:docs/esx-setup.adoc[steps required for ESXi / vSphere support are
+available]. Since everyone's setup is a little bit different do not hesitate
+to open an issue if you encounter a problem or improve our documentation via a
+pull request.
+
+=== Profiles
 
 We are exploring with the concept of _profiles_ which are stored separately
 than the configuration and can be used to create files, alter the registry or
