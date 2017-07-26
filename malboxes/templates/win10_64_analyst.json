@@ -1,7 +1,13 @@
 {
 	"builders": [{
-		"guest_os_type": "Windows10_64",
-		{% include 'snippets/builder_virtualbox_windows.json' %},
+
+		{% if hypervisor == "virtualbox" %}
+			"guest_os_type": "Windows10_64",
+			{% include 'snippets/builder_virtualbox_windows.json' %},
+		{% elif hypervisor == "vsphere" %}
+			"guest_os_type": "windows8-64",
+			{% include 'snippets/builder_vsphere_windows.json' %},
+		{% endif %}
 
 		"iso_urls": [
 			"file://{{ iso_path }}/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO",
@@ -16,19 +22,21 @@
 		]
 	}],
 
-	{% include 'snippets/postprocessor_vagrant.json' %},
+	{% if hypervisor == 'virtualbox' %}
+		{% include 'snippets/postprocessor_vagrant.json' %},
+	{% endif %}
 
 	"provisioners": [
 
-	{% include 'snippets/provision_powershell.json' %}
+		{% include 'snippets/provision_powershell.json' %}
 
-	{% if tools_path %},
-		{% include 'snippets/tools.json' %}
-	{% endif %}
-	{% if ida_path %},
-		{% include 'snippets/ida_remote_64.json' %},
-		{% include 'snippets/ida_remote_32.json' %}
-	{% endif %}
+		{% if tools_path %},
+			{% include 'snippets/tools.json' %}
+		{% endif %}
+		{% if ida_path %},
+			{% include 'snippets/ida_remote_64.json' %},
+			{% include 'snippets/ida_remote_32.json' %}
+		{% endif %}
 
 	]
 }

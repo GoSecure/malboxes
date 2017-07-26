@@ -7,7 +7,6 @@ Vagrant.configure(2) do |config|
 	# Giving plenty of times for updates
 	config.vm.boot_timeout = 600
 	config.vm.graceful_halt_timeout = 600
-
 	config.vm.provider "virtualbox" do |vb|
 		vb.gui = true
 		vb.customize ["modifyvm", :id, "--vram", "128"]

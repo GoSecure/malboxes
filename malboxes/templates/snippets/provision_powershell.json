@@ -3,7 +3,9 @@
 		"scripts": [
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
 			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
-			"{{ dir }}/scripts/windows/vmtools.ps1",
+			{% if hypervisor == "virtualbox" %}
+				"{{ dir }}/scripts/windows/vmtools.ps1",
+			{% endif %}
 			"{{ dir }}/scripts/windows/installtools.ps1",
 			{% if profile is defined %}"{{ cache_dir }}/profile-{{ profile }}.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/malware_analysis.ps1"

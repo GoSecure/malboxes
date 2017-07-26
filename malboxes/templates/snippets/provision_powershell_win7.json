@@ -4,7 +4,9 @@
 		"scripts": [
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
 			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
-			"{{ dir }}/scripts/windows/vmtools.ps1"
+			{% if hypervisor == "virtualbox" %}
+				"{{ dir }}/scripts/windows/vmtools.ps1"
+			{% endif %}
 		]
 	},
 	{

@@ -1,0 +1,28 @@
+"type": "vmware-iso",
+"format": "ova",
+"remote_type": "esx5",
+"remote_host": "{{ remote_host }}",
+"remote_datastore": "{{ remote_datastore }}",
+"remote_username": "{{ remote_username }}",
+"remote_password": "{{ remote_password }}",
+{# TODO avoiding ovftools doesn't seem to work #}
+"keep_registered": "true",
+"vnc_disable_password": "true",
+"communicator": "winrm",
+"winrm_username": "{{ username }}",
+"winrm_password": "{{ password }}",
+"winrm_timeout": "30m",
+"shutdown_command": "shutdown /s /f /t 10",
+"boot_wait": "10s",
+"disk_size": "{{ disk_size }}",
+"output_directory": "builds",
+"vm_name": "{{ profile_name }}",
+"vmdk_name": "{{ profile_name }}-vmdk",
+"vmx_data": {
+  "ethernet0.networkName": "VM Network",
+  "scsi0.virtualDev": "lsisas1068",
+  "memsize": "4096",
+  "numvcpus": "4"
+},
+{# TODO validate if they are automatically installed #}
+"tools_upload_flavor": "windows"

@@ -221,6 +221,14 @@ def load_config(config_filename, template):
     config['dir'] = resource_filename(__name__, "").replace('\\', '/')
     config['template_name'] = template
     config['config_dir'] = DIRS.user_config_dir.replace('\\', '/')
+
+    # add default values
+    # for users upgrading from versions where those values weren't defined
+    # I don't want default to override the config so I reversed the merge logic
+    default = {'hypervisor': 'virtualbox'}
+    default.update(config)
+    config = default
+
     return config
 
 
@@ -237,8 +245,17 @@ def load_profile(profile_name):
 
 
 def _get_os_type(config):
-    """OS Type is extracted from template json config"""
-    return config['builders'][0]['guest_os_type'].lower()
+    """OS Type is extracted from template json config.
+       For older hypervisor compatibility, some values needs to be updated here.
+    """
+    _os_type = config['builders'][0]['guest_os_type'].lower()
+    if config['hypervisor'] == 'vsphere':
+        if _os_type == 'windows8':
+            _os_type = 'windows10'
+        elif _os_type == 'windows8-64':
+            _os_type = 'windows10_64'
+
+    return _os_type
 
 
 tempfiles = []
@@ -425,8 +442,12 @@ def spin(parser, args):
     config['name'] = args.name
 
     print("Creating a Vagrantfile")
-    with open("Vagrantfile", 'w') as f:
-        _prepare_vagrantfile(config, "analyst_single.rb", f)
+    if config['hypervisor'] == 'virtualbox':
+        with open("Vagrantfile", 'w') as f:
+            _prepare_vagrantfile(config, "analyst_single.rb", f)
+    elif config['hypervisor'] == 'vsphere':
+        with open("Vagrantfile", 'w') as f:
+            _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
 

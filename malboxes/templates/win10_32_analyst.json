@@ -1,8 +1,13 @@
 {
 	"builders": [{
-		"guest_os_type": "Windows10",
 
-		{% include 'snippets/builder_virtualbox_windows.json' %},
+		{% if hypervisor == "virtualbox" %}
+			"guest_os_type": "Windows10",
+			{% include 'snippets/builder_virtualbox_windows.json' %},
+		{% elif hypervisor == "vsphere" %}
+			"guest_os_type": "windows8",
+			{% include 'snippets/builder_vsphere_windows.json' %},
+		{% endif %}
 
 		"iso_urls": [
 			"file://{{ iso_path }}/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO",
@@ -10,7 +15,6 @@
 		],
 		"iso_checksum": "0b8e56772c71dc7bb73654c61e53998a997e1e4d",
 		"iso_checksum_type": "sha1",
-
 
 		"floppy_files": [
 			"{{ cache_dir }}/Autounattend.xml",
@@ -20,16 +24,20 @@
 
 	{% include 'snippets/postprocessor_vagrant.json' %},
 
+	{% if hypervisor == 'virtualbox' %}
+		{% include 'snippets/postprocessor_vagrant.json' %},
+	{% endif %}
+
 	"provisioners": [
 
-	{% include 'snippets/provision_powershell.json' %}
+		{% include 'snippets/provision_powershell.json' %}
 
-	{% if tools_path %},
-		{% include 'snippets/tools.json' %}
-	{% endif %}
-	{% if ida_path %},
-		{% include 'snippets/ida_remote_32.json' %}
-	{% endif %}
+		{% if tools_path %},
+			{% include 'snippets/tools.json' %}
+		{% endif %}
+		{% if ida_path %},
+			{% include 'snippets/ida_remote_32.json' %}
+		{% endif %}
 
 	]
 }
