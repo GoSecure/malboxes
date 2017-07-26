@@ -6,45 +6,51 @@
 This document provides a high-level view of the changes introduced in {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== 0.3.0dev
+== 0.3.0
 
-// missing release title
+BlackHat USA Arsenal 2017 edition!
 
 Enhancements::
-* New templates: Windows 7 64-bit: win7_64_analyst (#42)
+* New templates: Windows 7 64-bit: win7_64_analyst ({uri-issue}42[#42])
 * Experimental profiles features: a separate configuration from OS templates
-  that enables to add new installed packages, files and registry changes (#51)
+  that enables to add new installed packages, files and registry changes ({uri-issue}51[#51])
 * Support for trial versions of Windows 7 Enterprise x86 and x64
-* Initial support for vSphere (ESXi / vCenter) on the back-end (#30, #68)
-* Better out of the box support of Fedora, CentOS and RedHat as host (#53)
+* Initial support for vSphere (ESXi / vCenter) on the back-end ({uri-issue}30[#30], {uri-issue}68[#68])
+* Better out of the box support of Fedora, CentOS and RedHat as host ({uri-issue}53[#53])
 * Use user cache directories for packer. This avoids caching in memory-backed locations to
   prevent unnecessary memory pressure during builds or free space issues on
-  low RAM systems (#45)
+  low RAM systems ({uri-issue}45[#45])
 * Default timeout for WinRM is 60m (from 30m) to allow slower machines the time to go
   through Windows' install process
 * Increased default disk size to 20GB
-* Added a --force flag to overwrite pre-existing packer artifacts or vagrant boxes (#46)
-* debug: Passes -on-error=abort to packer to allow investigation of failures (#35)
+* Added a --force flag to overwrite pre-existing packer artifacts or vagrant boxes ({uri-issue}46[#46])
+* debug: Passes -on-error=abort to packer to allow investigation of failures ({uri-issue}35[#35])
 * Documentation improvements
 
 Bug fixes::
-* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors (#33, #43, #60)
-* Increased WinRM memory limit on Windows 7 solves errors installing .Net Framework 4.0 (#31, #44)
-* More Windows 7 .Net Framework 4.0 fixes (#59)
+* NetworkLocation changes for Windows 7 solves a class of 'Timeout waiting for WinRM' errors ({uri-issue}33[#33], {uri-issue}43[#43], {uri-issue}60[#60])
+* Increased WinRM memory limit on Windows 7 solves errors installing .Net Framework 4.0 ({uri-issue}31[#31], {uri-issue}44[#44])
+* More Windows 7 .Net Framework 4.0 fixes ({uri-issue}59[#59])
 
-////
 === Release meta
 
-Released by
+* Released on: 2017-07-25
+* Released by: @obilodeau
+* Release beer: Sierra Nevada Hop Hunter IPA
 
-// {uri-repo}/issues?q=milestone%3A1.0.0[issues resolved] |
-{uri-repo}/releases/tag/0.2.0[git tag] |
-{uri-repo}/compare/0.1.0...0.2.0[full diff]
+Action: {uri-repo}/issues?q=is%3Aissue%20is%3Aclosed%20created%3A2017-02-16..2017-07-25[issues
+created and resolved] |
+{uri-repo}/compare/0.2.0...0.3.0[full diff]
 
 === Credits
 
 Thanks to the following people who contributed to this release:
-////
+
+https://github.com/gleblanc1783[Gregory Leblanc],
+https://github.com/xambroz[@xambroz],
+https://github.com/malwarenights[@malwarenights],
+https://github.com/svieg[Hugo Genesse] and
+https://github.com/obilodeau[Olivier Bilodeau]
 
 
 == 0.2.0
