@@ -15,6 +15,7 @@ Enhancements::
 * Experimental profiles features: a separate configuration from OS templates
   that enables to add new installed packages, files and registry changes (#51)
 * Support for trial versions of Windows 7 Enterprise x86 and x64
+* Initial support for vSphere (ESXi / vCenter) on the back-end (#30, #68)
 * Better out of the box support of Fedora, CentOS and RedHat as host (#53)
 * Use user cache directories for packer. This avoids caching in memory-backed locations to
   prevent unnecessary memory pressure during builds or free space issues on
