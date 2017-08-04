@@ -11,8 +11,8 @@
 	},
 	{
 		"type": "powershell",
-		"elevated_user": "malboxes",
-		"elevated_password": "malboxes",
+		"elevated_user": "{{ username }}",
+		"elevated_password": "{{ password }}",
 		"scripts": [
 			"{{ dir }}/scripts/windows/installtools.ps1"
 		],
