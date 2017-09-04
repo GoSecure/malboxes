@@ -49,7 +49,7 @@
                 <UILanguage>en-US</UILanguage>
                 <WillShowUI>Never</WillShowUI>
             </SetupUILanguage>
-            <InputLocale>en-US</InputLocale>
+            <InputLocale>{{ input_locale or 'en-US' }}</InputLocale>
             <SystemLocale>en-US</SystemLocale>
             <UILanguage>en-US</UILanguage>
             <UILanguageFallback>en-US</UILanguageFallback>

@@ -29,6 +29,7 @@
 	// For more information on profiles check an example profile:
 	// https://github.com/GoSecure/malboxes/blob/master/malboxes/profile-example.js
 	//"profile": "maldoc",
+	//"input_locale": "fr-FR",
 
 	// Provision settings
 	// Which Hypervisor for privisoning and deployment? (Options are: "virtualbox" and "vsphere") Default is "virtualbox"
