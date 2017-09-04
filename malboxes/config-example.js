@@ -45,6 +45,8 @@
 	"vsphere_password": "",
 	"vsphere_insecure": "true",
 
+	//"proxy": "company_proxy:3128",
+
 	// Windows Defender: true means enabled, false means disabled. Default is false.
 	//"windows_defender": "false",
 	// Windows Updates: true means enabled, false means disabled. Default is false.
