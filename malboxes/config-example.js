@@ -29,6 +29,7 @@
 	// For more information on profiles check an example profile:
 	// https://github.com/GoSecure/malboxes/blob/master/malboxes/profile-example.js
 	//"profile": "maldoc",
+	//"input_locale": "fr-FR",
 
 	// Provision settings
 	// Which Hypervisor for privisoning and deployment? (Options are: "virtualbox" and "vsphere") Default is "virtualbox"
@@ -44,6 +45,8 @@
 	"vsphere_user": "",
 	"vsphere_password": "",
 	"vsphere_insecure": "true",
+
+	//"proxy": "company_proxy:3128",
 
 	// Windows Defender: true means enabled, false means disabled. Default is false.
 	//"windows_defender": "false",
