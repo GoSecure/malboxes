@@ -8,6 +8,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == 0.3.1 *unreleased*
 
+Enhancements::
+* Added configuration parameters for keyboard locale and proxy settings ({uri-issue}72[#72])
+
 Bug fixes::
 * Fixed `jinja2.exceptions.TemplateNotFound: snippets/builder_vsphere_windows.json` ({uri-issue}71[#71])
 
