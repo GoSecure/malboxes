@@ -15,6 +15,10 @@
 	{
 		"type": "windows-shell",
 		"inline": [
+			{% if proxy %}
+				{# Sometimes, choco decide to ignore the proxy... #}
+				"choco config set proxy {{ proxy }}",
+			{% endif %}
 			"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
 			"choco install {{ choco_packages }} -y"
 		]
