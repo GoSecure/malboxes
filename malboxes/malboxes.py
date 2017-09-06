@@ -487,6 +487,11 @@ def prepare_profile(template, config):
         for package_mod in profile["package"]:
             package(profile_name, package_mod["package"], fd)
 
+    if "packer" in profile:
+        packer = profile["packer"]
+        if "provisioners" in packer:
+            config["packer_extra_provisioners"] = packer["provisioners"]
+
     fd.close()
     return config
 
