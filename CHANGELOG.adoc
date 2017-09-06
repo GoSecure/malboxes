@@ -10,6 +10,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Enhancements::
 * Added configuration parameters for keyboard locale and proxy settings ({uri-issue}72[#72])
+* Chocolatey will force the proxy configuration if set ({uri-issue}74[#74])
+* Custom provisioners can be defined in profiles configuration ({uri-issue}73[#73])
 
 Bug fixes::
 * Fixed `jinja2.exceptions.TemplateNotFound: snippets/builder_vsphere_windows.json` ({uri-issue}71[#71])
