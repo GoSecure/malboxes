@@ -94,6 +94,8 @@ def init_parser():
     parser_build.add_argument('--force', action='store_true',
                               help='Force the build to happen. Overwrites '
                                    'pre-existing builds or vagrant boxes.')
+    parser_build.add_argument('--profile', dest='profile', action='store',
+                              help='Override the profile setting')
     parser_build.add_argument('--show-packer-template', action='store_true',
                               help='Print the packer template and exit. '
                                    'Only useful for debugging.')
@@ -212,6 +214,10 @@ def prepare_config(args):
                     config_file)
 
     config = load_config(config_file, template)
+
+    if getattr(args, 'profile', None):
+        print("Profile set to: {}".format(args.profile))
+        config["profile"] = args.profile
 
     if "profile" in config.keys():
         profile_config = prepare_profile(template, config)
