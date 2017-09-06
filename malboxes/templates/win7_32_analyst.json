@@ -34,6 +34,10 @@
 	{% if ida_path %},
 		{% include 'snippets/ida_remote_32.json' %}
 	{% endif %}
-
+	{% if packer_extra_provisioners %}
+		{% for p in packer_extra_provisioners %}
+			,{{ p | tojson }}
+		{% endfor %}
+	{% endif %}
 	]
 }
