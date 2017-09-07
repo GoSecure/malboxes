@@ -55,6 +55,7 @@
 
 	// Chocolatey packages to install on the VM
 	// TODO re-add dependencywalker and regshot once upstream choco package provides a checksum
+	// "choco_packages": False,
 	"choco_packages": [
 		// "dependencywalker --ignorechecksum",
 		// "regshot --ignorechecksum",

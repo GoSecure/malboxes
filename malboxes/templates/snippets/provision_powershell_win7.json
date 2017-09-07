@@ -9,15 +9,17 @@
 			{% endif %}
 		]
 	},
-	{
-		"type": "powershell",
-		"elevated_user": "{{ username }}",
-		"elevated_password": "{{ password }}",
-		"scripts": [
-			"{{ dir }}/scripts/windows/installtools.ps1"
-		],
-		"valid_exit_codes": [ 0, 5888 ]
-	},
+	{% if choco_packages and choco_packages|length > 0 %}
+		{
+			"type": "powershell",
+			"elevated_user": "{{ username }}",
+			"elevated_password": "{{ password }}",
+			"scripts": [
+				"{{ dir }}/scripts/windows/installtools.ps1"
+			],
+			"valid_exit_codes": [ 0, 5888 ]
+		},
+	{% endif %}
 	{
 		"type": "windows-restart"
 	}
@@ -30,7 +32,7 @@
 		]
 	}
 {% endif %}
-{% if choco_packages %},
+{% if choco_packages and choco_packages|length > 0 %},
 	{
 		"type": "windows-shell",
 		"inline": [
