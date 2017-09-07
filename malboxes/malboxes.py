@@ -315,10 +315,13 @@ def run_packer(packer_tmpl, args):
                 return 254
 
         # run packer with relevant config minified
+        # (removes "choco_packages" as packer do not support arrays in var-file)
         configfile = os.path.join(DIRS.user_config_dir, 'config.js')
         with open(configfile, 'r') as config:
+            config = json.loads(jsmin(config.read()))
+            del config['choco_packages']
             f = create_cachefd('packer_var_file.json')
-            f.write(jsmin(config.read()))
+            f.write(json.dumps(config))
             f.close()
 
         flags = ['-var-file={}'.format(f.name)]
