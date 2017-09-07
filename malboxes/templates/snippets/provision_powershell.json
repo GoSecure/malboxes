@@ -6,12 +6,14 @@
 			{% if hypervisor == "virtualbox" %}
 				"{{ dir }}/scripts/windows/vmtools.ps1",
 			{% endif %}
-			"{{ dir }}/scripts/windows/installtools.ps1",
+			{% if choco_packages and choco_packages|length > 0 %}
+				"{{ dir }}/scripts/windows/installtools.ps1",
+			{% endif %}
 			{% if profile is defined %}"{{ cache_dir }}/profile-{{ profile }}.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/malware_analysis.ps1"
 		]
 	}
-{% if choco_packages %},
+{% if choco_packages and choco_packages|length > 0 %},
 	{
 		"type": "windows-shell",
 		"inline": [
@@ -19,8 +21,15 @@
 				{# Sometimes, choco decide to ignore the proxy... #}
 				"choco config set proxy {{ proxy }}",
 			{% endif %}
-			"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
-			"choco install {{ choco_packages }} -y"
+			{% if choco_packages is iterable and choco_packages is not string %}
+				{% for package in choco_packages %}
+					"choco install {{ package }} -y"{{ "," if not loop.last }}
+				{% endfor %}
+			{% else %}
+				{# Support old config format #}
+				"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
+				"choco install {{ choco_packages }} -y"
+			{% endif %}
 		]
 	}
 {% endif %}

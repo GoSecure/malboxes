@@ -9,15 +9,17 @@
 			{% endif %}
 		]
 	},
-	{
-		"type": "powershell",
-		"elevated_user": "{{ username }}",
-		"elevated_password": "{{ password }}",
-		"scripts": [
-			"{{ dir }}/scripts/windows/installtools.ps1"
-		],
-		"valid_exit_codes": [ 0, 5888 ]
-	},
+	{% if choco_packages and choco_packages|length > 0 %}
+		{
+			"type": "powershell",
+			"elevated_user": "{{ username }}",
+			"elevated_password": "{{ password }}",
+			"scripts": [
+				"{{ dir }}/scripts/windows/installtools.ps1"
+			],
+			"valid_exit_codes": [ 0, 5888 ]
+		},
+	{% endif %}
 	{
 		"type": "windows-restart"
 	}
@@ -30,7 +32,7 @@
 		]
 	}
 {% endif %}
-{% if choco_packages %},
+{% if choco_packages and choco_packages|length > 0 %},
 	{
 		"type": "windows-shell",
 		"inline": [
@@ -38,8 +40,15 @@
 				{# Sometimes, choco decide to ignore the proxy... #}
 				"choco config set proxy {{ proxy }}",
 			{% endif %}
-			"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
-			"choco install {{ choco_packages }} -y"
+			{% if choco_packages is iterable and choco_packages is not string %}
+				{% for package in choco_packages %}
+					"choco install {{ package }} -y"{{ "," if not loop.last }}
+				{% endfor %}
+			{% else %}
+				{# Support old config format #}
+				"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
+				"choco install {{ choco_packages }} -y"
+			{% endif %}
 		]
 	}
 {% endif %}
