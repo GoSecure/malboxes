@@ -26,6 +26,8 @@ import re
 import sys
 import unittest
 
+from types import SimpleNamespace
+
 from jinja2 import Environment, FileSystemLoader
 
 from malboxes.malboxes import load_config
@@ -42,8 +44,9 @@ class PackerTemplateTestCase(unittest.TestCase):
 
             # process profile
             profile_name = os.path.basename(profile)
-            config = load_config('malboxes/config-example.js',
-                                 re.match('(.*).json$', profile_name).group(1))
+            args = SimpleNamespace()
+            args.template = re.match('(.*).json$', profile_name).group(1)
+            config = load_config('malboxes/config-example.js', args)
 
             try:
                 template = self.env.get_template(os.path.basename(profile_name))

@@ -84,6 +84,8 @@ def init_parser():
     parser_build.add_argument('--force', action='store_true',
                               help='Force the build to happen. Overwrites '
                                    'pre-existing builds or vagrant boxes.')
+    parser_build.add_argument('--profile', dest='profile', action='store',
+                              help='Override the profile setting')
     parser_build.add_argument('--skip-packer-build', action='store_true',
                               help='Skip packer build phase. '
                                    'Only useful for debugging.')
@@ -100,6 +102,8 @@ def init_parser():
     parser_spin.add_argument('name', help='Name of the target VM. '
                                           'Must be unique on your system. '
                                           'Ex: Cryptolocker_XYZ.')
+    parser_spin.add_argument('--profile', dest='profile', action='store',
+                              help='Override the profile setting')
     parser_spin.set_defaults(func=spin)
 
     # no command
@@ -126,7 +130,7 @@ def prepare_autounattend(config):
     f.close()
 
 
-def prepare_packer_template(config, template_name):
+def prepare_packer_template(config, args):
     """
     Prepares a packer template JSON file according to configuration and writes
     it into a temporary location where packer later expects it.
@@ -134,6 +138,9 @@ def prepare_packer_template(config, template_name):
     Uses jinja2 template syntax to generate the resulting JSON file.
     Templates are in templates/ and snippets in templates/snippets/.
     """
+    template_name = config["template"]
+    packer_template_name = config["template_name"]
+
     try:
         template_fd = resource_stream(__name__,
                                      'templates/{}.json'.format(template_name))
@@ -147,7 +154,7 @@ def prepare_packer_template(config, template_name):
     template = env.get_template("{}.json".format(template_name))
 
     # write to temporary file
-    f = create_cachefd('{}.json'.format(template_name))
+    f = create_cachefd('{}.json'.format(packer_template_name))
     f.write(template.render(config)) # pylint: disable=no-member
     f.close()
     return f.name
@@ -167,7 +174,7 @@ def _prepare_vagrantfile(config, source, fd_dest):
     fd_dest.close()
 
 
-def prepare_config(template):
+def prepare_config(args):
     """
     Prepares Malboxes configuration and merge with Packer template configuration
 
@@ -190,15 +197,15 @@ def prepare_config(template):
         shutil.copy(resource_filename(__name__, 'config-example.js'),
                     config_file)
 
-    config = load_config(config_file, template)
+    config = load_config(config_file, args)
 
     if "profile" in config.keys():
-        profile_config = prepare_profile(template, config)
+        profile_config = prepare_profile(config, args)
 
         # profile_config might contain a profile not in the config file
         config.update(profile_config)
 
-    packer_tmpl = prepare_packer_template(config, template)
+    packer_tmpl = prepare_packer_template(config, args)
 
     # merge/update with template config
     with open(packer_tmpl, 'r') as f:
@@ -207,7 +214,7 @@ def prepare_config(template):
     return config, packer_tmpl
 
 
-def load_config(config_filename, template):
+def load_config(config_filename, args):
     """Loads the minified JSON config. Returns a dict."""
 
     config = {}
@@ -215,11 +222,20 @@ def load_config(config_filename, template):
         # minify then load as JSON
         config = json.loads(jsmin(config_file.read()))
 
+    if getattr(args, 'profile', None):
+        config["profile"] = args.profile
+
+
+    config["template"] = args.template
+    if "profile" in config.keys():
+        config['template_name'] = "{}_{}".format(args.template, config["profile"])
+    else:
+        config['template_name'] = args.template
+
     # add packer required variables
     # Note: Backslashes are replaced with forward slashes (Packer on Windows)
     config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
     config['dir'] = resource_filename(__name__, "").replace('\\', '/')
-    config['template_name'] = template
     config['config_dir'] = DIRS.user_config_dir.replace('\\', '/')
 
     # add default values
@@ -387,7 +403,7 @@ def list_templates(parser, args):
 def build(parser, args):
 
     print("Generating configuration files...")
-    config, packer_tmpl = prepare_config(args.template)
+    config, packer_tmpl = prepare_config(args)
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
@@ -436,7 +452,7 @@ def spin(parser, args):
         print("Vagrantfile already exists. Please move it away. Exiting...")
         sys.exit(5)
 
-    config, _ = prepare_config(args.template)
+    config, _ = prepare_config(args)
 
     config['template'] = args.template
     config['name'] = args.name
@@ -452,8 +468,9 @@ def spin(parser, args):
           "and issue a `vagrant up` to get started with your VM.")
 
 
-def prepare_profile(template, config):
+def prepare_profile(config, args):
     """Converts the profile to a powershell script."""
+    template = args.template
 
     profile_name = config["profile"]
 
