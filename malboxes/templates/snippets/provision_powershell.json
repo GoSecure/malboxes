@@ -33,7 +33,7 @@
 	{
 		"type": "powershell",
 		"scripts": [
-			"{{ cache_dir }}/profile-{{ profile }}.ps1"
+			"{{ packer_dir }}/profile-{{ profile }}.ps1"
 		]
 	}
 {% endif %}

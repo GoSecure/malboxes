@@ -28,6 +28,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import textwrap
 
 from appdirs import AppDirs
@@ -38,8 +39,10 @@ from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
+tmp_cache_dir = "/tmp/malboxes"
 
 def initialize():
+    global tmp_cache_dir
     # create appdata directories if they don't exist
     if not os.path.exists(DIRS.user_config_dir):
         os.makedirs(DIRS.user_config_dir)
@@ -52,7 +55,13 @@ def initialize():
     if not os.path.exists(DIRS.user_cache_dir):
         os.makedirs(DIRS.user_cache_dir)
 
-    cache_scripts_dir = os.path.join(DIRS.user_cache_dir, "scripts", "user")
+    temp_cache = tempfile.mkdtemp(dir=DIRS.user_cache_dir)
+    tmp_cache_dir = temp_cache
+
+    if not os.path.exists(tmp_cache_dir):
+        os.makedirs(tmp_cache_dir)
+
+    cache_scripts_dir = os.path.join(tmp_cache_dir, "scripts", "user")
 
     if not (os.path.exists(cache_scripts_dir)):
         os.makedirs(cache_scripts_dir)
@@ -235,6 +244,7 @@ def load_config(config_filename, args):
     # add packer required variables
     # Note: Backslashes are replaced with forward slashes (Packer on Windows)
     config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
+    config['packer_dir'] = tmp_cache_dir.replace('\\', '/')
     config['dir'] = resource_filename(__name__, "").replace('\\', '/')
     config['config_dir'] = DIRS.user_config_dir.replace('\\', '/')
 
@@ -276,15 +286,13 @@ def _get_os_type(config):
 
 tempfiles = []
 def create_cachefd(filename):
-    tempfiles.append(filename)
-    return open(os.path.join(DIRS.user_cache_dir, filename), 'w')
+    return open(os.path.join(tmp_cache_dir, filename), 'w')
 
 
 def cleanup():
     """Removes temporary files. Keep them in debug mode."""
     if not DEBUG:
-        for f in tempfiles:
-            os.remove(os.path.join(DIRS.user_cache_dir, f))
+        shutil.rmtree(tmp_cache_dir)
 
 
 def run_foreground(command, env=None):
@@ -318,7 +326,7 @@ def run_packer(packer_tmpl, args):
     print("----------------------------------")
 
     prev_cwd = os.getcwd()
-    os.chdir(DIRS.user_cache_dir)
+    os.chdir(tmp_cache_dir)
 
     try:
         # packer or packer-io?
@@ -331,7 +339,7 @@ def run_packer(packer_tmpl, args):
                 return 254
 
         # run packer with relevant config minified
-        # (removes "profiles" as packer do not support arrays in var-file)
+        # (removes "profile_config" as packer do not support arrays in var-file)
         configfile = os.path.join(DIRS.user_config_dir, 'config.js')
         with open(configfile, 'r') as config:
             config = json.loads(jsmin(config.read()))
@@ -344,7 +352,7 @@ def run_packer(packer_tmpl, args):
         flags = ['-var-file={}'.format(f.name)]
 
         special_env = {'PACKER_CACHE_DIR': DIRS.user_cache_dir}
-        special_env['TMPDIR'] = DIRS.user_cache_dir
+        special_env['TMPDIR'] = tmp_cache_dir
         if DEBUG:
             special_env['PACKER_LOG']  = '1'
             flags.append('-on-error=abort')
@@ -370,7 +378,7 @@ def add_box(config, args):
     print("--------------------------")
 
     box = config['post-processors'][0]['output']
-    box = os.path.join(DIRS.user_cache_dir, box)
+    box = os.path.join(tmp_cache_dir, box)
     box = box.replace('{{user `name`}}', args.template)
 
     flags = ['--name={}'.format(args.template)]
@@ -445,7 +453,7 @@ def build(parser, args):
         You can re-use this base box several times by using `malboxes
         spin`. Each VM will be independent of each other.
         ===============================================================""")
-        .format(args.template, DIRS.user_cache_dir))
+        .format(args.template, tmp_cache_dir))
 
 
 def spin(parser, args):

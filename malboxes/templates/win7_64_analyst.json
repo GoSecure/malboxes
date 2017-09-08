@@ -17,7 +17,7 @@
 		{% endif %}
 
 		"floppy_files": [
-			"{{ cache_dir }}/Autounattend.xml",
+			"{{ packer_dir }}/Autounattend.xml",
 			{% if proxy %}"{{ dir }}/scripts/windows/refresh-proxy.ps1",{% endif %}
 			"{{ dir }}/installconfig/windows7_64/enablewinrm.ps1"
 		]
