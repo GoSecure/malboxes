@@ -28,7 +28,7 @@
 	// This example profile will attempt to load profiles/maldoc.js
 	// For more information on profiles check an example profile:
 	// https://github.com/GoSecure/malboxes/blob/master/malboxes/profile-example.js
-	//"profile": "maldoc",
+	"profile": "default",
 	//"input_locale": "fr-FR",
 
 	// Provision settings
@@ -52,10 +52,6 @@
 	//"windows_defender": "false",
 	// Windows Updates: true means enabled, false means disabled. Default is false.
 	//"windows_updates": "false",
-
-	// Chocolatey packages to install on the VM
-	// TODO re-add dependencywalker and regshot once upstream choco package provides a checksum
-	"choco_packages": "sysinternals windbg 7zip putty fiddler4 processhacker apm wireshark",
 
 	// Setting the IDA Path will copy the IDA remote debugging tools into the guest
 	//"ida_path": "/path/to/your/ida",

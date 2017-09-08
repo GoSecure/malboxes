@@ -206,10 +206,10 @@ def prepare_config(args):
         config.update(profile_config)
 
     packer_tmpl = prepare_packer_template(config, args)
-
     # merge/update with template config
     with open(packer_tmpl, 'r') as f:
-        config.update(json.loads(f.read()))
+        a = f.read()
+        config.update(json.loads(a))
 
     return config, packer_tmpl
 
@@ -331,10 +331,14 @@ def run_packer(packer_tmpl, args):
                 return 254
 
         # run packer with relevant config minified
+        # (removes "profiles" as packer do not support arrays in var-file)
         configfile = os.path.join(DIRS.user_config_dir, 'config.js')
         with open(configfile, 'r') as config:
+            config = json.loads(jsmin(config.read()))
+            if "profile_config" in config.keys():
+                del config["profile_config"]
             f = create_cachefd('packer_var_file.json')
-            f.write(jsmin(config.read()))
+            f.write(json.dumps(config))
             f.close()
 
         flags = ['-var-file={}'.format(f.name)]
@@ -486,6 +490,8 @@ def prepare_profile(config, args):
 
     profile = load_profile(profile_name)
 
+    config["profile_config"] = profile
+
     fd = create_cachefd('profile-{}.ps1'.format(profile_name))
 
     if "registry" in profile:
@@ -500,9 +506,9 @@ def prepare_profile(config, args):
         for doc_mod in profile["document"]:
             document(profile_name, doc_mod["modtype"], doc_mod["docpath"], fd)
 
-    if "package" in profile:
-        for package_mod in profile["package"]:
-            package(profile_name, package_mod["package"], fd)
+    if "packages" in profile:
+        for pkg in profile["packages"]:
+            package(profile_name, pkg, fd)
 
     if "packer" in profile:
         packer = profile["packer"]
@@ -560,7 +566,7 @@ def directory(profile_name, modtype, dirpath, fd):
 
 def package(profile_name, package_name, fd):
     """ Adds a package to install with Chocolatey."""
-    line = "choco install {} -y\r\n".format(package_name)
+    line = "choco install -y {}\r\n".format(package_name)
     print("Adding Chocolatey package: {}".format(package_name))
 
     fd.write(line)

@@ -1,5 +1,17 @@
 {
-    "package": [{"package": "thunderbird"}],
+    "packages": [
+        // "dependencywalker --ignorechecksum",
+        // "regshot --ignorechecksum",
+        "npcap --package-parameters '/winpcap_mode=yes' -y",
+        "sysinternals",
+        "windbg",
+        "7zip",
+        "putty",
+        "fiddler4",
+        "processhacker",
+        "apm",
+        "wireshark"
+    ],
     "document": [{"modtype": "add", "docpath": "C:\\Test.doc"}],
     "directory": [{"modtype": "add", "dirpath": "C:\\mlbxs\\"}],
     "registry": [
