@@ -560,7 +560,7 @@ def document(profile_name, modtype, docpath, fd):
         line = '{0} -Path "{1}"\r\n'.format(command, docpath)
         print("Removing file: {}".format(docpath))
     else:
-        print("Directory modification type invalid.")
+        print("Document modification type invalid.")
         print("Valid ones are: add, delete.")
 
     fd.write(line)
