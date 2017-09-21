@@ -2,6 +2,11 @@
     "package": [{"package": "thunderbird"}],
     "document": [{"modtype": "add", "docpath": "C:\\Test.doc"}],
     "directory": [{"modtype": "add", "dirpath": "C:\\mlbxs\\"}],
+    "shortcut": [
+        {"name": "Fiddler", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
+        {"name": "Fiddler Port 9999", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe", "arguments": "/port:9999"},
+        {"name": "SysInternals", "target": "$env:ALLUSERSPROFILE\\chocolatey\\bin"}
+    ],
     "registry": [
         {"modtype": "add", "key": "HKLM:\\Hardware\\Description\\System", "value": "04/04/04", "name": "SystemBiosDate", "valuetype": "String"},
         {"modtype": "add", "key": "HKLM:\\Hardware\\Description\\System", "value": "Hardware Version 0.0 PARTTBLX", "name": "SystemBiosDate", "valuetype": "String"},
