@@ -471,6 +471,10 @@ def prepare_profile(template, config):
 
     fd = create_cachefd('profile-{}.ps1'.format(profile_name))
 
+    if "package" in profile:
+        for package_mod in profile["package"]:
+            package(profile_name, package_mod["package"], fd)
+
     if "registry" in profile:
         for reg_mod in profile["registry"]:
             registry(profile_name, reg_mod, fd)
@@ -482,10 +486,6 @@ def prepare_profile(template, config):
     if "document" in profile:
         for doc_mod in profile["document"]:
             document(profile_name, doc_mod["modtype"], doc_mod["docpath"], fd)
-
-    if "package" in profile:
-        for package_mod in profile["package"]:
-            package(profile_name, package_mod["package"], fd)
 
     if "packer" in profile:
         packer = profile["packer"]
@@ -508,6 +508,9 @@ def registry(profile_name, reg_mod, fd):
     Adds a registry key modification to a profile with PowerShell commands.
     """
     if reg_mod["modtype"] == "add":
+        reg_key_line = 'if ( -not (Test-Path "{0}") ){{New-Item "{0}" -Force}}\r\n' \
+                       .format(reg_mod["key"])
+        fd.write(reg_key_line)
         command = "New-ItemProperty"
         line = '{} -Path "{}" -Name "{}" -Value "{}" -PropertyType "{}"\r\n' \
             .format(command, reg_mod["key"], reg_mod["name"], reg_mod["value"],
