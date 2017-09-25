@@ -492,6 +492,13 @@ def prepare_profile(template, config):
         if "provisioners" in packer:
             config["packer_extra_provisioners"] = packer["provisioners"]
 
+    if "shortcut" in profile:
+        shortcut_function(fd)
+        for shortcut_mod in profile["shortcut"]:
+            if not "arguments" in shortcut_mod:
+                shortcut_mod["arguments"]=None
+            shortcut(shortcut_mod["dest"], shortcut_mod["target"], shortcut_mod["arguments"], fd)
+    
     fd.close()
     return config
 
@@ -565,6 +572,42 @@ def document(profile_name, modtype, docpath, fd):
 
     fd.write(line)
 
+def shortcut_function(fd):
+    """ Add shortcut function to the profile """
+    fd.write("""function Add-Shortcut{
+        param([string]$target_path, [string]$dest_path, [string]$arguments="");
+        if (-Not (Test-Path $target_path)){
+            Write-Output "[Add-Shortcut::Error] Can't add shortcut. Target path '$target_path' not found.";
+            return;
+        }
+        if ((Test-Path $dest_path)){
+            Write-Output "[Add-Shortcut::Error] Can't add shortcut. Destination path '$dest_path' exists.";
+            return;
+        }
+        Write-Output "[Add-Shortcut] Destination: '$dest_path'; Target: '$target_path'";
+        if((Get-Item $target_path) -is [System.IO.DirectoryInfo]){
+            Start-Process "cmd.exe" -ArgumentList "/c mklink /D `"$dest_path`" `"$target_path`"" -Wait -NoNewWindow;      
+        }else{
+            $_shell = New-Object -ComObject ("WScript.Shell");
+            $_shortcut = $_shell.CreateShortcut($dest_path);
+            $_shortcut.TargetPath=$target_path;
+            if(-Not [String]::IsNullOrEmpty($arguments)){
+                $_shortcut.Arguments=$arguments;
+            }
+            $_shortcut.WorkingDirectory=[System.IO.Path]::GetDirectoryName($target_path);
+            $_shortcut.Save();
+        }
+    }\r\n""")
+
+def shortcut(dest, target, arguments, fd):
+    """ Create shortcut on Desktop """
+    if arguments is None:
+        line = "Add-Shortcut \"{0}\" \"{1}\"\r\n".format(target, dest)
+        print("Adding shortcut {}: {}".format(dest, target))
+    else:
+        line = "Add-Shortcut \"{0}\" \"{1}\" \"{2}\"\r\n".format(target, dest, arguments)
+        print("Adding shortcut {}: {} with arguments {}".format(dest, target, arguments))
+    fd.write(line)
 
 def main():
     global DEBUG
