@@ -72,7 +72,7 @@
     </settings>
     <settings pass="oobeSystem">
         {% if proxy %}
-        <component name="Microsoft-Windows-IE-ClientNetworkProtocolImplementation" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+        <component name="Microsoft-Windows-IE-ClientNetworkProtocolImplementation" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <POLICYProxySettingsPerUser>0</POLICYProxySettingsPerUser>
             <HKLMProxyEnable>true</HKLMProxyEnable>
             <HKLMProxyServer>{{ proxy }}</HKLMProxyServer>
@@ -131,8 +131,16 @@
 		    <Description>Disable password expiration for user {{ username }}</Description>
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
+                {% if proxy %}
+                    <SynchronousCommand wcm:action="add">
+                        <Order>4</Order>
+                        <CommandLine>cmd.exe /c powershell -File &quot;A:\refresh-proxy.ps1&quot;</CommandLine>
+                        <Description>Refresh Proxy Settings</Description>
+                        <RequiresUserInput>true</RequiresUserInput>
+                    </SynchronousCommand>
+                {% endif %}
                 <SynchronousCommand wcm:action="add">
-                    <Order>4</Order>
+                    <Order>5</Order>
                     <CommandLine>cmd.exe /c powershell -File &quot;A:\enablewinrm.ps1&quot;</CommandLine>
                     <Description>Enable WinRM for Packer/Vagrant communicator</Description>
                     <RequiresUserInput>true</RequiresUserInput>
