@@ -3,9 +3,13 @@
     "document": [{"modtype": "add", "docpath": "C:\\Test.doc"}],
     "directory": [{"modtype": "add", "dirpath": "C:\\mlbxs\\"}],
     "shortcut": [
-        //Create shortcuts for exe files
-        {"dest": "$env:USERPROFILE\\Desktop\\Fiddler.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
-        {"dest": "$env:USERPROFILE\\Desktop\\Fiddler Port 9999.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe", "arguments": "/port:9999"},
+        //Create shortcuts for exe files on Desktop
+        {"dest": "Fiddler.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
+        {"dest": "$env:DESKTOP\\Fiddler Port 9999.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe", "arguments": "/port:9999"},
+        //Create shortcuts for exe files in Start Menu
+        {"dest": "$env:STARTMENU\\Fiddler\\Fiddler.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
+        //Create shortcuts for exe files in Startup folder (Autorun)
+        {"dest": "$env:STARTUP\\Fiddler.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
         //Create shortcuts for folders
         {"dest": "$env:USERPROFILE\\Desktop\\SysInternals", "target": "$env:ALLUSERSPROFILE\\chocolatey\\lib\\sysinternals\\tools"}
     ],

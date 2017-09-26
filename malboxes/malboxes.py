@@ -574,30 +574,10 @@ def document(profile_name, modtype, docpath, fd):
 
 def shortcut_function(fd):
     """ Add shortcut function to the profile """
-    fd.write("""function Add-Shortcut{
-        param([string]$target_path, [string]$dest_path, [string]$arguments="");
-        if (-Not (Test-Path $target_path)){
-            Write-Output "[Add-Shortcut::Error] Can't add shortcut. Target path '$target_path' not found.";
-            return;
-        }
-        if ((Test-Path $dest_path)){
-            Write-Output "[Add-Shortcut::Error] Can't add shortcut. Destination path '$dest_path' exists.";
-            return;
-        }
-        Write-Output "[Add-Shortcut] Destination: '$dest_path'; Target: '$target_path'";
-        if((Get-Item $target_path) -is [System.IO.DirectoryInfo]){
-            Start-Process "cmd.exe" -ArgumentList "/c mklink /D `"$dest_path`" `"$target_path`"" -Wait -NoNewWindow;      
-        }else{
-            $_shell = New-Object -ComObject ("WScript.Shell");
-            $_shortcut = $_shell.CreateShortcut($dest_path);
-            $_shortcut.TargetPath=$target_path;
-            if(-Not [String]::IsNullOrEmpty($arguments)){
-                $_shortcut.Arguments=$arguments;
-            }
-            $_shortcut.WorkingDirectory=[System.IO.Path]::GetDirectoryName($target_path);
-            $_shortcut.Save();
-        }
-    }\r\n""")
+    filename = resource_filename(__name__, "scripts/windows/add-shortcut.ps1")
+    with open(filename, 'r') as add_shortcut_file:
+        fd.write(add_shortcut_file.read())
+        add_shortcut_file.close();
 
 def shortcut(dest, target, arguments, fd):
     """ Create shortcut on Desktop """
