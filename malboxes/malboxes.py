@@ -501,9 +501,11 @@ def registry(profile_name, reg_mod, fd):
     Adds a registry key modification to a profile with PowerShell commands.
     """
     if reg_mod["modtype"] == "add":
+        # Creates registry path if it doesn't exist
         reg_key_line = 'if ( -not (Test-Path "{0}") ){{New-Item "{0}" -Force}}\r\n' \
                        .format(reg_mod["key"])
         fd.write(reg_key_line)
+        
         command = "New-ItemProperty"
         line = '{} -Path "{}" -Name "{}" -Value "{}" -PropertyType "{}"\r\n' \
             .format(command, reg_mod["key"], reg_mod["name"], reg_mod["value"],
