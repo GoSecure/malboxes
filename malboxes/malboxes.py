@@ -492,6 +492,13 @@ def prepare_profile(template, config):
         if "provisioners" in packer:
             config["packer_extra_provisioners"] = packer["provisioners"]
 
+    if "shortcut" in profile:
+        shortcut_function(fd)
+        for shortcut_mod in profile["shortcut"]:
+            if not "arguments" in shortcut_mod:
+                shortcut_mod["arguments"]=None
+            shortcut(shortcut_mod["name"], shortcut_mod["target"], shortcut_mod["arguments"], fd)
+    
     fd.close()
     return config
 
@@ -570,6 +577,34 @@ def document(profile_name, modtype, docpath, fd):
 
     fd.write(line)
 
+def shortcut_function(fd):
+    """ Addd shortcut function to the profile """
+    fd.write("""function Add-Shortcut{
+        param([string]$dest_path, [string]$lnk_name, [string]$arguments="");
+        $lnk_path=$env:USERPROFILE + "\\Desktop\\" + $lnk_name;
+        if((Get-Item $dest_path) -is [System.IO.DirectoryInfo]){
+            Start-Process "cmd.exe" -ArgumentList "/c mklink /D `"$lnk_path`" `"$dest_path`"" -Wait -NoNewWindow;      
+        }else{
+            $Shell = New-Object -ComObject ("WScript.Shell");
+            $ShortCut = $Shell.CreateShortcut($lnk_path + ".lnk");
+            $ShortCut.TargetPath=$dest_path;
+            if(-Not [String]::IsNullOrEmpty($arguments)){
+                $ShortCut.Arguments=$arguments;
+            }
+            $ShortCut.WorkingDirectory=[System.IO.Path]::GetDirectoryName($dest_path);
+            $ShortCut.Save();
+        }
+    }\r\n""")
+
+def shortcut(name, target, arguments, fd):
+    """ Create shortcut on Desktop """
+    if arguments is None:
+        line = "Add-Shortcut \"{0}\" \"{1}\"\r\n".format(target, name)
+        print("Adding shortcut {}: {}".format(name, target))
+    else:
+        line = "Add-Shortcut \"{0}\" \"{1}\" \"{2}\"\r\n".format(target, name, arguments)
+        print("Adding shortcut {}: {} with arguments {}".format(name, target, arguments))
+    fd.write(line)
 
 def main():
     global DEBUG
