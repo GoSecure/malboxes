@@ -9,6 +9,12 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == 0.3.1 *unreleased*
 
 Enhancements::
+* Experimental profiles feature gained shortcut creation support.
+  See `profile-example.js` for syntax. ({uri-issue}85[#85])
+* Experimental profiles registry changes now happen after package installation.
+  This enables registry changes to alter program configuration.
+  ({uri-issue}86[#86])
+* Experimental profiles registry changes now create missing registry paths by default ({uri-issue}84[#84])
 * Added configuration parameters for keyboard locale and proxy settings
   ({uri-issue}72[#72], {uri-issue}78[#78])
 * Chocolatey will force the proxy configuration if set ({uri-issue}74[#74])
