@@ -6,17 +6,34 @@
 			{% if hypervisor == "virtualbox" %}
 				"{{ dir }}/scripts/windows/vmtools.ps1",
 			{% endif %}
-			"{{ dir }}/scripts/windows/installtools.ps1",
-			{% if profile is defined %}"{{ cache_dir }}/profile-{{ profile }}.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/malware_analysis.ps1"
 		]
 	}
-{% if choco_packages %},
+{% if profile and profile_config and profile_config.packages and profile_config.packages|length > 0 %}
+	,
 	{
-		"type": "windows-shell",
-		"inline": [
-			"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
-			"choco install {{ choco_packages }} -y"
+		"type": "powershell",
+		"elevated_user": "{{ username }}",
+		"elevated_password": "{{ password }}",
+		"scripts": [
+			"{{ dir }}/scripts/windows/installtools.ps1"
+		],
+		"valid_exit_codes": [ 0, 5888 ]
+	}
+{% endif %}
+{% if "win7" in template %}
+	{# Windows 7 needs to reboot after .net installation #}
+	,
+	{
+		"type": "windows-restart"
+	}
+{% endif %}
+{% if profile is defined %}
+	,
+	{
+		"type": "powershell",
+		"scripts": [
+			"{{ packer_dir }}/profile-{{ profile }}.ps1"
 		]
 	}
 {% endif %}

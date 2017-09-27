@@ -17,7 +17,7 @@
 		"iso_checksum_type": "sha1",
 
 		"floppy_files": [
-			"{{ cache_dir }}/Autounattend.xml",
+			"{{ packer_dir }}/Autounattend.xml",
 			"{{ dir }}/installconfig/windows10_64/enablewinrm.ps1"
 		]
 	}],

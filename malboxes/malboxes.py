@@ -28,6 +28,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import textwrap
 
 from appdirs import AppDirs
@@ -38,8 +39,10 @@ from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
+tmp_cache_dir = "/tmp/malboxes"
 
 def initialize():
+    global tmp_cache_dir
     # create appdata directories if they don't exist
     if not os.path.exists(DIRS.user_config_dir):
         os.makedirs(DIRS.user_config_dir)
@@ -52,7 +55,13 @@ def initialize():
     if not os.path.exists(DIRS.user_cache_dir):
         os.makedirs(DIRS.user_cache_dir)
 
-    cache_scripts_dir = os.path.join(DIRS.user_cache_dir, "scripts", "user")
+    temp_cache = tempfile.mkdtemp(dir=DIRS.user_cache_dir)
+    tmp_cache_dir = temp_cache
+
+    if not os.path.exists(tmp_cache_dir):
+        os.makedirs(tmp_cache_dir)
+
+    cache_scripts_dir = os.path.join(tmp_cache_dir, "scripts", "user")
 
     if not (os.path.exists(cache_scripts_dir)):
         os.makedirs(cache_scripts_dir)
@@ -84,6 +93,8 @@ def init_parser():
     parser_build.add_argument('--force', action='store_true',
                               help='Force the build to happen. Overwrites '
                                    'pre-existing builds or vagrant boxes.')
+    parser_build.add_argument('--profile', dest='profile', action='store',
+                              help='Override the profile setting')
     parser_build.add_argument('--skip-packer-build', action='store_true',
                               help='Skip packer build phase. '
                                    'Only useful for debugging.')
@@ -100,6 +111,8 @@ def init_parser():
     parser_spin.add_argument('name', help='Name of the target VM. '
                                           'Must be unique on your system. '
                                           'Ex: Cryptolocker_XYZ.')
+    parser_spin.add_argument('--profile', dest='profile', action='store',
+                              help='Override the profile setting')
     parser_spin.set_defaults(func=spin)
 
     # no command
@@ -126,7 +139,7 @@ def prepare_autounattend(config):
     f.close()
 
 
-def prepare_packer_template(config, template_name):
+def prepare_packer_template(config, args):
     """
     Prepares a packer template JSON file according to configuration and writes
     it into a temporary location where packer later expects it.
@@ -134,6 +147,9 @@ def prepare_packer_template(config, template_name):
     Uses jinja2 template syntax to generate the resulting JSON file.
     Templates are in templates/ and snippets in templates/snippets/.
     """
+    template_name = config["template"]
+    packer_template_name = config["template_name"]
+
     try:
         template_fd = resource_stream(__name__,
                                      'templates/{}.json'.format(template_name))
@@ -147,7 +163,7 @@ def prepare_packer_template(config, template_name):
     template = env.get_template("{}.json".format(template_name))
 
     # write to temporary file
-    f = create_cachefd('{}.json'.format(template_name))
+    f = create_cachefd('{}.json'.format(packer_template_name))
     f.write(template.render(config)) # pylint: disable=no-member
     f.close()
     return f.name
@@ -167,7 +183,7 @@ def _prepare_vagrantfile(config, source, fd_dest):
     fd_dest.close()
 
 
-def prepare_config(template):
+def prepare_config(args):
     """
     Prepares Malboxes configuration and merge with Packer template configuration
 
@@ -190,24 +206,24 @@ def prepare_config(template):
         shutil.copy(resource_filename(__name__, 'config-example.js'),
                     config_file)
 
-    config = load_config(config_file, template)
+    config = load_config(config_file, args)
 
     if "profile" in config.keys():
-        profile_config = prepare_profile(template, config)
+        profile_config = prepare_profile(config, args)
 
         # profile_config might contain a profile not in the config file
         config.update(profile_config)
 
-    packer_tmpl = prepare_packer_template(config, template)
-
+    packer_tmpl = prepare_packer_template(config, args)
     # merge/update with template config
     with open(packer_tmpl, 'r') as f:
-        config.update(json.loads(f.read()))
+        a = f.read()
+        config.update(json.loads(a))
 
     return config, packer_tmpl
 
 
-def load_config(config_filename, template):
+def load_config(config_filename, args):
     """Loads the minified JSON config. Returns a dict."""
 
     config = {}
@@ -215,11 +231,21 @@ def load_config(config_filename, template):
         # minify then load as JSON
         config = json.loads(jsmin(config_file.read()))
 
+    if getattr(args, 'profile', None):
+        config["profile"] = args.profile
+
+
+    config["template"] = args.template
+    if "profile" in config.keys():
+        config['template_name'] = "{}_{}".format(args.template, config["profile"])
+    else:
+        config['template_name'] = args.template
+
     # add packer required variables
     # Note: Backslashes are replaced with forward slashes (Packer on Windows)
     config['cache_dir'] = DIRS.user_cache_dir.replace('\\', '/')
+    config['packer_dir'] = tmp_cache_dir.replace('\\', '/')
     config['dir'] = resource_filename(__name__, "").replace('\\', '/')
-    config['template_name'] = template
     config['config_dir'] = DIRS.user_config_dir.replace('\\', '/')
 
     # add default values
@@ -260,15 +286,13 @@ def _get_os_type(config):
 
 tempfiles = []
 def create_cachefd(filename):
-    tempfiles.append(filename)
-    return open(os.path.join(DIRS.user_cache_dir, filename), 'w')
+    return open(os.path.join(tmp_cache_dir, filename), 'w')
 
 
 def cleanup():
     """Removes temporary files. Keep them in debug mode."""
     if not DEBUG:
-        for f in tempfiles:
-            os.remove(os.path.join(DIRS.user_cache_dir, f))
+        shutil.rmtree(tmp_cache_dir)
 
 
 def run_foreground(command, env=None):
@@ -302,7 +326,7 @@ def run_packer(packer_tmpl, args):
     print("----------------------------------")
 
     prev_cwd = os.getcwd()
-    os.chdir(DIRS.user_cache_dir)
+    os.chdir(tmp_cache_dir)
 
     try:
         # packer or packer-io?
@@ -315,16 +339,20 @@ def run_packer(packer_tmpl, args):
                 return 254
 
         # run packer with relevant config minified
+        # (removes "profile_config" as packer do not support arrays in var-file)
         configfile = os.path.join(DIRS.user_config_dir, 'config.js')
         with open(configfile, 'r') as config:
+            config = json.loads(jsmin(config.read()))
+            if "profile_config" in config.keys():
+                del config["profile_config"]
             f = create_cachefd('packer_var_file.json')
-            f.write(jsmin(config.read()))
+            f.write(json.dumps(config))
             f.close()
 
         flags = ['-var-file={}'.format(f.name)]
 
         special_env = {'PACKER_CACHE_DIR': DIRS.user_cache_dir}
-        special_env['TMPDIR'] = DIRS.user_cache_dir
+        special_env['TMPDIR'] = tmp_cache_dir
         if DEBUG:
             special_env['PACKER_LOG']  = '1'
             flags.append('-on-error=abort')
@@ -350,7 +378,7 @@ def add_box(config, args):
     print("--------------------------")
 
     box = config['post-processors'][0]['output']
-    box = os.path.join(DIRS.user_cache_dir, box)
+    box = os.path.join(tmp_cache_dir, box)
     box = box.replace('{{user `name`}}', args.template)
 
     flags = ['--name={}'.format(args.template)]
@@ -387,7 +415,7 @@ def list_templates(parser, args):
 def build(parser, args):
 
     print("Generating configuration files...")
-    config, packer_tmpl = prepare_config(args.template)
+    config, packer_tmpl = prepare_config(args)
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
@@ -425,7 +453,7 @@ def build(parser, args):
         You can re-use this base box several times by using `malboxes
         spin`. Each VM will be independent of each other.
         ===============================================================""")
-        .format(args.template, DIRS.user_cache_dir))
+        .format(args.template, tmp_cache_dir))
 
 
 def spin(parser, args):
@@ -436,7 +464,7 @@ def spin(parser, args):
         print("Vagrantfile already exists. Please move it away. Exiting...")
         sys.exit(5)
 
-    config, _ = prepare_config(args.template)
+    config, _ = prepare_config(args)
 
     config['template'] = args.template
     config['name'] = args.name
@@ -452,8 +480,9 @@ def spin(parser, args):
           "and issue a `vagrant up` to get started with your VM.")
 
 
-def prepare_profile(template, config):
+def prepare_profile(config, args):
     """Converts the profile to a powershell script."""
+    template = args.template
 
     profile_name = config["profile"]
 
@@ -469,6 +498,8 @@ def prepare_profile(template, config):
 
     profile = load_profile(profile_name)
 
+    config["profile_config"] = profile
+
     fd = create_cachefd('profile-{}.ps1'.format(profile_name))
 
     if "registry" in profile:
@@ -483,9 +514,9 @@ def prepare_profile(template, config):
         for doc_mod in profile["document"]:
             document(profile_name, doc_mod["modtype"], doc_mod["docpath"], fd)
 
-    if "package" in profile:
-        for package_mod in profile["package"]:
-            package(profile_name, package_mod["package"], fd)
+    if "packages" in profile:
+        for pkg in profile["packages"]:
+            package(profile_name, pkg, fd)
 
     if "packer" in profile:
         packer = profile["packer"]
@@ -548,7 +579,7 @@ def directory(profile_name, modtype, dirpath, fd):
 
 def package(profile_name, package_name, fd):
     """ Adds a package to install with Chocolatey."""
-    line = "choco install {} -y\r\n".format(package_name)
+    line = "choco install -y {}\r\n".format(package_name)
     print("Adding Chocolatey package: {}".format(package_name))
 
     fd.write(line)
