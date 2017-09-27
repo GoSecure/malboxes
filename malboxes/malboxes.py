@@ -492,6 +492,13 @@ def prepare_profile(template, config):
         if "provisioners" in packer:
             config["packer_extra_provisioners"] = packer["provisioners"]
 
+    if "shortcut" in profile:
+        shortcut_function(fd)
+        for shortcut_mod in profile["shortcut"]:
+            if not "arguments" in shortcut_mod:
+                shortcut_mod["arguments"]=None
+            shortcut(shortcut_mod["dest"], shortcut_mod["target"], shortcut_mod["arguments"], fd)
+    
     fd.close()
     return config
 
@@ -570,6 +577,22 @@ def document(profile_name, modtype, docpath, fd):
 
     fd.write(line)
 
+def shortcut_function(fd):
+    """ Add shortcut function to the profile """
+    filename = resource_filename(__name__, "scripts/windows/add-shortcut.ps1")
+    with open(filename, 'r') as add_shortcut_file:
+        fd.write(add_shortcut_file.read())
+        add_shortcut_file.close();
+
+def shortcut(dest, target, arguments, fd):
+    """ Create shortcut on Desktop """
+    if arguments is None:
+        line = "Add-Shortcut \"{0}\" \"{1}\"\r\n".format(target, dest)
+        print("Adding shortcut {}: {}".format(dest, target))
+    else:
+        line = "Add-Shortcut \"{0}\" \"{1}\" \"{2}\"\r\n".format(target, dest, arguments)
+        print("Adding shortcut {}: {} with arguments {}".format(dest, target, arguments))
+    fd.write(line)
 
 def main():
     global DEBUG

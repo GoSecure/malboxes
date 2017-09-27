@@ -2,6 +2,17 @@
     "package": [{"package": "thunderbird"}],
     "document": [{"modtype": "add", "docpath": "C:\\Test.doc"}],
     "directory": [{"modtype": "add", "dirpath": "C:\\mlbxs\\"}],
+    "shortcut": [
+        //Create shortcuts for exe files on Desktop
+        {"dest": "Fiddler.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
+        {"dest": "$env:DESKTOP\\Fiddler Port 9999.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe", "arguments": "/port:9999"},
+        //Create shortcuts for exe files in Start Menu
+        {"dest": "$env:STARTMENU\\Fiddler\\Fiddler.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
+        //Create shortcuts for exe files in Startup folder (Autorun)
+        {"dest": "$env:STARTUP\\Fiddler.lnk", "target": "$env:LOCALAPPDATA\\Programs\\Fiddler\\Fiddler.exe"},
+        //Create shortcuts for folders
+        {"dest": "$env:USERPROFILE\\Desktop\\SysInternals", "target": "$env:ALLUSERSPROFILE\\chocolatey\\lib\\sysinternals\\tools"}
+    ],
     "registry": [
         {"modtype": "add", "key": "HKLM:\\Hardware\\Description\\System", "value": "04/04/04", "name": "SystemBiosDate", "valuetype": "String"},
         {"modtype": "add", "key": "HKLM:\\Hardware\\Description\\System", "value": "Hardware Version 0.0 PARTTBLX", "name": "SystemBiosDate", "valuetype": "String"},
