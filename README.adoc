@@ -75,7 +75,8 @@ installed. Otherwise, follow the <<Manually,manual installation procedure>>.
 +
 * Install malboxes:
 +
-    pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
+    pip3 install setuptools
+    pip3 install -U git+https://github.com/GoSecure/malboxes.git#egg=malboxes
 
 ==== Manually
 
@@ -88,7 +89,8 @@ installed. Otherwise, follow the <<Manually,manual installation procedure>>.
   Python to your environment variables)
 * Open a console (Windows-Key + cmd)
 +
-    pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
+    pip3 install setuptools
+    pip3 install -U git+https://github.com/GoSecure/malboxes.git#egg=malboxes
 
 
 == Usage
