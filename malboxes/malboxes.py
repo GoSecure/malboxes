@@ -192,11 +192,10 @@ def prepare_config(template):
 
     config = load_config(config_file, template)
 
-    if "profile" in config.keys():
-        profile_config = prepare_profile(template, config)
+    profile_config = prepare_profile(template, config)
 
-        # profile_config might contain a profile not in the config file
-        config.update(profile_config)
+    # profile_config might contain a profile not in the config file
+    config.update(profile_config)
 
     packer_tmpl = prepare_packer_template(config, template)
 
