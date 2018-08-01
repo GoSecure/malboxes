@@ -323,7 +323,8 @@ def run_packer(packer_tmpl, args):
 
         flags = ['-var-file={}'.format(f.name)]
 
-        special_env = {'PACKER_CACHE_DIR': DIRS.user_cache_dir}
+        packer_cache_dir = os.getenv('PACKER_CACHE_DIR', DIRS.user_cache_dir)
+        special_env = {'PACKER_CACHE_DIR': packer_cache_dir}
         special_env['TMPDIR'] = DIRS.user_cache_dir
         if DEBUG:
             special_env['PACKER_LOG']  = '1'
