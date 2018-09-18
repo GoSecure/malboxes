@@ -148,8 +148,16 @@ def prepare_packer_template(config, template_name):
 
     # write to temporary file
     f = create_cachefd('{}.json'.format(template_name))
-    f.write(template.render(config)) # pylint: disable=no-member
+    packer_config = template.render(config) # pylint: disable=no-member
+    f.write(packer_config)
     f.close()
+
+    if DEBUG:
+        print("Generated configuration file for packer: {}".format(f.name))
+        print("======================= With content ========================")
+        print(packer_config)
+        print("====================== end of content =======================")
+
     return f.name
 
 
