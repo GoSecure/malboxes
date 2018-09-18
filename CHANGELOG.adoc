@@ -12,11 +12,9 @@ Enhancements::
 * Experimental profiles feature gained shortcut creation support.
   See `profile-example.js` for syntax. ({uri-issue}85[#85])
 * Experimental profiles registry changes now happen after package installation.
-  This enables registry changes to alter program configuration.
-  ({uri-issue}86[#86])
+  This enables registry changes to alter program configuration. ({uri-issue}86[#86])
 * Experimental profiles registry changes now create missing registry paths by default ({uri-issue}84[#84])
-* Added configuration parameters for keyboard locale and proxy settings
-  ({uri-issue}72[#72], {uri-issue}78[#78])
+* Added configuration parameters for keyboard locale and proxy settings ({uri-issue}72[#72], {uri-issue}78[#78])
 * Chocolatey will force the proxy configuration if set ({uri-issue}74[#74])
 * Custom provisioners can be defined in profiles configuration ({uri-issue}73[#73])
 * `PACKER_CACHE_DIR` environment variable will be honored if present ({uri-issue}99[#99], {uri-issue}100[#100])
