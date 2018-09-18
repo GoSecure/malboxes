@@ -19,7 +19,9 @@ Enhancements::
   ({uri-issue}72[#72], {uri-issue}78[#78])
 * Chocolatey will force the proxy configuration if set ({uri-issue}74[#74])
 * Custom provisioners can be defined in profiles configuration ({uri-issue}73[#73])
+* `PACKER_CACHE_DIR` environment variable will be honored if present ({uri-issue}99[#99], {uri-issue}100[#100])
 * Removed `fiddler4` chocolatey package ({uri-issue}89[#89])
+* Travis testing: Removed support for Python 3.3 (end of life), added 3.5 and 3.6 ({uri-issue}101[#101])
 
 Bug fixes::
 * Fixed `jinja2.exceptions.TemplateNotFound: snippets/builder_vsphere_windows.json` ({uri-issue}71[#71])
