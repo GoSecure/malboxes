@@ -18,6 +18,7 @@
 # GNU General Public License for more details.
 #
 import argparse
+from collections import OrderedDict
 import glob
 from io import TextIOWrapper
 import json
@@ -38,6 +39,15 @@ from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
+
+def beautify_json(input_json):
+    """
+    Properly indent a JSON string
+
+    Uses json.loads / json.dumps to re-render the JSON file
+    """
+    parsed_json = json.loads(input_json, object_pairs_hook=OrderedDict)
+    return json.dumps(parsed_json, None, indent=2)
 
 def initialize():
     # create appdata directories if they don't exist
@@ -84,6 +94,11 @@ def init_parser():
     parser_build.add_argument('--force', action='store_true',
                               help='Force the build to happen. Overwrites '
                                    'pre-existing builds or vagrant boxes.')
+    parser_build.add_argument('--profile', dest='profile', action='store',
+                              help='Override the profile setting')
+    parser_build.add_argument('--show-packer-template', action='store_true',
+                              help='Print the packer template and exit. '
+                                   'Only useful for debugging.')
     parser_build.add_argument('--skip-packer-build', action='store_true',
                               help='Skip packer build phase. '
                                    'Only useful for debugging.')
@@ -126,7 +141,7 @@ def prepare_autounattend(config):
     f.close()
 
 
-def prepare_packer_template(config, template_name):
+def prepare_packer_template(template_name, config, args):
     """
     Prepares a packer template JSON file according to configuration and writes
     it into a temporary location where packer later expects it.
@@ -146,9 +161,15 @@ def prepare_packer_template(config, template_name):
                       trim_blocks=True, lstrip_blocks=True)
     template = env.get_template("{}.json".format(template_name))
 
+    rendered_template = beautify_json(template.render(config))
+
+    if getattr(args, 'show_packer_template', False):
+        print(rendered_template)
+        sys.exit(0)
+
     # write to temporary file
     f = create_cachefd('{}.json'.format(template_name))
-    f.write(template.render(config)) # pylint: disable=no-member
+    f.write(rendered_template)
     f.close()
     return f.name
 
@@ -167,7 +188,7 @@ def _prepare_vagrantfile(config, source, fd_dest):
     fd_dest.close()
 
 
-def prepare_config(template):
+def prepare_config(args):
     """
     Prepares Malboxes configuration and merge with Packer template configuration
 
@@ -182,6 +203,8 @@ def prepare_config(template):
 
     [1]: https://plus.google.com/+DouglasCrockfordEsq/posts/RK8qyGVaGSr
     """
+    template = args.template
+
     # if config does not exist, copy default one
     config_file = os.path.join(DIRS.user_config_dir, 'config.js')
     if not os.path.isfile(config_file):
@@ -192,13 +215,17 @@ def prepare_config(template):
 
     config = load_config(config_file, template)
 
+    if getattr(args, 'profile', None):
+        print("Profile set to: {}".format(args.profile))
+        config["profile"] = args.profile
+
     if "profile" in config.keys():
         profile_config = prepare_profile(template, config)
 
         # profile_config might contain a profile not in the config file
         config.update(profile_config)
 
-    packer_tmpl = prepare_packer_template(config, template)
+    packer_tmpl = prepare_packer_template(template, config, args)
 
     # merge/update with template config
     with open(packer_tmpl, 'r') as f:
@@ -388,7 +415,7 @@ def list_templates(parser, args):
 def build(parser, args):
 
     print("Generating configuration files...")
-    config, packer_tmpl = prepare_config(args.template)
+    config, packer_tmpl = prepare_config(args)
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
@@ -437,7 +464,7 @@ def spin(parser, args):
         print("Vagrantfile already exists. Please move it away. Exiting...")
         sys.exit(5)
 
-    config, _ = prepare_config(args.template)
+    config, _ = prepare_config(args)
 
     config['template'] = args.template
     config['name'] = args.name
