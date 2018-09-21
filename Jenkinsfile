@@ -5,7 +5,7 @@ pipeline {
             agent {
                 dockerfile {
                     filename 'Dockerfile'
-                    dir 'tests/smoke/'
+                    dir 'tests/smoke'
                     args '-v /dev/vboxdrv:/dev/vboxdrv'
                 }
             }
