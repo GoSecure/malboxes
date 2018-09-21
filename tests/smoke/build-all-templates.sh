@@ -16,27 +16,27 @@
 #
 
 export PATH=$PATH:$HOME/.local/bin
-pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git#egg=malboxes
+pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git@${GIT_BRANCH#*/}#egg=malboxes
 
-echo "Fetching all profiles..."
-PROFILES=`malboxes list | head -n-1 | tail -n+3`
+echo "Fetching all templates..."
+TEMPLATES=`malboxes list | head -n-1 | tail -n+3`
 
-# build all profiles
+# build all templates
 declare -A RESULTS
 WORST_EXIT_STATUS=0
-for _P in $PROFILES; do
-        echo "Building profile $_P"
-        malboxes build --force --skip-vagrant-box-add --config config.js $_P
+for _T in $TEMPLATES; do
+        echo "Building template $_T"
+        malboxes build --force --skip-vagrant-box-add --config tests/smoke/config.js $_T
 	EXIT_VAL=$?
 	if (( $EXIT_VAL > $WORST_EXIT_STATUS )); then
 		WORST_EXIT_STATUS=$EXIT_VAL
 	fi
-        RESULTS[$_P]=$EXIT_VAL
+        RESULTS[$_T]=$EXIT_VAL
 done
 
-echo Finished building all profiles. Results:
-for _P in "${!RESULTS[@]}"; do
-  echo "$_P: ${RESULTS[$_P]}"
+echo Finished building all templates. Results:
+for _T in "${!RESULTS[@]}"; do
+  echo "$_T: ${RESULTS[$_T]}"
 done
 
 # Not necessarily worse but at least non-zero
