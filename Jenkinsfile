@@ -10,6 +10,7 @@ pipeline {
                 }
             }
             steps {
+                sh 'id -a'
                 sh 'tests/smoke.sh' 
             }
         }
