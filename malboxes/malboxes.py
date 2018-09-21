@@ -81,6 +81,9 @@ def init_parser():
     parser_build.add_argument('template', help='Name of the template to build. '
                                               'Use list command to view '
                                               'available templates.')
+    parser_build.add_argument('-c', '--config', type=argparse.FileType('r'),
+                              help='Override the configuration file with the '
+                                    'one specified.')
     parser_build.add_argument('--force', action='store_true',
                               help='Force the build to happen. Overwrites '
                                    'pre-existing builds or vagrant boxes.')
@@ -175,7 +178,7 @@ def _prepare_vagrantfile(config, source, fd_dest):
     fd_dest.close()
 
 
-def prepare_config(template):
+def prepare_config(args):
     """
     Prepares Malboxes configuration and merge with Packer template configuration
 
@@ -198,15 +201,20 @@ def prepare_config(template):
         shutil.copy(resource_filename(__name__, 'config-example.js'),
                     config_file)
 
-    config = load_config(config_file, template)
+    if args.config is not None:
+        config_file = args.config
+    else:
+        config_file = open(config_file, 'r')
+
+    config = load_config(config_file, args.template)
 
     if "profile" in config.keys():
-        profile_config = prepare_profile(template, config)
+        profile_config = prepare_profile(args.template, config)
 
         # profile_config might contain a profile not in the config file
         config.update(profile_config)
 
-    packer_tmpl = prepare_packer_template(config, template)
+    packer_tmpl = prepare_packer_template(config, args.template)
 
     # merge/update with template config
     with open(packer_tmpl, 'r') as f:
@@ -215,13 +223,11 @@ def prepare_config(template):
     return config, packer_tmpl
 
 
-def load_config(config_filename, template):
+def load_config(config_file, template):
     """Loads the minified JSON config. Returns a dict."""
 
-    config = {}
-    with open(config_filename, 'r') as config_file:
-        # minify then load as JSON
-        config = json.loads(jsmin(config_file.read()))
+    # minify then load as JSON
+    config = json.loads(jsmin(config_file.read()))
 
     # add packer required variables
     # Note: Backslashes are replaced with forward slashes (Packer on Windows)
@@ -396,7 +402,7 @@ def list_templates(parser, args):
 def build(parser, args):
 
     print("Generating configuration files...")
-    config, packer_tmpl = prepare_config(args.template)
+    config, packer_tmpl = prepare_config(args)
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
@@ -445,7 +451,7 @@ def spin(parser, args):
         print("Vagrantfile already exists. Please move it away. Exiting...")
         sys.exit(5)
 
-    config, _ = prepare_config(args.template)
+    config, _ = prepare_config(args)
 
     config['template'] = args.template
     config['name'] = args.name
