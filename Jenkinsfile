@@ -11,6 +11,7 @@ pipeline {
             }
             steps {
                 sh 'id -a'
+                sh 'ls -l'
                 sh 'tests/smoke.sh' 
             }
         }
