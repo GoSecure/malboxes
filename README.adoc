@@ -11,6 +11,7 @@ ifdef::status[]
 .*Project health*
 image:https://img.shields.io/travis/GoSecure/malboxes/master.svg[Build
 Status (Travis CI), link=https://travis-ci.org/GoSecure/malboxes]
+image:https://badges.gitter.im/malboxes_/Lobby.svg[link="https://gitter.im/malboxes_/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
 endif::[]
 
 Builds malware analysis Windows virtual machines so that you don't have to.
