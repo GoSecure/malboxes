@@ -42,7 +42,7 @@ class PackerTemplateTestCase(unittest.TestCase):
 
             # process profile
             profile_name = os.path.basename(profile)
-            config = load_config('malboxes/config-example.js',
+            config = load_config(open('malboxes/config-example.js', 'r'),
                                  re.match('(.*).json$', profile_name).group(1))
 
             try:

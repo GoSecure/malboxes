@@ -202,7 +202,7 @@ def prepare_config(args):
                     config_file)
 
     if args.config is not None:
-        config_file = args.config 
+        config_file = args.config
     else:
         config_file = open(config_file, 'r')
 
