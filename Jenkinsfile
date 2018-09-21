@@ -3,8 +3,10 @@ pipeline {
     stages {
         stage('Build') { 
             agent {
-                docker {
-                    image 'vbox_test_builder'
+                dockerfile {
+                    filename 'Dockerfile'
+                    dir 'tests/smoke/'
+                    args '-v /dev/vboxdrv:/dev/vboxdrv'
                 }
             }
             steps {
