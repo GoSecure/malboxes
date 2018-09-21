@@ -1,4 +1,6 @@
 = Malboxes
+
+image:https://badges.gitter.im/malboxes_/Lobby.svg[link="https://gitter.im/malboxes_/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge"]
 :toc: preamble
 :toclevels: 2
 :twob: https://twitter.com/obilodeau
