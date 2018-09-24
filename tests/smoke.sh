@@ -26,7 +26,7 @@ declare -A RESULTS
 WORST_EXIT_STATUS=0
 for _P in $PROFILES; do
         echo "Building profile $_P"
-        malboxes build --force --skip-vagrant-box-add --config config.js $_P
+        malboxes build --force --skip-vagrant-box-add --config tests/smoke/config.js $_P
 	EXIT_VAL=$?
 	if (( $EXIT_VAL > $WORST_EXIT_STATUS )); then
 		WORST_EXIT_STATUS=$EXIT_VAL
