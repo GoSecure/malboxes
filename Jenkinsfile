@@ -10,7 +10,6 @@ pipeline {
                 }
             }
             steps {
-                sh 'echo On branch: ${GIT_BRANCH#*/}'
                 sh 'tests/smoke/build-all-templates.sh'
             }
         }

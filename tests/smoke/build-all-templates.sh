@@ -16,8 +16,7 @@
 #
 
 export PATH=$PATH:$HOME/.local/bin
-# TODO support branch specific builds
-pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git#egg=malboxes
+pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git@${GIT_BRANCH#*/}#egg=malboxes
 
 echo "Fetching all templates..."
 TEMPLATES=`malboxes list | head -n-1 | tail -n+3`
