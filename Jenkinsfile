@@ -6,7 +6,7 @@ pipeline {
                 dockerfile {
                     filename 'Dockerfile'
                     dir 'tests/smoke'
-                    args '-v /dev/vboxdrv:/dev/vboxdrv'
+                    args '-v /dev/vboxdrv:/dev/vboxdrv --privileged'
                 }
             }
             steps {
