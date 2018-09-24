@@ -1,5 +1,8 @@
 pipeline {
-    agent none 
+    agent none
+    environment {
+        PYTHONUNBUFFERED = '1'
+    }
     stages {
         stage('Build') { 
             agent {
