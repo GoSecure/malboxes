@@ -10,8 +10,6 @@ pipeline {
                 }
             }
             steps {
-                sh 'id -a'
-                sh 'pwd; ls -l; ls -l $HOME'
                 sh 'tests/smoke.sh' 
             }
         }
