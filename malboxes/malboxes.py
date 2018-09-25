@@ -67,7 +67,10 @@ def init_parser():
                         version='%(prog)s ' + __version__)
     parser.add_argument('-d', '--debug', action='store_true',
                         help="Debug mode. Leaves built VMs running on failure!")
-    subparsers = parser.add_subparsers()
+    parser.add_argument('-c', '--config', type=argparse.FileType('r'),
+                        help='Override the configuration file with the one '
+                             'specified.')
+    subparsers = parser.add_subparsers(dest='command')
 
     # list command
     parser_list = subparsers.add_parser('list',
@@ -81,9 +84,6 @@ def init_parser():
     parser_build.add_argument('template', help='Name of the template to build. '
                                               'Use list command to view '
                                               'available templates.')
-    parser_build.add_argument('-c', '--config', type=argparse.FileType('r'),
-                              help='Override the configuration file with the '
-                                    'one specified.')
     parser_build.add_argument('--force', action='store_true',
                               help='Force the build to happen. Overwrites '
                                    'pre-existing builds or vagrant boxes.')
