@@ -26,7 +26,7 @@ declare -A RESULTS
 WORST_EXIT_STATUS=0
 for _T in $TEMPLATES; do
         echo "Building template $_T"
-        malboxes build --force --skip-vagrant-box-add --config tests/smoke/config.js $_T
+        malboxes --config tests/smoke/config.js build --force --skip-vagrant-box-add $_T
 	EXIT_VAL=$?
 	if (( $EXIT_VAL > $WORST_EXIT_STATUS )); then
 		WORST_EXIT_STATUS=$EXIT_VAL
