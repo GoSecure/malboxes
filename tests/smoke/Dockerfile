@@ -11,6 +11,9 @@ ARG group=jenkins
 ARG uid=1000
 ARG gid=1006
 # [...]
+ARG JENKINS_HOME=/var/jenkins_home
+
+ENV JENKINS_HOME $JENKINS_HOME
 
 # Jenkins is run with user `jenkins`, uid = 1000
 # If you bind mount a volume from the host or a data container,
