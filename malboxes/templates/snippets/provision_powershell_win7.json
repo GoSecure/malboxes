@@ -32,10 +32,11 @@
 {% endif %}
 {% if choco_packages %},
 	{
-		"type": "windows-shell",
+		"type": "powershell",
 		"inline": [
 			"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
 			"choco install {{ choco_packages }} -y"
-		]
+		],
+		"valid_exit_codes": [ 0, 404 ]
 	}
 {% endif %}
