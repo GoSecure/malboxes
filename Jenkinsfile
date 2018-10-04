@@ -9,7 +9,7 @@ pipeline {
                 dockerfile {
                     filename 'Dockerfile'
                     dir 'tests/smoke'
-                    args '-v /dev/vboxdrv:/dev/vboxdrv --privileged'
+                    args '-v /dev/vboxdrv:/dev/vboxdrv --privileged -p 5900-5999:15900-15999'
                 }
             }
             steps {
