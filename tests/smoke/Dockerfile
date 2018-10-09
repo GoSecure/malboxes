@@ -1,6 +1,9 @@
 FROM ubuntu:16.04
 
-RUN apt-get update && apt-get install -y --no-install-recommends virtualbox python3 python3-pip python3-setuptools wget unzip bash git && \
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gnupg && \
+    curl -sSL https://www.virtualbox.org/download/oracle_vbox_2016.asc | apt-key add - && \
+    echo "deb http://download.virtualbox.org/virtualbox/debian xenial contrib" >> /etc/apt/sources.list.d/virtualbox.list && \
+    apt-get update && apt-get install -y --no-install-recommends virtualbox-5.2 module-init-tools python3 python3-pip python3-setuptools wget unzip bash git && \
     wget https://releases.hashicorp.com/packer/1.3.1/packer_1.3.1_linux_amd64.zip && unzip packer_1.3.1_linux_amd64.zip -d packer && \
     mv packer/packer /usr/local/bin/ && chmod a+x /usr/local/bin/packer && rm packer_1.3.1_linux_amd64.zip && rmdir packer
 
