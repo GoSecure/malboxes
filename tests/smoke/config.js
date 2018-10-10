@@ -41,8 +41,7 @@
     //"hypervisor": "kvm",
 
     // Chocolatey packages to install on the VM
-    // TODO re-add dependencywalker and regshot once upstream choco package provides a checksum
-    // FIXME made install go faster to prevent jenkins bug
+    // FIXME made install go faster to prevent jenkins / packer bug when building Windows 7 machines (see #108)
     //"choco_packages": "sysinternals windbg wireshark 7zip putty apm",
 
     // Setting the IDA Path will copy the IDA remote debugging tools into the guest
