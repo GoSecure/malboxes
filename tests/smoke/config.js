@@ -25,7 +25,7 @@
     "password": "malboxes",
     "computername": "smoketest",
     // disk size is in megabytes
-    "disk_size": "20480",
+    "disk_size": "40960",
 
     // Windows Defender: true means enabled, false means disabled. Default is false.
     //"windows_defender": "false",
