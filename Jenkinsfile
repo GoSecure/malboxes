@@ -9,7 +9,7 @@ pipeline {
                 dockerfile {
                     filename 'Dockerfile'
                     dir 'tests/smoke'
-                    args '-v /dev/vboxdrv:/dev/vboxdrv --privileged'
+                    args '-v /dev/vboxdrv:/dev/vboxdrv -v /tmp:/tmp --network host --privileged'
                 }
             }
             steps {
