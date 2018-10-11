@@ -25,7 +25,7 @@
     "password": "malboxes",
     "computername": "smoketest",
     // disk size is in megabytes
-    "disk_size": "20480",
+    "disk_size": "40960",
 
     // Windows Defender: true means enabled, false means disabled. Default is false.
     //"windows_defender": "false",
@@ -41,8 +41,8 @@
     //"hypervisor": "kvm",
 
     // Chocolatey packages to install on the VM
-    // TODO re-add dependencywalker and regshot once upstream choco package provides a checksum
-    "choco_packages": "sysinternals windbg wireshark 7zip putty apm",
+    // FIXME made install go faster to prevent jenkins / packer bug when building Windows 7 machines (see #108)
+    //"choco_packages": "sysinternals windbg wireshark 7zip putty apm",
 
     // Setting the IDA Path will copy the IDA remote debugging tools into the guest
     //"ida_path": "/path/to/your/ida",
