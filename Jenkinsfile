@@ -16,5 +16,13 @@ pipeline {
                 sh 'tests/smoke/build-all-templates.sh'
             }
         }
+        stage('Clean') {
+            agent any
+            steps {
+                dir('/var/jenkins_home/.cache/malboxes/') {
+                    deleteDir()
+                }
+            }
+        }
     }
 }
