@@ -49,6 +49,8 @@
 	"aws_access_key": "",
 	"aws_secret_key": "",
 	"aws_s3_bucket": "",
+	"aws_security_group": "",
+	"aws_keypair": "",
 
 	//"proxy": "company_proxy:3128",
 

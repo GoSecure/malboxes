@@ -463,6 +463,16 @@ def spin(parser, args):
     elif config['hypervisor'] == 'vsphere':
         with open("Vagrantfile", 'w') as f:
             _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
+    elif config['hypervisor'] == 'aws':
+        with open("Vagrantfile", 'w') as f:
+            manifest_filename = os.path.join(DIRS.user_cache_dir,
+                                             "manifest.json")
+            with open(manifest_filename, 'r') as _f:
+                _manifest = json.loads(_f.read())
+            # AMI Id is like: [builds][0][artifact_id] == "us-east-1:ami-aabbccddeeff0011"
+            # and we keep after the colon
+            config['aws_ami_id'] = _manifest['builds'][0]['artifact_id'].split(':')[1]
+            _prepare_vagrantfile(config, "analyst_aws.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
 

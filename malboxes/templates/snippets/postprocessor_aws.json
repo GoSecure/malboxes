@@ -6,9 +6,9 @@
         "secret_key": "{{ aws_secret_key }}",
         "region": "us-east-1",
         "ami_name": "malboxes",
-        "s3_bucket_name": "{{ aws_s3_bucket }}", 
+        "s3_bucket_name": "{{ aws_s3_bucket }}",
         "license_type": "BYOL",
-        "tags": { "Description": "packer amazon import" } 
+        "tags": { "Description": "packer amazon import" }
     },
     {
       "type": "manifest",
