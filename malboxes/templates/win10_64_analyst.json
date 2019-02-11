@@ -1,7 +1,7 @@
 {
 	"builders": [{
 
-		{% if hypervisor == "virtualbox" %}
+		{% if hypervisor == "virtualbox" or hypervisor == "aws" %}
 			"guest_os_type": "Windows10_64",
 			{% include 'snippets/builder_virtualbox_windows.json' %},
 		{% elif hypervisor == "vsphere" %}
@@ -24,6 +24,8 @@
 
 	{% if hypervisor == 'virtualbox' %}
 		{% include 'snippets/postprocessor_vagrant.json' %},
+	{% elif hypervisor == 'aws' %}
+		{% include 'snippets/postprocessor_aws.json' %},
 	{% endif %}
 
 	"provisioners": [

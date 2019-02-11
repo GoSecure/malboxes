@@ -45,6 +45,10 @@
 	"vsphere_user": "",
 	"vsphere_password": "",
 	"vsphere_insecure": "true",
+	// If AWS,  the following configuration options are mandatory
+	"aws_access_key": "",
+	"aws_secret_key": "",
+	"aws_s3_bucket": "",
 
 	//"proxy": "company_proxy:3128",
 

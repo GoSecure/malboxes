@@ -1,0 +1,17 @@
+"post-processors": [
+    {# List of list used to make sure post-processors are not run in parallel #}
+    [{
+        "type": "amazon-import",
+        "access_key": "{{ aws_access_key }}",
+        "secret_key": "{{ aws_secret_key }}",
+        "region": "us-east-1",
+        "ami_name": "malboxes",
+        "s3_bucket_name": "{{ aws_s3_bucket }}", 
+        "license_type": "BYOL",
+        "tags": { "Description": "packer amazon import" } 
+    },
+    {
+      "type": "manifest",
+      "output": "{{ cache_dir }}/manifest.json"
+    }]
+]

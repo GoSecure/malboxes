@@ -13,4 +13,7 @@
 		],
 		"boot_wait": "10s",
 		"disk_size": "{{ disk_size }}",
+	{% if hypervisor == "aws" %}
+		"format": "ova",
+	{% endif %}
 		"output_directory": "builds"
