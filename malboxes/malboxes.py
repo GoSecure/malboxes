@@ -416,7 +416,7 @@ def build(parser, args):
         print("Packer failed. Build failed. Exiting...")
         sys.exit(3)
 
-    if not args.skip_vagrant_box_add:
+    if not (args.skip_vagrant_box_add or config['hypervisor'] == 'aws'):
         ret = add_box(config, args)
     else:
         ret = 0
@@ -425,7 +425,25 @@ def build(parser, args):
         print("'vagrant box add' failed. Build failed. Exiting...")
         sys.exit(4)
 
-    if not args.skip_vagrant_box_add:
+    if config['hypervisor'] == 'aws':
+        print(textwrap.dedent("""
+        ===============================================================
+        The AMI was successfully created on the Amazon Elastic Compute Cloud.
+
+        The required box will be added to Vagrant, if it's not already there,
+        with the spin command.
+        
+        You should generate a Vagrantfile configuration in order to
+        launch an instance of the AMI:
+
+        malboxes spin {} <analysis_name>
+
+        You can re-use this box several times by using `malboxes
+        spin`. Each EC2 instance will be independent of each other.
+        ===============================================================""")
+        .format(args.template, DIRS.user_cache_dir))
+
+    elif not args.skip_vagrant_box_add:
         print(textwrap.dedent("""
         ===============================================================
         A base box was imported into your local Vagrant box repository.
@@ -441,8 +459,7 @@ def build(parser, args):
         spin`. Each VM will be independent of each other.
         ===============================================================""")
         .format(args.template, DIRS.user_cache_dir))
-
-
+    
 def spin(parser, args):
     """
     Creates a Vagrantfile meant for user-interaction in the current directory.
@@ -475,7 +492,6 @@ def spin(parser, args):
             _prepare_vagrantfile(config, "analyst_aws.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
-
 
 def prepare_profile(template, config):
     """Converts the profile to a powershell script."""
