@@ -1,6 +1,10 @@
 "post-processors": [
-    {# List of list used to make sure post-processors are not run in parallel #}
-    [{
+    {# List of lists used to make sure post-processors are not run in parallel #}
+    [
+      {# Exports the .OVA created by the builder to the S3 bucket then converts the file to an AMI
+        (This can take a very long time). 
+        Use this command to see the status of the import: aws ec2 describe-import-image-tasks #}
+      {
         "type": "amazon-import",
         "access_key": "{{ aws_access_key }}",
         "secret_key": "{{ aws_secret_key }}",
@@ -9,9 +13,11 @@
         "s3_bucket_name": "{{ aws_s3_bucket }}",
         "license_type": "BYOL",
         "tags": { "Description": "This AMI was generated using Malboxes from the following packer template: {{ template_name }}" }
-    },
-    {
+      },
+      {# The Vagrantfile will retrieve the AMI ID from the generated manifest #}
+      {
       "type": "manifest",
       "output": "{{ cache_dir }}/manifest.json"
-    }]
+      }
+    ]
 ]
