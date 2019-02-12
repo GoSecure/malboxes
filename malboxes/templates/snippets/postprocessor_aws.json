@@ -8,7 +8,7 @@
         "ami_name": "malboxes",
         "s3_bucket_name": "{{ aws_s3_bucket }}",
         "license_type": "BYOL",
-        "tags": { "Description": "packer amazon import" }
+        "tags": { "Description": "This AMI was generated using Malboxes from the following packer template: {{ template_name }}" }
     },
     {
       "type": "manifest",
