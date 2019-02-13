@@ -34,6 +34,8 @@ from appdirs import AppDirs
 from jinja2 import Environment, FileSystemLoader
 from jsmin import jsmin
 
+import boto3
+
 from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
@@ -142,7 +144,7 @@ def prepare_packer_template(config, template_name):
                                      'templates/{}.json'.format(template_name))
     except FileNotFoundError:
         print("Template doesn't exist: {}".format(template_name))
-        sys.exit(2)
+        sys.exit(1)
 
     filepath = resource_filename(__name__, 'templates/')
     env = Environment(loader=FileSystemLoader(filepath), autoescape=False,
@@ -386,7 +388,7 @@ def default(parser, args):
     parser.print_help()
     print("\n")
     list_templates(parser, args)
-    sys.exit(1)
+    sys.exit(2)
 
 
 def list_templates(parser, args):
@@ -398,14 +400,40 @@ def list_templates(parser, args):
         print(m.group(1))
     print()
 
+def get_AMI_ID_by_template(template):
+    boto3_connection = boto3.resource("ec2")
+    images = list(boto3_connection.images.filter(Owners=['self'],Filters=[{'Name': 'tag:Template', 'Values': [template]}]))
+    return images[0].image_id
+
+def template_already_AMI(template):
+    boto3_connection = boto3.resource("ec2")
+    images = list(boto3_connection.images.filter(Owners=['self'],Filters=[{'Name': 'tag:Template', 'Values': [template]}]))
+    if not images:
+        return False
+    else:
+        return True
 
 def build(parser, args):
-
     print("Generating configuration files...")
     config, packer_tmpl = prepare_config(args)
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
+
+    if config['hypervisor'] == 'aws' and template_already_AMI(args.template):
+        print(textwrap.dedent("""
+        ===============================================================
+        This template has already been converted to an AMI.
+        
+        You should generate a Vagrantfile configuration in order to
+        launch an instance of this AMI:
+
+        malboxes spin {} <analysis_name>
+
+        Exiting...
+        ===============================================================""")
+        .format(args.template, DIRS.user_cache_dir))
+        sys.exit(4)
 
     if not args.skip_packer_build:
         ret = run_packer(packer_tmpl, args)
@@ -423,7 +451,7 @@ def build(parser, args):
 
     if ret != 0:
         print("'vagrant box add' failed. Build failed. Exiting...")
-        sys.exit(4)
+        sys.exit(5)
 
     if config['hypervisor'] == 'aws':
         print(textwrap.dedent("""
@@ -466,7 +494,7 @@ def spin(parser, args):
     """
     if os.path.isfile('Vagrantfile'):
         print("Vagrantfile already exists. Please move it away. Exiting...")
-        sys.exit(5)
+        sys.exit(6)
 
     config, _ = prepare_config(args)
 
@@ -482,13 +510,7 @@ def spin(parser, args):
             _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
     elif config['hypervisor'] == 'aws':
         with open("Vagrantfile", 'w') as f:
-            manifest_filename = os.path.join(DIRS.user_cache_dir,
-                                             "manifest.json")
-            with open(manifest_filename, 'r') as _f:
-                _manifest = json.loads(_f.read())
-            # AMI Id is like: [builds][0][artifact_id] == "us-east-1:ami-aabbccddeeff0011"
-            # and we keep after the colon
-            config['aws_ami_id'] = _manifest['builds'][0]['artifact_id'].split(':')[1]
+            config['aws_ami_id'] = get_AMI_ID_by_template(config['template_name'])
             _prepare_vagrantfile(config, "analyst_aws.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
