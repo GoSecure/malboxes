@@ -9,10 +9,10 @@
         "access_key": "{{ aws_access_key }}",
         "secret_key": "{{ aws_secret_key }}",
         "region": "us-east-1",
-        "ami_name": "malboxes",
+        "ami_name": "malboxes  {{ template_name }}",
         "s3_bucket_name": "{{ aws_s3_bucket }}",
         "license_type": "BYOL",
-        "tags": { "Description": "This AMI was generated using Malboxes from the following packer template: {{ template_name }}" }
+        "tags": { "Description": "This AMI was generated using Malboxes" }
       },
       {# The Vagrantfile will retrieve the AMI ID from the generated manifest #}
       {
