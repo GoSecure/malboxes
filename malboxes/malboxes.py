@@ -400,15 +400,33 @@ def list_templates(parser, args):
         print(m.group(1))
     print()
 
-def get_AMI_ID_by_template(template):
-    boto3_connection = boto3.resource("ec2")
-    images = list(boto3_connection.images.filter(Owners=['self'],Filters=[{'Name': 'tag:Template', 'Values': [template]}]))
-    return images[0].image_id
+def create_EC2_client(config):
+    """
+    Creates a client to interact with Amazon Elastic Compute Cloud.
+    It's Currently only used to retrieve the AMI ID.
+    """
+    return boto3.client(
+        'ec2',
+        aws_access_key_id=config['aws_access_key'],
+        aws_secret_access_key=config['aws_secret_key'],
+        region_name='us-east-1',
+    )
 
-def template_already_AMI(template):
-    boto3_connection = boto3.resource("ec2")
-    images = list(boto3_connection.images.filter(Owners=['self'],Filters=[{'Name': 'tag:Template', 'Values': [template]}]))
-    if not images:
+def get_AMI_ID_by_template(config, template):
+    """
+    Gets the ID of an AMI by the template tag on it.
+    """
+    images = create_EC2_client(config).describe_images(Owners=['self'],Filters=[{'Name': 'tag:Template', 'Values': [template]}])
+    return images['Images'][0]['ImageId']
+
+def template_already_AMI(config, template):
+    """
+    Verifies if there's already an AMI based on a template.
+    If so, returns True.
+    Otherwise, returns False
+    """
+    images = create_EC2_client(config).describe_images(Owners=['self'],Filters=[{'Name': 'tag:Template', 'Values': [template]}])
+    if not images['Images']:
         return False
     else:
         return True
@@ -419,8 +437,7 @@ def build(parser, args):
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
-
-    if config['hypervisor'] == 'aws' and template_already_AMI(args.template):
+    if config['hypervisor'] == 'aws' and template_already_AMI(config, args.template):
         print(textwrap.dedent("""
         ===============================================================
         This template has already been converted to an AMI.
@@ -510,7 +527,7 @@ def spin(parser, args):
             _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
     elif config['hypervisor'] == 'aws':
         with open("Vagrantfile", 'w') as f:
-            config['aws_ami_id'] = get_AMI_ID_by_template(config['template_name'])
+            config['aws_ami_id'] = get_AMI_ID_by_template(config, config['template'])
             _prepare_vagrantfile(config, "analyst_aws.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
