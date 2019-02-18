@@ -22,5 +22,9 @@ Vagrant.configure(2) do |config|
         aws.security_groups = "{{ aws_security_group }}"
         aws.keypair_name = "{{ aws_keypair }}"
         aws.ami = "{{ aws_ami_id }}"
+        aws.tags = {
+            'Name' => "Malboxes"
+            'Template' => "{{ template_name }}"
+          }
     end
 end

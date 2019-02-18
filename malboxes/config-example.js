@@ -51,6 +51,7 @@
 	"aws_s3_bucket": "",
 	"aws_security_group": "",
 	"aws_keypair": "",
+	"aws_region": "",
 
 	//"proxy": "company_proxy:3128",
 

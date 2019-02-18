@@ -6,10 +6,9 @@
     "type": "amazon-import",
     "access_key": "{{ aws_access_key }}",
     "secret_key": "{{ aws_secret_key }}",
-    "region": "us-east-1",
-    "ami_name": "malboxes",
+    "region": "{{ aws_region }}",
     "s3_bucket_name": "{{ aws_s3_bucket }}",
     "license_type": "BYOL",
-    "tags": { "Description": "This AMI was generated using Malboxes.", "Template": "{{ template_name }}" }
+    "tags": {"Name" : "Malboxes", "Template": "{{ template_name }}"}
   } 
 ]

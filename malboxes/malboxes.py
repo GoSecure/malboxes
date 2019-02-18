@@ -409,7 +409,7 @@ def create_EC2_client(config):
         'ec2',
         aws_access_key_id=config['aws_access_key'],
         aws_secret_access_key=config['aws_secret_key'],
-        region_name='us-east-1',
+        region_name=config['aws_region'],
     )
 
 def get_AMI_ID_by_template(config, template):
