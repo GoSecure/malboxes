@@ -1,1 +1,0 @@
-#This is only to simplify the use of the comma in JSON files.

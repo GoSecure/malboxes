@@ -8,7 +8,8 @@
 			{% endif %}
 			"{{ dir }}/scripts/windows/installtools.ps1",
 			{% if profile is defined %}"{{ cache_dir }}/profile-{{ profile }}.ps1",{% endif %}
-			"{{ dir }}/scripts/windows/malware_analysis.ps1"
+			"{{ dir }}/scripts/windows/malware_analysis.ps1",
+			"{{ dir }}/scripts/windows/allow-WinRM-public.ps1"
 		]
 	}
 {% if choco_packages %},

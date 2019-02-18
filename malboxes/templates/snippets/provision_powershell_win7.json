@@ -7,7 +7,7 @@
 			{% if hypervisor == "virtualbox" %}
 				"{{ dir }}/scripts/windows/vmtools.ps1",
 			{% endif %}
-			"{{ dir }}/scripts/windows/do-nothing.ps1"
+			"{{ dir }}/scripts/windows/allow-WinRM-public.ps1"
 		]
 	},
 	{
