@@ -18,7 +18,7 @@ Vagrant.configure(2) do |config|
     config.vm.provider :aws do |aws, override|
         aws.access_key_id = "{{ aws_access_key }}"
         aws.secret_access_key = "{{ aws_secret_key }}"
-        aws.instance_type = "m3.medium"
+        aws.instance_type = "{{ aws_instance_type }}"
         aws.security_groups = "{{ aws_security_group }}"
         aws.keypair_name = "{{ aws_keypair }}"
         aws.ami = "{{ aws_ami_id }}"
