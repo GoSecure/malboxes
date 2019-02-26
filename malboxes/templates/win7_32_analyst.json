@@ -10,7 +10,7 @@
 		{% else %}
 			"iso_urls": [
 				"file://{{ iso_path }}/7600.16385.090713-1255_x86fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENEVAL_EN_DVD.iso",
-				"http://download.microsoft.com/download/evalx/win7/x86/EN/7600.16385.090713-1255_x86fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENEVAL_EN_DVD.iso"
+				"http://care.dlservice.microsoft.com/dl/download/evalx/win7/x86/EN/7600.16385.090713-1255_x86fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENEVAL_EN_DVD.iso"
 			],
 			"iso_checksum": "971fc00183a52c152fe924a6b99fdec011a871c2",
 			"iso_checksum_type": "sha1",
