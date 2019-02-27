@@ -22,7 +22,7 @@
 		]
 	}],
 
-	{% if hypervisor == 'virtualbox' %}
+	{% if hypervisor != 'aws' %}
 		{% include 'snippets/postprocessor_vagrant.json' %},
 	{% endif %}
 
