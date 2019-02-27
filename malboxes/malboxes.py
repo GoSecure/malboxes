@@ -31,10 +31,9 @@ import sys
 import textwrap
 
 from appdirs import AppDirs
+import boto3
 from jinja2 import Environment, FileSystemLoader
 from jsmin import jsmin
-
-import boto3
 
 from malboxes._version import __version__
 
