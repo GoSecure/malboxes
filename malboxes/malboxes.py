@@ -484,9 +484,6 @@ def build(parser, args):
         ===============================================================
         The AMI was successfully created on the Amazon Elastic Compute Cloud.
 
-        The required box will be added to Vagrant, if it's not already there,
-        with the spin command.
-        
         You should generate a Vagrantfile configuration in order to
         launch an instance of the AMI:
 
