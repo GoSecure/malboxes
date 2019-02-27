@@ -425,16 +425,17 @@ def get_AMI_ID_by_template(config, template):
     return images['Images'][0]['ImageId']
 
 def template_already_AMI(config, template):
+def is_template_already_AMI(config, template):
     """
     Verifies if there's already an AMI based on a template.
     If so, returns True.
-    Otherwise, returns False
+    Otherwise, returns False.
     """
-    images = create_EC2_client(config).describe_images(Owners=['self'],Filters=[{'Name': 'tag:Template', 'Values': [template]}])
-    if not images['Images']:
+    try:
+        get_AMI_ID_by_template(config, template)
+    except IndexError:
         return False
-    else:
-        return True
+    return True
 
 def build(parser, args):
     print("Generating configuration files...")
