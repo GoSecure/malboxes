@@ -66,6 +66,7 @@ def initialize():
 
     return init_parser()
 
+
 def init_parser():
     parser = argparse.ArgumentParser(
                     description="Vagrant box builder "
@@ -405,6 +406,7 @@ def list_templates(parser, args):
         print(m.group(1))
     print()
 
+
 def create_EC2_client(config):
     """
     Creates a client to interact with Amazon Elastic Compute Cloud.
@@ -416,6 +418,7 @@ def create_EC2_client(config):
         aws_secret_access_key=config['aws_secret_key'],
         region_name=config['aws_region'],
     )
+
 
 def get_AMI_ID_by_template(config, template):
     """
@@ -437,6 +440,7 @@ def is_template_already_AMI(config, template):
     except IndexError:
         return False
     return True
+
 
 def build(parser, args):
     print("Generating configuration files...")
@@ -510,7 +514,8 @@ def build(parser, args):
         spin`. Each VM will be independent of each other.
         ===============================================================""")
         .format(args.template, DIRS.user_cache_dir))
-    
+
+
 def spin(parser, args):
     """
     Creates a Vagrantfile meant for user-interaction in the current directory.
@@ -538,6 +543,7 @@ def spin(parser, args):
             _prepare_vagrantfile(config, "analyst_aws.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
+
 
 def prepare_profile(template, config):
     """Converts the profile to a powershell script."""
@@ -664,12 +670,14 @@ def document(profile_name, modtype, docpath, fd):
 
     fd.write(line)
 
+
 def shortcut_function(fd):
     """ Add shortcut function to the profile """
     filename = resource_filename(__name__, "scripts/windows/add-shortcut.ps1")
     with open(filename, 'r') as add_shortcut_file:
         fd.write(add_shortcut_file.read())
         add_shortcut_file.close();
+
 
 def shortcut(dest, target, arguments, fd):
     """ Create shortcut on Desktop """
@@ -680,6 +688,7 @@ def shortcut(dest, target, arguments, fd):
         line = "Add-Shortcut \"{0}\" \"{1}\" \"{2}\"\r\n".format(target, dest, arguments)
         print("Adding shortcut {}: {} with arguments {}".format(dest, target, arguments))
     fd.write(line)
+
 
 def main():
     global DEBUG
