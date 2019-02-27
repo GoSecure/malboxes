@@ -39,6 +39,12 @@ from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
+EXIT_WITHOUT_ERROR = 1
+EXIT_TEMPLATE_NOT_FOUND = 2
+EXIT_PACKER_FAILED = 3
+EXIT_VAGRANT_BOX_ADD_FAILED = 4
+EXIT_VAGRANTFILE_ALREADY_EXISTS = 5
+EXIT_TEMPLATE_ALREADY_AMI = 6
 
 def initialize():
     # create appdata directories if they don't exist
@@ -143,7 +149,7 @@ def prepare_packer_template(config, template_name):
                                      'templates/{}.json'.format(template_name))
     except FileNotFoundError:
         print("Template doesn't exist: {}".format(template_name))
-        sys.exit(1)
+        sys.exit(EXIT_TEMPLATE_NOT_FOUND)
 
     filepath = resource_filename(__name__, 'templates/')
     env = Environment(loader=FileSystemLoader(filepath), autoescape=False,
@@ -387,7 +393,7 @@ def default(parser, args):
     parser.print_help()
     print("\n")
     list_templates(parser, args)
-    sys.exit(2)
+    sys.exit(EXIT_WITHOUT_ERROR)
 
 
 def list_templates(parser, args):
@@ -449,7 +455,7 @@ def build(parser, args):
         Exiting...
         ===============================================================""")
         .format(args.template, DIRS.user_cache_dir))
-        sys.exit(4)
+        sys.exit(EXIT_TEMPLATE_ALREADY_AMI)
 
     if not args.skip_packer_build:
         ret = run_packer(packer_tmpl, args)
@@ -458,7 +464,7 @@ def build(parser, args):
 
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
-        sys.exit(3)
+        sys.exit(EXIT_PACKER_FAILED)
 
     if not (args.skip_vagrant_box_add or config['hypervisor'] == 'aws'):
         ret = add_box(config, args)
@@ -467,7 +473,7 @@ def build(parser, args):
 
     if ret != 0:
         print("'vagrant box add' failed. Build failed. Exiting...")
-        sys.exit(5)
+        sys.exit(EXIT_VAGRANT_BOX_ADD_FAILED)
 
     if config['hypervisor'] == 'aws':
         print(textwrap.dedent("""
@@ -510,7 +516,7 @@ def spin(parser, args):
     """
     if os.path.isfile('Vagrantfile'):
         print("Vagrantfile already exists. Please move it away. Exiting...")
-        sys.exit(6)
+        sys.exit(VAGRANTFILE_ALREADY_EXISTS)
 
     config, _ = prepare_config(args)
 
