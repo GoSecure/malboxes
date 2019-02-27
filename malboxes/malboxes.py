@@ -522,7 +522,7 @@ def spin(parser, args):
     """
     if os.path.isfile('Vagrantfile'):
         print("Vagrantfile already exists. Please move it away. Exiting...")
-        sys.exit(VAGRANTFILE_ALREADY_EXISTS)
+        sys.exit(EXIT_VAGRANTFILE_ALREADY_EXISTS)
 
     config, _ = prepare_config(args)
 
