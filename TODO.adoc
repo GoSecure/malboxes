@@ -18,7 +18,6 @@
 
 == bugs
 
-* Win10 disable malware protection, cloud and automatic submission
 * Win10 desktop virtualbox share doesn't work
 
 === inetsim json config
