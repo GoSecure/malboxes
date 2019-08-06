@@ -6,9 +6,14 @@
 // github stuff
 ifdef::env-github[:github:]
 
-image:https://raw.githubusercontent.com/GoSecure/malboxes/master/docs/logos/main.svg[Malboxes Logo]
+ifndef::github[]
+// local logo
+image::docs/logos/main.svg[Malboxes Logo]
+endif::[]
 
 ifdef::github[]
+// logo on github
+image:https://raw.githubusercontent.com/GoSecure/malboxes/master/docs/logos/main.svg[Malboxes Logo]
 .*Project health*
 // Travis Build Status
 image:https://img.shields.io/travis/GoSecure/malboxes/master.svg[Build Status (Travis CI), link=https://travis-ci.org/GoSecure/malboxes]
