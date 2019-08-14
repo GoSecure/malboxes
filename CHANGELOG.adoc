@@ -14,6 +14,7 @@ Bug fixes::
 
 Infrastructure Improvements::
 * Further improvements to Jenkins CI system fixed Windows 7 build issues ({uri-issue}108[#108], {uri-issue}110[#110])
+* Jenkins CI system can now perform smoke tests on external PRs ({uri-issue}123[#123])
 
 
 == 0.4.0
