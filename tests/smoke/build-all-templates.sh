@@ -22,6 +22,11 @@ pip3 install -e .
 
 echo "Fetching all templates..."
 TEMPLATES=`malboxes list | head -n-1 | tail -n+3`
+if [[ ${PIPESTATUS[0]} != 0 ]]; then
+        echo "Malboxes didn't list templates. This is a fatal error. Force failing the build."
+	exit 1
+fi
+
 
 # build all templates
 declare -A RESULTS
