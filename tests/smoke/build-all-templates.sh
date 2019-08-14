@@ -16,7 +16,8 @@
 #
 
 export PATH=$PATH:$HOME/.local/bin
-#pip3 install --upgrade git+https://github.com/GoSecure/malboxes.git@${GIT_BRANCH#*/}#egg=malboxes
+
+echo "Performing a local install of malboxes in development mode"
 pip3 install -e .
 
 echo "Fetching all templates..."
