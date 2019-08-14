@@ -22,8 +22,6 @@
 		]
 	}],
 
-	{% include 'snippets/postprocessor_vagrant.json' %},
-
 	{% if hypervisor == 'virtualbox' %}
 		{% include 'snippets/postprocessor_vagrant.json' %},
 	{% endif %}

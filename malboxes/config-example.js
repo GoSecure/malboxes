@@ -32,9 +32,9 @@
 	//"input_locale": "fr-FR",
 
 	// Provision settings
-	// Which Hypervisor for privisoning and deployment? (Options are: "virtualbox" and "vsphere") Default is "virtualbox"
+	// Which Hypervisor for privisoning and deployment? (Options are: "virtualbox", "vsphere" and "aws") Default is "virtualbox"
 	"hypervisor": "virtualbox",
-	//If vsphere, the following configuration options are mandatory
+	// If vsphere, the following configuration options are mandatory
 	"remote_host": "",
 	"remote_datastore": "",
 	"remote_username": "",
@@ -45,6 +45,15 @@
 	"vsphere_user": "",
 	"vsphere_password": "",
 	"vsphere_insecure": "true",
+	// If AWS, the following configuration options are mandatory
+	"aws_access_key": "",
+	"aws_secret_key": "",
+	"aws_s3_bucket": "",
+	"aws_keypair": "",
+	"aws_security_group": "", // See Usage/AWS in doc to understand why you need to create one.
+	// Optional
+	"aws_region": "us-east-1",
+	"aws_instance_type" : "m3.medium",
 
 	//"proxy": "company_proxy:3128",
 
