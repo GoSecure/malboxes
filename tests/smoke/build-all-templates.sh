@@ -21,8 +21,8 @@ echo "Performing a local install of malboxes in development mode"
 pip3 install -e .
 
 echo "Fetching all templates..."
-TEMPLATES=`malboxes list | head -n-1 | tail -n+3`
-if [[ ${PIPESTATUS[0]} != 0 ]]; then
+TEMPLATES=$(malboxes list | head -n-1 | tail -n+3; exit ${PIPESTATUS[0]})
+if [[ $? != 0 ]]; then
         echo "Malboxes didn't list templates. This is a fatal error. Force failing the build."
 	exit 1
 fi
