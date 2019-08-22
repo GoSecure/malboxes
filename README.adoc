@@ -150,6 +150,10 @@ link:https://docs.aws.amazon.com/quickstarts/latest/s3backup/step-1-create-bucke
 
 . Your instance also requires a link:https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html#CreatingSecurityGroups[security group] with at least a rule allowing inbound connections for WinRM (Type: WinRM-HTTP, Protocol: TCP, Port Range: 5985, Source: host's public IP).
 
+. Next, you need a `vmimport` service role configured.
+  Follow the section named _VM Import Service Role_ of https://docs.aws.amazon.com/vm-import/latest/userguide/vmimport-image-import.html[this guide].
+  These steps must be performed with an account that has `iam:CreateRole` and `iam:PutRolePolicy` permissions.
+
 . If the <<_configuration,default config>> is used, change the hypervisor to aws and fill the mandatory options related. Otherwise, be sure to add all the options about AWS to your custom config.
 
 . Finally, you can follow the same steps described in the <<Box creation>> and the <<Per analysis instances>> sections to launch your instance!
