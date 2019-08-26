@@ -11,5 +11,6 @@ Vagrant.configure(2) do |config|
 		vb.gui = true
 		vb.customize ["modifyvm", :id, "--vram", "128"]
 		vb.customize ["modifyvm", :id, "--draganddrop", "hosttoguest"]
+		vb.linked_clone = true
 	end
 end

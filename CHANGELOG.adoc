@@ -9,6 +9,8 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == <next release>
 
 Enhancements::
+* Using VirtualBox's linked clones by default now.
+  Creating a new spin of an existing template is now instant. ({uri-issue}126[#126])
 * Enabling UAC so the default account can use Edge without requiring changes ({uri-issue}93[#93])
 
 Bug fixes::
