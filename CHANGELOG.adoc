@@ -8,6 +8,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == <next release>
 
+Enhancements::
+* New tools: Ghidra, x64dbg, ollydbg, dnSpy, Detect It Easy (die), HxD, PE-Sieve, PE-Bear ({uri-issue}9[#9], {uri-issue}125[#125])
+
 Bug fixes::
   * Removed APM from default chocolatey packages ({uri-issue}119[#119])
   * Disabled malware protection, cloud and automatic sample submission on Windows 10 ({uri-issue}120[#120])
