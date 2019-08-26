@@ -37,6 +37,7 @@
 			"choco install npcap --package-parameters '/winpcap_mode=yes' -y",
 			"choco install {{ choco_packages }} -y"
 		],
-		"valid_exit_codes": [ 0, 404 ]
+		{# 404 is broken download, 3010 is a .Net reboot required #}
+		"valid_exit_codes": [ 0, 404, 3010 ]
 	}
 {% endif %}
