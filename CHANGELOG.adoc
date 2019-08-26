@@ -10,6 +10,9 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Enhancements::
 * New tools: Ghidra, x64dbg, ollydbg, dnSpy, Detect It Easy (die), HxD, PE-Sieve, PE-Bear ({uri-issue}9[#9], {uri-issue}125[#125])
+* Using VirtualBox's linked clones by default now.
+  Creating a new spin of an existing template is now instant. ({uri-issue}126[#126])
+* Enabling UAC so the default account can use Edge without requiring changes ({uri-issue}93[#93])
 
 Bug fixes::
   * Removed APM from default chocolatey packages ({uri-issue}119[#119])
