@@ -8,6 +8,10 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 == <next release>
 
+Enhancements::
+* Using VirtualBox's linked clones by default now.
+  Creating a new spin of an existing template is now instant. ({uri-issue}126[#126])
+
 Bug fixes::
   * Removed APM from default chocolatey packages ({uri-issue}119[#119])
   * Disabled malware protection, cloud and automatic sample submission on Windows 10 ({uri-issue}120[#120])
