@@ -27,4 +27,7 @@ Vagrant.configure(2) do |config|
             'Template' => "{{ template_name }}"
           }
     end
+
+    # Disable the default synced folder (vagrant-aws only supports rsync and our images don't)
+    config.vm.synced_folder ".", "/vagrant", disabled: true
 end
