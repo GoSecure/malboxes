@@ -1,0 +1,4 @@
+{% set iso_filename = '14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO' %}
+{% set iso_url = 'http://download.microsoft.com/download/2/5/4/254230E8-AEA5-43C5-94F6-88CE222A5846/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO' %}
+{% set iso_checksum = 'a86ae3d664553cd0ee9a6bcd83a5dbe92e3dc41a' %}
+{% include 'snippets/win10_x64_analyst.json' %}
