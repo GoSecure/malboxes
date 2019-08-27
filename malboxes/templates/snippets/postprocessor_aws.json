@@ -1,0 +1,14 @@
+"post-processors": [    
+  {# Exports the .OVA created by the builder to the S3 bucket then converts the file to an AMI
+    (This can take a very long time). 
+    Use this command to see the status of the import: aws ec2 describe-import-image-tasks #}
+  {
+    "type": "amazon-import",
+    "access_key": "{{ aws_access_key }}",
+    "secret_key": "{{ aws_secret_key }}",
+    "region": "{{ aws_region }}",
+    "s3_bucket_name": "{{ aws_s3_bucket }}",
+    "license_type": "BYOL",
+    "tags": {"Name" : "Malboxes", "Template": "{{ template_name }}"}
+  } 
+]

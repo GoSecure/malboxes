@@ -1,6 +1,7 @@
 	{
 		"type": "powershell",
 		"scripts": [
+			"{{ dir }}/scripts/windows/allow-WinRM-public.ps1",
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
 			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
 			{% if hypervisor == "virtualbox" %}
@@ -10,6 +11,7 @@
 			{% if profile is defined %}"{{ cache_dir }}/profile-{{ profile }}.ps1",{% endif %}
 			"{{ dir }}/scripts/windows/uac.ps1",
 			"{{ dir }}/scripts/windows/malware_analysis.ps1"
+			
 		]
 	}
 {% if choco_packages %},
