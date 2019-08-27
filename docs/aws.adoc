@@ -1,0 +1,32 @@
+= Amazon Web Services (AWS) Helpers
+
+== Setup
+
+Install the `aws` command-line tool (pip or your OS' version)
+
+Configure it
+
+    aws configure
+
+You are good to go!
+
+
+== Built Templates
+
+They are available as images or AMIs in AWS' language.
+You can find them under EC2 -> Images -> AMIs.
+
+=== List malboxes images hosted available to you
+
+    aws ec2 describe-images --filters "Name=tag:Name,Values=Malboxes"
+
+
+== Operations
+
+=== Map a drive
+
+Connecting to the instance with the following command will map the current
+working directory as a drive letter on the Windows box using RDP:
+
+    vagrant rdp -- /cert-ignore  /a:drive,home,./
+
