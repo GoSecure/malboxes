@@ -10,13 +10,47 @@ If you want to use a trial version make sure you have the following in your
 
     "trial": true
 
-=== Windows 10 32-bit
+=== Windows 10
+
+==== 1903 May 2019 Update (19H1)
+
+===== x64
+
+* filename: 18362.30.190401-1528.19h1_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso
+* sha1sum: 743FC483BB8BF1901C0534A0AE15208A5A72A3C5
+* download link: https://software-download.microsoft.com/download/pr/18362.30.190401-1528.19h1_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso
+
+===== x86
+
+* filename: 18362.30.190401-1528.19h1_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x86FRE_en-us.iso
+* sha1sum: d0373ab9d590ff3d512d9e91b7e3d458026ea1c6
+* download link: https://software-download.microsoft.com/download/pr/18362.30.190401-1528.19h1_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x86FRE_en-us.iso
+
+
+==== 1703 Creators Update (Redstone 2)
+
+===== x64
+
+* filename: 15063.0.170317-1834.RS2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO
+* sha1sum: 6c60f91bf0ad7b20f469ab8f80863035c517f34f
+* download link: http://care.dlservice.microsoft.com/dl/download/B/8/B/B8B452EC-DD2D-4A8F-A88C-D2180C177624/15063.0.170317-1834.RS2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO
+
+===== x86
+
+* filename: 15063.0.170317-1834.RS2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO
+* sha1sum: 1aa6d3c4451e79e69e84118ec629ad99e2ad36e7
+* download link: http://care.dlservice.microsoft.com/dl/download/B/8/B/B8B452EC-DD2D-4A8F-A88C-D2180C177624/15063.0.170317-1834.RS2_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO
+
+
+==== 1607 Anniversary Update (Redstone 1)
+
+===== 32-bit
 
 * filename: 14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO
 * sha1 checksum: 0b8e56772c71dc7bb73654c61e53998a997e1e4d
 * download link: http://download.microsoft.com/download/2/5/4/254230E8-AEA5-43C5-94F6-88CE222A5846/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO
 
-=== Windows 10 64-bit
+=== 64-bit
 
 * filename: 14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO"
 * sha1 checksum: a86ae3d664553cd0ee9a6bcd83a5dbe92e3dc41a
