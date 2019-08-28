@@ -1,1 +1,1 @@
-{% include 'win10_1607_x64_analyst.json' %}
+{% include 'win10_1903_x64_analyst.json' %}
