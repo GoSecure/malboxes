@@ -1,8 +1,6 @@
 {% if not windows_defender == "true" %}
 	{
 		"type": "powershell",
-		"elevated_user": "SYSTEM",
-		"elevated_password": "",
 		"script": "{{ dir }}/scripts/windows/disable_defender_tamper_protection.ps1"
 	},
 	{
