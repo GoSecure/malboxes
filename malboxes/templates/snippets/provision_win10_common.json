@@ -3,13 +3,11 @@
 		"type": "windows-shell",
 		"script": "{{ dir }}/scripts/windows/disable_defender.bat"
 	},
-	{% if os_version >= 1903 %}
 	{
 		"type": "file",
 		"source": "{{ dir }}/scripts/windows/disable_defender.bat",
 		"destination": "C:\\Tools\\disable_defender.bat"
 	},
-	{% endif %}
 {% endif %}
 	{
 		"type": "powershell",
