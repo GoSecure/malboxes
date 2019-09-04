@@ -1,6 +1,10 @@
 @echo off
 rem A modified version of the disable defender script from: https://pastebin.com/kYCVzZPz
 
+@echo on
+rem ==========================================
+rem This section will Disable Windows Defender
+rem You can ignore error messages
 rem 1 - Disable Real-time protection
 reg delete "HKLM\Software\Policies\Microsoft\Windows Defender" /f
 reg add "HKLM\Software\Policies\Microsoft\Windows Defender" /v "DisableAntiSpyware" /t REG_DWORD /d "1" /f
@@ -43,3 +47,7 @@ reg add "HKLM\System\CurrentControlSet\Services\WdFilter" /v "Start" /t REG_DWOR
 reg add "HKLM\System\CurrentControlSet\Services\WdNisDrv" /v "Start" /t REG_DWORD /d "4" /f
 reg add "HKLM\System\CurrentControlSet\Services\WdNisSvc" /v "Start" /t REG_DWORD /d "4" /f
 reg add "HKLM\System\CurrentControlSet\Services\WinDefend" /v "Start" /t REG_DWORD /d "4" /f
+
+rem Force success exit code
+exit /b 0
+rem ==========================================
