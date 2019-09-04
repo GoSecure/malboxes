@@ -1,8 +1,20 @@
+{% if not windows_defender == "true" %}
+	{
+		"type": "windows-shell",
+		"script": "{{ dir }}/scripts/windows/disable_defender.bat"
+	},
+	{% if os_version >= 1903 %}
+	{
+		"type": "file",
+		"source": "{{ dir }}/scripts/windows/disable_defender.bat",
+		"destination": "C:\\Tools\\disable_defender.bat"
+	},
+	{% endif %}
+{% endif %}
 	{
 		"type": "powershell",
 		"scripts": [
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
-			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
 			{% if hypervisor == "virtualbox" %}
 				"{{ dir }}/scripts/windows/vmtools.ps1",
 			{% endif %}

@@ -28,7 +28,7 @@
 
 	"provisioners": [
 
-		{% include 'snippets/provision_powershell.json' %}
+		{% include 'snippets/provision_win10_common.json' %}
 
 		{% if tools_path %},
 			{% include 'snippets/tools.json' %}
