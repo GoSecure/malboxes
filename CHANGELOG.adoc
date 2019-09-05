@@ -17,9 +17,9 @@ Enhancements::
 * Enabling UAC so the default account can use Edge without requiring changes ({uri-issue}93[#93])
 
 Bug fixes::
-  * Removed APM from default chocolatey packages ({uri-issue}119[#119])
-  * Disabled malware protection, cloud and automatic sample submission on Windows 10 ({uri-issue}120[#120], {uri-issue}128[#128])
-  * Fix Windows 10 download links ({uri-issue}113[#113], {uri-issue}116[#116])
+* Removed APM from default chocolatey packages ({uri-issue}119[#119])
+* Disabled malware protection, cloud and automatic sample submission on Windows 10 ({uri-issue}120[#120], {uri-issue}128[#128])
+* Fix Windows 10 download links ({uri-issue}113[#113], {uri-issue}116[#116])
 
 Infrastructure Improvements::
 * Various Jenkins CI system improvements ({uri-issue}108[#108], {uri-issue}110[#110], {uri-issue}123[#123], {uri-issue}124[#124])

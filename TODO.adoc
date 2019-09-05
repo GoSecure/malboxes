@@ -12,13 +12,11 @@
 
 * Watch this: http://static.sstic.org/videos2016/SSTIC_2016-06-02_P07.mp4
 
-== missing things
+== Multi-machine Setup
 
-* chocolatey package for ollydbg 2
+=== Isolation-focused
 
-== bugs
-
-* Win10 desktop virtualbox share doesn't work
+* Use whonix gateway? https://www.whonix.org/wiki/Main_Page
 
 === inetsim json config
 
@@ -26,16 +24,6 @@
 			["modifyvm", "{{.Name}}", "--nic1", "intnet"],
 			["modifyvm", "{{.Name}}", "--intnet1", "malwarelab"]
 		],
-
-== Install process
-
-* Make easily customizable in `Autounattend.xml`
-** license key
-** computer name
-** username
-** NetworkLocation: Microsoft-Windows-Shell-Setup | OOBE | NetworkLocation (Win7 at least)
-
-* Concept of pre-built profiles: Work (crimeware/APTs?) vs Home (crimeware)
 
 == Improvements to Autounattend.xml
 
@@ -109,10 +97,6 @@ Talk to sholmes, he did it.
 == Optimizations
 
 * https://github.com/W4RH4WK/Debloat-Windows-10
-
-=== Use VirtualBox's linked_clones Vagrant config
-
-https://www.vagrantup.com/docs/virtualbox/configuration.html
 
 == Honeypot Workflow
 
