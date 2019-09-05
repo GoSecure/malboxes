@@ -9,6 +9,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 == <next release>
 
 Enhancements::
+* Support for Windows 10 19H1 (version 1903) ({uri-issue}128[#128])
 * New tools: Ghidra, x64dbg, ollydbg, dnSpy, Detect It Easy (die), HxD, PE-Sieve, PE-Bear ({uri-issue}9[#9], {uri-issue}125[#125])
 * New deployment target: Amazon Web Services EC2 (for the VM) and S3 (for the image) ({uri-issue}115[#115])
 * Using VirtualBox's linked clones by default now.
@@ -17,7 +18,7 @@ Enhancements::
 
 Bug fixes::
   * Removed APM from default chocolatey packages ({uri-issue}119[#119])
-  * Disabled malware protection, cloud and automatic sample submission on Windows 10 ({uri-issue}120[#120])
+  * Disabled malware protection, cloud and automatic sample submission on Windows 10 ({uri-issue}120[#120], {uri-issue}128[#128])
   * Fix Windows 10 download links ({uri-issue}113[#113], {uri-issue}116[#116])
 
 Infrastructure Improvements::
