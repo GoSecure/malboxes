@@ -39,6 +39,7 @@ https://github.com/gosecure/malboxes
 * vagrant: https://www.vagrantup.com/downloads.html
 * https://www.virtualbox.org/wiki/Downloads[VirtualBox] or an vSphere / ESXi server
 
+
 === Minimum specs for the build machine
 
 * At least 5 GB of RAM
@@ -53,7 +54,6 @@ https://github.com/gosecure/malboxes
 
     apt install vagrant git python3-pip
 
-
 == Installation
 
 === Linux/Unix
@@ -63,7 +63,6 @@ https://github.com/gosecure/malboxes
 * `pip install` malboxes:
 +
     sudo pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
-
 
 === Windows
 
@@ -106,6 +105,12 @@ installed. Otherwise, follow the <<Manually,manual installation procedure>>.
     pip3 install setuptools
     pip3 install -U git+https://github.com/GoSecure/malboxes.git#egg=malboxes
 
+=== To deploy on AWS (optional)
+Run this command after normal installation:
+    
+    vagrant plugin install vagrant-aws
+
+NOTE: The AWS feature has only been tested on Linux for the moment and EC2 does not support 32-bit desktop version of Windows 10.
 
 == Usage
 
@@ -149,6 +154,54 @@ For example:
 
     malboxes spin win7_x86_analyst 20160519.cryptolocker.xyz
 
+=== To deploy on AWS (optional)
+
+Malboxes can upload and interact with a VM on the Amazon Web serivces. To do so, follow these steps:
+
+. Malboxes will need a S3 bucket on AWS to upload the VM before converting it to an AMI (Amazon Machine Image). If you don't have one, 
+link:https://docs.aws.amazon.com/quickstarts/latest/s3backup/step-1-create-bucket.html[create one now.]
+
+. Your instance also requires a link:https://docs.aws.amazon.com/vpc/latest/userguide/VPC_SecurityGroups.html#CreatingSecurityGroups[security group] with at least a rule allowing inbound connections for WinRM (Type: WinRM-HTTP, Protocol: TCP, Port Range: 5985, Source: host's public IP).
+
+. Next, you need a `vmimport` service role configured.
+  Follow the section named _VM Import Service Role_ of https://docs.aws.amazon.com/vm-import/latest/userguide/vmimport-image-import.html[this guide].
+  These steps must be performed with an account that has `iam:CreateRole` and `iam:PutRolePolicy` permissions.
+
+. If the <<_configuration,default config>> is used, change the hypervisor to aws and fill the mandatory options related. Otherwise, be sure to add all the options about AWS to your custom config.
+
+. Finally, you can follow the same steps described in the <<Box creation>> and the <<Per analysis instances>> sections to launch your instance!
+
+NOTE: The AMI import can take a very long time (about an hour), however you can verify the status of the task by doing <<AMI import status, this>>. At the moment, only one AMI can be build per template.
+
+==== AMI import status
+Install awscli using pip:
+
+    pip install awscli
+
+link:https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html#cli-quick-configuration[Configure] awscli with:
+
+    aws configure
+
+Then run:
+
+    aws ec2 describe-import-image-tasks 
+
+==== RDP
+
+To connect to an instance on the cloud using RDP, run this command at the same location of your `Vagrantfile`: 
+
+    vagrant rdp -- /cert-ignore
+
+For this to work, the instance will require a security group allowing RDP inbound connections (Type: RDP, Protocol: TCP, Port Range: 3389, Source: host's public IP).
+
+NOTE: You can safely ignore the following error because rsync is not yet implemented: `No host IP was given to the Vagrant core NFS helper. This is an internal error that should be reported as a bug.` 
+
+
+==== Stopping an Instance
+
+To stop an instance on the cloud, run this command at the same location of your `Vagrantfile`:
+
+    vagrant halt
 
 == Configuration
 
@@ -180,6 +233,9 @@ link:malboxes/profile-example.js[profile-example.js] for an example
 configuration. This new capacity is experimental and subject to change as we
 experiment with it.
 
+=== AWS security groups
+
+Currently, Malboxes does not support the automatic creation of the security groups, so you'll have to use the AWS console to create yours. However, using the library link:https://boto3.amazonaws.com/v1/documentation/api/latest/index.html[Boto3] there should be a way to implement this.
 
 == More information
 

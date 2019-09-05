@@ -31,6 +31,7 @@ import sys
 import textwrap
 
 from appdirs import AppDirs
+import boto3
 from jinja2 import Environment, FileSystemLoader
 from jsmin import jsmin
 
@@ -38,6 +39,12 @@ from malboxes._version import __version__
 
 DIRS = AppDirs("malboxes")
 DEBUG = False
+EXIT_WITHOUT_ERROR = 1
+EXIT_TEMPLATE_NOT_FOUND = 2
+EXIT_PACKER_FAILED = 3
+EXIT_VAGRANT_BOX_ADD_FAILED = 4
+EXIT_VAGRANTFILE_ALREADY_EXISTS = 5
+EXIT_TEMPLATE_ALREADY_AMI = 6
 
 def initialize():
     # create appdata directories if they don't exist
@@ -58,6 +65,7 @@ def initialize():
         os.makedirs(cache_scripts_dir)
 
     return init_parser()
+
 
 def init_parser():
     parser = argparse.ArgumentParser(
@@ -142,7 +150,7 @@ def prepare_packer_template(config, template_name):
                                      'templates/{}.json'.format(template_name))
     except FileNotFoundError:
         print("Template doesn't exist: {}".format(template_name))
-        sys.exit(2)
+        sys.exit(EXIT_TEMPLATE_NOT_FOUND)
 
     filepath = resource_filename(__name__, 'templates/')
     env = Environment(loader=FileSystemLoader(filepath), autoescape=False,
@@ -395,7 +403,7 @@ def default(parser, args):
     parser.print_help()
     print("\n")
     list_templates(parser, args)
-    sys.exit(1)
+    sys.exit(EXIT_WITHOUT_ERROR)
 
 
 def list_templates(parser, args):
@@ -408,13 +416,63 @@ def list_templates(parser, args):
     print()
 
 
-def build(parser, args):
+def create_EC2_client(config):
+    """
+    Creates a client to interact with Amazon Elastic Compute Cloud.
+    It's Currently only used to retrieve the AMI ID.
+    """
+    return boto3.client(
+        'ec2',
+        aws_access_key_id=config['aws_access_key'],
+        aws_secret_access_key=config['aws_secret_key'],
+        region_name=config['aws_region'],
+    )
 
+
+def get_AMI_ID_by_template(config, template):
+    """
+    Gets the ID of an AMI by the template tag on it.
+    """
+    images = create_EC2_client(config).describe_images(Owners=['self'],
+    Filters=[{'Name': 'tag:Template', 'Values': [template]}])
+    return images['Images'][0]['ImageId']
+
+
+def is_template_already_AMI(config, template):
+    """
+    Verifies if there's already an AMI based on a template.
+    If so, returns True.
+    Otherwise, returns False.
+    """
+    try:
+        get_AMI_ID_by_template(config, template)
+    except IndexError:
+        return False
+    return True
+
+
+def build(parser, args):
     print("Generating configuration files...")
     config, packer_tmpl = prepare_config(args)
     prepare_autounattend(config)
     _prepare_vagrantfile(config, "box_win.rb", create_cachefd('box_win.rb'))
     print("Configuration files are ready")
+    if (    config['hypervisor'] == 'aws' and
+            is_template_already_AMI(config, args.template)
+       ):
+        print(textwrap.dedent("""
+        ===============================================================
+        This template has already been converted to an AMI.
+        
+        You should generate a Vagrantfile configuration in order to
+        launch an instance of this AMI:
+
+        malboxes spin {} <analysis_name>
+
+        Exiting...
+        ===============================================================""")
+        .format(args.template, DIRS.user_cache_dir))
+        sys.exit(EXIT_TEMPLATE_ALREADY_AMI)
 
     if not args.skip_packer_build:
         ret = run_packer(packer_tmpl, args)
@@ -423,18 +481,33 @@ def build(parser, args):
 
     if ret != 0:
         print("Packer failed. Build failed. Exiting...")
-        sys.exit(3)
+        sys.exit(EXIT_PACKER_FAILED)
 
-    if not args.skip_vagrant_box_add:
+    if not (args.skip_vagrant_box_add or config['hypervisor'] == 'aws'):
         ret = add_box(config, args)
     else:
         ret = 0
 
     if ret != 0:
         print("'vagrant box add' failed. Build failed. Exiting...")
-        sys.exit(4)
+        sys.exit(EXIT_VAGRANT_BOX_ADD_FAILED)
 
-    if not args.skip_vagrant_box_add:
+    if config['hypervisor'] == 'aws':
+        print(textwrap.dedent("""
+        ===============================================================
+        The AMI was successfully created on the Amazon Elastic Compute Cloud.
+
+        You should generate a Vagrantfile configuration in order to
+        launch an instance of the AMI:
+
+        malboxes spin {} <analysis_name>
+
+        You can re-use this box several times by using `malboxes
+        spin`. Each EC2 instance will be independent of each other.
+        ===============================================================""")
+        .format(args.template, DIRS.user_cache_dir))
+
+    elif not args.skip_vagrant_box_add:
         print(textwrap.dedent("""
         ===============================================================
         A base box was imported into your local Vagrant box repository.
@@ -458,7 +531,7 @@ def spin(parser, args):
     """
     if os.path.isfile('Vagrantfile'):
         print("Vagrantfile already exists. Please move it away. Exiting...")
-        sys.exit(5)
+        sys.exit(EXIT_VAGRANTFILE_ALREADY_EXISTS)
 
     config, _ = prepare_config(args)
 
@@ -472,6 +545,11 @@ def spin(parser, args):
     elif config['hypervisor'] == 'vsphere':
         with open("Vagrantfile", 'w') as f:
             _prepare_vagrantfile(config, "analyst_vsphere.rb", f)
+    elif config['hypervisor'] == 'aws':
+        with open("Vagrantfile", 'w') as f:
+            config['aws_ami_id'] = get_AMI_ID_by_template(config,
+            config['template'])
+            _prepare_vagrantfile(config, "analyst_aws.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
 
@@ -606,12 +684,14 @@ def document(profile_name, modtype, docpath, fd):
 
     fd.write(line)
 
+
 def shortcut_function(fd):
     """ Add shortcut function to the profile """
     filename = resource_filename(__name__, "scripts/windows/add-shortcut.ps1")
     with open(filename, 'r') as add_shortcut_file:
         fd.write(add_shortcut_file.read())
         add_shortcut_file.close();
+
 
 def shortcut(dest, target, arguments, fd):
     """ Create shortcut on Desktop """
@@ -622,6 +702,7 @@ def shortcut(dest, target, arguments, fd):
         line = "Add-Shortcut \"{0}\" \"{1}\" \"{2}\"\r\n".format(target, dest, arguments)
         print("Adding shortcut {}: {} with arguments {}".format(dest, target, arguments))
     fd.write(line)
+
 
 def main():
     global DEBUG

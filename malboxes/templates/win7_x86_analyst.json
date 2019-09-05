@@ -23,7 +23,11 @@
 		]
 	}],
 
-	{% include 'snippets/postprocessor_vagrant.json' %},
+	{% if hypervisor == 'virtualbox' %}
+		{% include 'snippets/postprocessor_vagrant.json' %},
+	{% elif hypervisor == 'aws' %}
+		{% include 'snippets/postprocessor_aws.json' %},
+	{% endif %}
 
 	"provisioners": [
 
