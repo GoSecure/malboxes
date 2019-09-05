@@ -127,7 +127,7 @@ include it in a Vagrantfile afterwards.
 
 For example:
 
-    malboxes build win10_64_analyst
+    malboxes build win10_x64_analyst
 
 <<_configuration,The configuration section>> contains further information about
 what can be configured with malboxes.
@@ -135,7 +135,7 @@ what can be configured with malboxes.
 
 === Per analysis instances
 
-    malboxes spin win10_64_analyst <name>
+    malboxes spin win10_x64_analyst <name>
 
 This will create a `Vagrantfile` prepared to use for malware analysis. Move it
 into a directory of your choice and issue:
@@ -147,7 +147,7 @@ can be changed by commenting the relevant part of the `Vagrantfile`.
 
 For example:
 
-    malboxes spin win7_32_analyst 20160519.cryptolocker.xyz
+    malboxes spin win7_x86_analyst 20160519.cryptolocker.xyz
 
 
 == Configuration
