@@ -15,6 +15,7 @@ Enhancements::
 * Using VirtualBox's linked clones by default now.
   Creating a new spin of an existing template is now instant. ({uri-issue}126[#126])
 * Enabling UAC so the default account can use Edge without requiring changes ({uri-issue}93[#93])
+* Updated logo ({uri-issue}129[#129])
 
 Bug fixes::
 * Removed APM from default chocolatey packages ({uri-issue}119[#119])
