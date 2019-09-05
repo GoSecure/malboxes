@@ -44,17 +44,18 @@ If you want to use a trial version make sure you have the following in your
 
 ==== 1607 Anniversary Update (Redstone 1)
 
-===== 32-bit
+===== x86
 
 * filename: 14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO
 * sha1 checksum: 0b8e56772c71dc7bb73654c61e53998a997e1e4d
 * download link: http://download.microsoft.com/download/2/5/4/254230E8-AEA5-43C5-94F6-88CE222A5846/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO
 
-=== 64-bit
+===== x64
 
 * filename: 14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO"
 * sha1 checksum: a86ae3d664553cd0ee9a6bcd83a5dbe92e3dc41a
 * download link: http://download.microsoft.com/download/2/5/4/254230E8-AEA5-43C5-94F6-88CE222A5846/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X64FRE_EN-US.ISO"
+
 
 === Windows 7 32-bit
 
