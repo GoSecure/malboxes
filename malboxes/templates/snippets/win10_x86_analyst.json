@@ -10,10 +10,10 @@
 		{% endif %}
 
 		"iso_urls": [
-			"file://{{ iso_path }}/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO",
-			"http://download.microsoft.com/download/2/5/4/254230E8-AEA5-43C5-94F6-88CE222A5846/14393.0.160715-1616.RS1_RELEASE_CLIENTENTERPRISEEVAL_OEMRET_X86FRE_EN-US.ISO"
+			"file://{{ iso_path }}/{{ iso_filename }}",
+			"{{ iso_url }}"
 		],
-		"iso_checksum": "0b8e56772c71dc7bb73654c61e53998a997e1e4d",
+		"iso_checksum": "{{ iso_checksum }}",
 		"iso_checksum_type": "sha1",
 
 		"floppy_files": [
@@ -28,7 +28,7 @@
 
 	"provisioners": [
 
-		{% include 'snippets/provision_powershell.json' %}
+		{% include 'snippets/provision_win10_common.json' %}
 
 		{% if tools_path %},
 			{% include 'snippets/tools.json' %}
@@ -42,4 +42,3 @@
 			{% endfor %}
 		{% endif %}
 	]
-}

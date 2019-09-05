@@ -159,8 +159,17 @@ def prepare_packer_template(config, template_name):
 
     # write to temporary file
     f = create_cachefd('{}.json'.format(template_name))
-    packer_config = template.render(config) # pylint: disable=no-member
-    f.write(packer_config)
+
+    # load packer config as JSON
+    packer_config = json.loads(template.render(config)) # pylint: disable=no-member
+
+    # merge special _malboxes key into config and get rid of it
+    # packer doesn't like unknown keys yet we need to pass info from template to malboxes
+    if packer_config.get('_malboxes'):
+        config.update(packer_config['_malboxes'])
+        packer_config.pop('_malboxes')
+
+    json.dump(packer_config, f, indent=4)
     f.close()
 
     if DEBUG:
@@ -543,6 +552,11 @@ def spin(parser, args):
             _prepare_vagrantfile(config, "analyst_aws.rb", f)
     print("Vagrantfile generated. You can move it in your analysis directory "
           "and issue a `vagrant up` to get started with your VM.")
+
+    if config.get("windows_defender", "false") == "false" \
+        and config.get("os") == "Windows10" and config.get("os_version") >= 1903:
+        _r = resource_stream(__name__, 'messages/defender-1903.txt')
+        print(_r.read().decode())
 
 
 def prepare_profile(template, config):

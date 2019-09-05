@@ -1,0 +1,7 @@
+
+Starting with Windows 10 May 2019 Update (version 1903) Windows Defender has a Tamper Protection enabled by default. This protection is meant to be unremovable without user intervention (if you know how let us know). If you need Defender disabled it is advised that you manually disable it and then run as Administrator the batch script provided in C:\Tools of the VM. This is only required once.
+
+Instructions to disable Windows Defender Tamper Protection:
+https://www.tenforums.com/tutorials/123792-turn-off-tamper-protection-windows-defender-antivirus.html
+
+Batch script to run as Administrator in the VM: C:\Tools\disable_defender.bat

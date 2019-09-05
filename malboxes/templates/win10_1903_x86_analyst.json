@@ -1,0 +1,6 @@
+{% set iso_filename = '18362.30.190401-1528.19h1_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x86FRE_en-us.iso' %}
+{% set iso_url = 'https://software-download.microsoft.com/download/pr/18362.30.190401-1528.19h1_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x86FRE_en-us.iso' %}
+{% set iso_checksum = 'd0373ab9d590ff3d512d9e91b7e3d458026ea1c6' %}
+{% include 'snippets/win10_x86_analyst.json' %}
+    , "_malboxes": {"os": "Windows10", "os_version": 1903}
+}

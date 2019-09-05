@@ -1,9 +1,14 @@
 {# Needed a different provision script due to chocolatey / .Net 4.0 install issues on Windows 7 (gh#59) #}
+{% if not windows_defender == "true" %}
+	{
+		"type": "windows-shell",
+		"script": "{{ dir }}/scripts/windows/disable_defender.bat"
+	},
+{% endif %}
 	{
 		"type": "powershell",
 		"scripts": [
 			{% if not windows_updates == "true" %}"{{ dir }}/scripts/windows/disable_auto-updates.ps1",{% endif %}
-			{% if not windows_defender == "true" %}"{{ dir }}/scripts/windows/disable_defender.ps1",{% endif %}
 			{% if hypervisor == "virtualbox" %}
 				"{{ dir }}/scripts/windows/vmtools.ps1",
 			{% endif %}
