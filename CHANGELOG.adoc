@@ -25,6 +25,21 @@ Bug fixes::
 Infrastructure Improvements::
 * Various Jenkins CI system improvements ({uri-issue}108[#108], {uri-issue}110[#110], {uri-issue}123[#123], {uri-issue}124[#124])
 
+=== Release meta
+
+* Released on: 2019-09-06
+* Released by: @obilodeau
+* Release whiskey: Colonel E.H. Taylor Small Batch Bourbon
+
+Action: {uri-repo}/issues?q=is%3Aissue%20is%3Aclosed%20created%3A2018-09-02..2019-09-06[issues created and resolved] |
+{uri-repo}/compare/0.4.0...0.5.0[full diff]
+
+=== Credits
+
+Thanks to the following people who contributed to this release:
+
+Etienne Lacroix, Michael Seborowski, Olivier Bilodeau and Maxime Carbonneau
+
 
 == 0.4.0
 
