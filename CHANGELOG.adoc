@@ -6,7 +6,9 @@
 This document provides a high-level view of the changes introduced in {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
-== <next release>
+== 0.5.0
+
+BlackHat USA Arsenal 2019 [late] Edition!
 
 Enhancements::
 * Support for Windows 10 19H1 (version 1903) ({uri-issue}128[#128])
