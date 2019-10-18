@@ -6,6 +6,13 @@
 This document provides a high-level view of the changes introduced in {project-name} by release.
 For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
 
+
+== <master>
+
+Enhancements::
+* Reintroduced `fiddler` in the default configuration ({uri-issue}96[#96], {uri-issue}131[#131])
+
+
 == 0.5.0
 
 BlackHat USA Arsenal 2019 [late] Edition!
