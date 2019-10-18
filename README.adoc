@@ -54,6 +54,10 @@ https://github.com/gosecure/malboxes
 
     apt install vagrant git python3-pip
 
+=== ArchLinux
+
+    pacman -Sy vagrant packer python-pip git
+
 == Installation
 
 === Linux/Unix
