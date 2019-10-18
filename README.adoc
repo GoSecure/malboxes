@@ -53,6 +53,10 @@ https://github.com/gosecure/malboxes
 === Debian
 
     apt install vagrant git python3-pip
+    
+=== Ubuntu
+
+    apt install git python3-pip
 
 === ArchLinux
 
@@ -62,8 +66,9 @@ https://github.com/gosecure/malboxes
 
 === Linux/Unix
 
-* Install git, vagrant and packer using your distribution's packaging tool
+* Install git and packer using your distribution's packaging tool
   (packer is sometimes called packer-io)
+* Install vagrant from their website : https://www.vagrantup.com/downloads.html (Installing from some distributions' packaging tools have caused issues). 
 * `pip install` malboxes:
 +
     sudo pip3 install git+https://github.com/GoSecure/malboxes.git#egg=malboxes
