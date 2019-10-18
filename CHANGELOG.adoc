@@ -11,6 +11,7 @@ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[
 
 Enhancements::
 * Reintroduced `fiddler` in the default configuration ({uri-issue}96[#96], {uri-issue}131[#131])
+* Documentation improvements ({uri-issue}132[#132], {uri-issue}133[#133])
 
 
 == 0.5.0
