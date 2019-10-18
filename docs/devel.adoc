@@ -33,6 +33,9 @@ branch to test in the following command:
 
 . Push your changes (including the tag)
 . Make a release on github (from changelog and copy from previous releases)
+** from CHANGELOG.adoc in vim:
+*** `%s/{uri-issue}\(\d*\)\[#\d*\]/#\1/gc`
+*** `%s/{uri-repo}/https:\/\/github.com\/GoSecure\/malboxes/gc`
 
 . Update version in `malboxes/_version.py` (+1 feature, append 'dev') and commit
 ** commit msg: Begin development on next release
