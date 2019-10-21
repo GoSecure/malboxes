@@ -1,6 +1,5 @@
 		"type": "qemu",
 		"accelerator": "kvm",
-		"guest_additions_mode": "attach",
 		{# headless = true now due to issue #10. Will revisit later. #}
 		"headless": "true",
 		"communicator": "winrm",

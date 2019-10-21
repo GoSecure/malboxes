@@ -285,7 +285,16 @@ def _get_os_type(config):
             _os_type = 'windows10'
         elif _os_type == 'windows8-64':
             _os_type = 'windows10_64'
-
+    elif config['hypervisor'] == 'kvm':
+        if 'win7_64' in config['template_name']:
+            _os_type = 'windows7_64'
+        elif 'win7' in config['template_name']:
+            _os_type = 'windows7'
+        elif 'win10_64' in config['template_name']:
+            _os_type = 'windows10_64'
+        elif 'win10' in config['template_name']:
+            _os_type = 'windows10'
+    
     return _os_type
 
 
