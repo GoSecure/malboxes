@@ -14,7 +14,6 @@
 			"{{ iso_url }}"
 		],
 		"iso_checksum": "{{ iso_checksum }}",
-		"iso_checksum_type": "sha1",
 
 		"floppy_files": [
 			"{{ cache_dir }}/Autounattend.xml",
