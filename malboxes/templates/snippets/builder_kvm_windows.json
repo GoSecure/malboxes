@@ -1,0 +1,19 @@
+		"type": "qemu",
+		"accelerator": "kvm",
+		{# headless = true now due to issue #10. Will revisit later. #}
+		"headless": "true",
+		"communicator": "winrm",
+		"winrm_username": "{{ username }}",
+		"winrm_password": "{{ password }}",
+		"winrm_timeout": "60m",
+		"shutdown_command": "shutdown /s /f /t 10",
+		"net_device": "e1000",
+		"disk_interface": "ide",
+		"qemuargs": [
+			["-m", "4096"],
+			["-smp", "cpus=1"]
+		],
+		"boot_wait": "10s",
+		"disk_size": "{{ disk_size }}",
+		"format": "qcow2",
+		"output_directory": "builds"
